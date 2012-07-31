@@ -60,14 +60,12 @@ def generatePom() {
  * repository.
  */
 task writePoms {
-	onlyIf {
-		def pom = file("${project.mavenPomDir}/pom.xml");
-		!pom.exists() || pom.lastModified() < project.buildFile.lastModified()
-	}
+	ext.pomXml        = file("${project.mavenPomDir}/pom.xml")
+	ext.pomProperties = file("${project.mavenPomDir}/pom.properties")
+	outputs.files(pomXml, pomProperties)
 	doLast {
-		generatePom().writeTo("${project.mavenPomDir}/pom.xml")
-
-		file("${project.mavenPomDir}/pom.properties").withWriter { out ->
+		generatePom().writeTo(pomXml)
+		pomProperties.withWriter { out ->
 			out.println '#Generated using Gradle'
 			out.println '#' + new Date().format('EEE MMM dd HH:mm:ss zzz yyyy')
 			out.println "version=${project.version}"
