@@ -12,12 +12,17 @@ sourceSets {
 		java {
 			srcDir 'Java'
 		}
+		resources {
+			srcDir 'Resources'
+		}
 		output.classesDir = 'Classes'
 	}
-}
-
-def archiveName() {
-	return "${project.artifact}-${project.version}.jar";
+	test {
+		java {
+			srcDir 'Tests'
+		}
+		output.classesDir = 'Classes'
+	}
 }
 
 /**
@@ -38,7 +43,8 @@ def listDependencies() {
  * information.
  */
 jar {
-	archiveName = "${ -> archiveName() }"
+	exclude('**/tests/*')
+	includeEmptyDirs = false
 	manifest {
 		attributes 'Class-Path': "${ -> listDependencies() }"
 	}

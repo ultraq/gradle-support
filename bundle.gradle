@@ -19,8 +19,10 @@ task downloadDependencies(
 	description: 'Download all dependencies required by the project',
 	type: Sync) {
 
+	ext.dependenciesDir = file("${project.buildDir}/dependencies")
+//	outputs.dir = dependenciesDir
 	from configurations.compile
-	into "${project.buildDir}/dependencies"
+	into dependenciesDir
 }
 
 /**
@@ -30,6 +32,7 @@ task sourcesZip(
 	description: 'Create a ZIP archive of all the project source files',
 	type: Zip) {
 
+//	outputs.file = "${project.buildDir}/src/${archiveName}"
 	from sourceSets.main.allSource
 	destinationDir = file("${project.buildDir}/src")
 	classifier = 'src'
@@ -49,12 +52,12 @@ artifacts {
  */
 task bundle(
 	description: 'Create the overall distribution archive',
-	dependsOn: [downloadDependencies, jar, javadoc, sourcesZip],
+	dependsOn: [/*downloadDependencies,*/ jar, javadoc, sourcesZip],
 	type: Zip) {
 
 	archiveName = "${project.name} ${project.version}.zip"
 
-	from(configurations.bundle.artifacts.files)
+	from(configurations.bundle)
 	from(configurations.compile) {
 		into 'Libraries'
 	}
