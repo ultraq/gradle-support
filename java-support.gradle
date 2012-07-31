@@ -43,6 +43,11 @@ def listDependencies() {
  * information.
  */
 jar {
+	// Workaround for early evaluation of the archive name
+	doFirst {
+		baseName = "${project.artifact}"
+	}
+
 	exclude('**/tests/*')
 	includeEmptyDirs = false
 	manifest {
