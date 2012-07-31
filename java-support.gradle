@@ -5,7 +5,7 @@
  * @author Emanuel Rabina
  */
 
-apply plugin: 'java'
+project.ext.artifact = ''
 
 sourceSets {
 	main {
@@ -15,10 +15,6 @@ sourceSets {
 		output.classesDir = 'Classes'
 	}
 }
-
-// =============================================================================
-// Java support methods and tasks
-// =============================================================================
 
 /**
  * Create a list of all immediate dependencies.
@@ -38,14 +34,14 @@ def listDependencies() {
  * information.
  */
 jar {
-	dependsOn writePoms
+	baseName = "${ -> project.artifact }"
 	manifest {
 		attributes(
 			'Class-Path':             listDependencies(),
-			'Implementation-Title':   project.name,
-			'Implementation-Version': project.version,
-			'Implementation-Vendor':  project.author,
-			'Implementation-URL':     "${project.authorWebsite}projects/${project.artifact}/"
+//			'Implementation-Title':   project.name,
+//			'Implementation-Version': project.version,
+//			'Implementation-Vendor':  project.author,
+//			'Implementation-URL':     project.website
 		)
 	}
 }

@@ -6,19 +6,17 @@
  * @author Emanuel Rabina
  */
 
-apply plugin: 'java'
-
 project.defaultTasks 'bundle'
 
-// =============================================================================
-// Bundling tasks
-// =============================================================================
+configurations {
+	bundle
+}
 
 /**
  * Download dependency JARs.
  */
 task downloadDependencies(
-	description: 'Download all dependencies required by the project'
+	description: 'Download all dependencies required by the project',
 	type: Sync) {
 
 	from configurations.compile
@@ -29,12 +27,19 @@ task downloadDependencies(
  * Create the source file archive (ZIP).
  */
 task sourcesZip(
-	description: 'Create a ZIP archive of all the project source files'
+	description: 'Create a ZIP archive of all the project source files',
 	type: Zip) {
 
 	from sourceSets.main.allSource
 	destinationDir = file("${project.buildDir}/src")
 	classifier = 'src'
+}
+
+/**
+ * Include source and class JARs in the download bundle.
+ */
+artifacts {
+	bundle jar, sourcesZip
 }
 
 /**
@@ -49,14 +54,11 @@ task bundle(
 
 	archiveName = "${project.name} ${project.version}.zip"
 
-	from(project.libsDir) {
-		include "${project.artifact}-${project.version}.jar"
-	}
-	from("${project.buildDir}/dependencies") {
+	from(configurations.bundle.artifacts.files)
+	from(configurations.compile) {
 		into 'Libraries'
 	}
-	from("${project.buildDir}/src")
-	from("${project.docsDir}/javadoc") {
+	from(javadoc.destinationDir) {
 		into 'Javadoc'
 	}
 	from('.') {

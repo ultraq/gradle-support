@@ -5,8 +5,6 @@
  * needed for my own projects.
  */
 
-apply plugin: 'java'
-
 configurations {
 	ajc
 	aspects
@@ -33,7 +31,7 @@ task compileJava(dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME, overwrite: t
 			fork: 'true', 
 			aspectPath: configurations.aspects.asPath,
 			inpath: configurations.ajInpath.asPath,
-			sourceRootCopyFilter: '**/.svn/*,**/*.java',
+			sourceRootCopyFilter: '**/*.java,**/*.aj',
 			classpath: configurations.compile.asPath) {	
 		
 			sourceroots {
