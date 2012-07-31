@@ -1,0 +1,67 @@
+
+/**
+ * Common Gradle script configuration for bundling projects for standalone
+ * download distributions.
+ * 
+ * @author Emanuel Rabina
+ */
+
+apply plugin: 'java'
+
+project.defaultTasks 'bundle'
+
+// =============================================================================
+// Bundling tasks
+// =============================================================================
+
+/**
+ * Download dependency JARs.
+ */
+task downloadDependencies(
+	description: 'Download all dependencies required by the project'
+	type: Sync) {
+
+	from configurations.compile
+	into "${project.buildDir}/dependencies"
+}
+
+/**
+ * Create the source file archive (ZIP).
+ */
+task sourcesZip(
+	description: 'Create a ZIP archive of all the project source files'
+	type: Zip) {
+
+	from sourceSets.main.allSource
+	destinationDir = file("${project.buildDir}/src")
+	classifier = 'src'
+}
+
+/**
+ * Creates the distribution archive for standalone downloads, a ZIP file
+ * containing: the project JAR, source ZIP, folder containing all required
+ * dependencies, and the license and readme files.
+ */
+task bundle(
+	description: 'Create the overall distribution archive',
+	dependsOn: [downloadDependencies, jar, javadoc, sourcesZip],
+	type: Zip) {
+
+	archiveName = "${project.name} ${project.version}.zip"
+
+	from(project.libsDir) {
+		include "${project.artifact}-${project.version}.jar"
+	}
+	from("${project.buildDir}/dependencies") {
+		into 'Libraries'
+	}
+	from("${project.buildDir}/src")
+	from("${project.docsDir}/javadoc") {
+		into 'Javadoc'
+	}
+	from('.') {
+		include 'LICENSE.txt'
+		include 'README.md'
+	}
+	into project.name
+}

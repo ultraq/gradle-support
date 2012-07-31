@@ -1,0 +1,51 @@
+
+/**
+ * Common Gradle script configuration for Java projects and tasks.
+ * 
+ * @author Emanuel Rabina
+ */
+
+apply plugin: 'java'
+
+sourceSets {
+	main {
+		java {
+			srcDir 'Java'
+		}
+		output.classesDir = 'Classes'
+	}
+}
+
+// =============================================================================
+// Java support methods and tasks
+// =============================================================================
+
+/**
+ * Create a list of all immediate dependencies.
+ *
+ * @return Comma-seperated list of dependencies.
+ */
+def listDependencies() {
+	def deps = '';
+	configurations.compile.dependencies.each {
+		deps += "${it.name}-${it.version}.jar, "
+	}
+	return !deps.isEmpty() ? deps.substring(0, deps.length() - 2) : deps;
+}
+
+/**
+ * Reconfigure the JAR task to create a manifest file with some extra
+ * information.
+ */
+jar {
+	dependsOn writePoms
+	manifest {
+		attributes(
+			'Class-Path':             listDependencies(),
+			'Implementation-Title':   project.name,
+			'Implementation-Version': project.version,
+			'Implementation-Vendor':  project.author,
+			'Implementation-URL':     "${project.authorWebsite}projects/${project.artifact}/"
+		)
+	}
+}
