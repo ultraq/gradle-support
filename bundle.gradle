@@ -19,11 +19,9 @@ task sourcesZip(
 	description: 'Create a ZIP archive of all the project source files',
 	type: Zip) {
 
-	// Workaround for early evaluation of the archive name
 	doFirst {
 		baseName = "${project.artifact}"
 	}
-
 	from sourceSets.main.allSource
 	destinationDir = file("${project.buildDir}/src")
 	classifier = 'src'
@@ -46,11 +44,9 @@ task bundle(
 	dependsOn: [jar, javadoc, sourcesZip],
 	type: Zip) {
 
-	// Workaround for early evaluation of the archive name
 	doFirst {
 		archiveName = "${project.name} ${project.version}.zip"
 	}
-
 	from(configurations.bundle.artifacts.files)
 	from(configurations.compile) {
 		into 'Libraries'

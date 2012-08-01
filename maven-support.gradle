@@ -92,6 +92,9 @@ jar {
  * Create the source file archive (JAR).
  */
 task sourcesJar(type: Jar, dependsOn: classes) {
+	doFirst {
+		baseName = "${project.artifact}"
+	}
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }
@@ -100,6 +103,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
  * Create the javadoc archive.
  */
 task javadocJar(type: Jar, dependsOn: javadoc) {
+	doFirst {
+		baseName = "${project.artifact}"
+	}
 	classifier = 'javadoc'
 	from javadoc.destinationDir
 }
@@ -122,10 +128,12 @@ signing {
  * Used for testing, upload everything to the local repository.
  */
 install {
+	doFirst {
+		repositories.mavenDeployer.pom = generatePom()
+	}
 	repositories.mavenDeployer {
 		configuration = configurations.archives
 		repository(url: 'file:///' + System.properties['user.home'] + '/.m2/repository/')
-		pom = generatePom()
 		beforeDeployment { MavenDeployment deployment ->
 			signing.signPom(deployment)
 		}
@@ -136,12 +144,14 @@ install {
  * Upload everything to Maven central.
  */
 uploadArchives {
+	doFirst {
+		repositories.mavenDeployer.pom = generatePom()
+	}
 	repositories.mavenDeployer {
 		configuration = configurations.archives
 		repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
 			authentication(userName: sonatypeUsername, password: sonatypePassword)
 		}
-		pom = generatePom()
 		beforeDeployment { MavenDeployment deployment ->
 			signing.signPom(deployment)
 		}
