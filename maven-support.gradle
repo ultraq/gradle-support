@@ -62,6 +62,7 @@ def generatePom() {
 task writePoms {
 	ext.pomXml        = file("${project.mavenPomDir}/pom.xml")
 	ext.pomProperties = file("${project.mavenPomDir}/pom.properties")
+	inputs.file(project.buildFile)
 	outputs.files(pomXml, pomProperties)
 	doLast {
 		generatePom().writeTo(pomXml)
