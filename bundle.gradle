@@ -8,10 +8,6 @@
 
 project.defaultTasks 'bundle'
 
-configurations {
-	bundle
-}
-
 /**
  * Create the source file archive (ZIP).
  */
@@ -28,13 +24,6 @@ task sourcesZip(
 }
 
 /**
- * Include source and class JARs in the download bundle.
- */
-artifacts {
-	bundle jar, sourcesZip
-}
-
-/**
  * Creates the distribution archive for standalone downloads, a ZIP file
  * containing: the project JAR, source ZIP, folder containing all required
  * dependencies, and the license and readme files.
@@ -47,7 +36,8 @@ task bundle(
 	doFirst {
 		archiveName = "${project.name} ${project.version}.zip"
 	}
-	from(configurations.bundle.artifacts.files)
+	from(jar.outputs.files)
+	from(sourcesZip.outputs.files)
 	from(configurations.compile) {
 		into 'Libraries'
 	}
