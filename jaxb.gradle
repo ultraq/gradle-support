@@ -1,0 +1,53 @@
+
+/**
+ * Common Gradle build script to make use of JAXB's XJC tool and any XJC
+ * plugins used throughout my projects.
+ * 
+ * @author Emanuel Rabina
+ */
+
+configurations {
+	xjc
+}
+
+dependencies {
+	xjc(
+		'javax.xml.bind:jaxb-api:2.2.6',
+		'com.sun.xml.bind:jaxb-impl:2.2.6',
+		'com.sun.xml.bind:jaxb-xjc:2.2.6',
+		'jaxb:activation:1.0.2',
+		'javax.xml.bind:jsr173_api:1.0',
+
+		// Use the XJC taks from the JAXB2 Commons project to allow plugin use
+		'org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.3',
+	)
+}
+
+/**
+ * Task to create Java class files from XML schemas.
+ */
+task xjc(
+	description: 'XML schema to Java compiler',
+	dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
+
+	ext.schemaDir = 'Schema'
+	ext.includes  = '*.xsd'
+	ext.outputDir = 'Java'
+	ext.args = []
+
+	doLast {
+		ant.taskdef(
+			name: 'xjc',
+			classname: 'org.jvnet.jaxb2_commons.xjc.XJC2Task',
+			classpath: configurations.xjc.asPath)
+		ant.xjc(
+			destDir: outputDir,
+			extension: 'true') {
+			schema(dir: schemaDir, includes: includes)
+			args.each { val ->
+				arg(value: val)
+			}
+		}
+	}
+}
+compileJava.dependsOn(xjc)
