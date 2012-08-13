@@ -23,6 +23,30 @@ dependencies {
 	)
 }
 
+sourceSets {
+	main {
+		resources {
+			srcDir 'Schema'
+		}
+	}
+}
+
+/**
+ * Get the latest modification time of the files in the file collection.
+ * 
+ * @param files
+ */
+def latestModificationTime(files) {
+
+	def modificationTime = 0;
+	files.each { file ->
+		if (modificationTime < file.lastModified()) {
+			modificationTime = file.lastModified()
+		}
+	}
+	return modificationTime;
+}
+
 /**
  * Task to create Java class files from XML schemas.
  */
@@ -31,10 +55,16 @@ task xjc(
 	dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
 
 	ext.schemaDir = 'Schema'
-	ext.includes  = '*.xsd'
+	ext.depends   = ['**/*.xsd']
 	ext.outputDir = 'Java'
-	ext.args = []
+	ext.produces  = []
+	ext.args      = []
 
+	onlyIf {
+		def schemaModifiedTime = latestModificationTime(fileTree(dir: schemaDir, includes: depends))
+		def outputModifiedTime = latestModificationTime(fileTree(dir: outputDir, includes: produces))
+		return schemaModifiedTime > outputModifiedTime
+	}
 	doLast {
 		ant.taskdef(
 			name: 'xjc',
