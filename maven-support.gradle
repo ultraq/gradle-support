@@ -82,10 +82,12 @@ task writePoms {
  */
 jar {
 	dependsOn writePoms
-	metaInf {
-		from("${project.mavenPomDir}")
-		into("maven/${project.group}/${project.artifact}")
-		include('pom.*')
+	doFirst {
+		metaInf {
+			from("${project.mavenPomDir}")
+			into("maven/${project.group}/${project.artifact}")
+			include('pom.*')
+		}
 	}
 }
 
