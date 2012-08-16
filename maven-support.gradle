@@ -15,10 +15,18 @@ project.ext.authorWebsite = ''
 project.ext.year          = ''
 
 /**
+ * Introduce a 'provided' configuration.
+ */
+configurations {
+	provided
+	compile.extendsFrom(provided)
+}
+
+/**
  * Generate the pom.xml file.
  */
 def generatePom() {
-	pom {
+	def pom = pom {
 		project {
 			artifactId    project.artifact
 			packaging     'jar'
@@ -49,6 +57,16 @@ def generatePom() {
 						role 'developer'
 					}
 					timezone '+12'
+				}
+			}
+			dependencies {
+				configurations.provided.dependencies.each { dep ->
+					dependency {
+						groupId    dep.group
+						artifactId dep.name
+						version    dep.version
+						scope      'provided'
+					}
 				}
 			}
 		}
