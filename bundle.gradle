@@ -38,7 +38,7 @@ task bundle(
 	}
 	from(jar.outputs.files)
 	from(sourcesZip.outputs.files)
-	from(configurations.compile) {
+	from(configurations.runtime) {
 		into 'Libraries'
 	}
 	from(javadoc.destinationDir) {

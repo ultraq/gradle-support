@@ -15,40 +15,38 @@ sourceSets {
 		resources {
 			srcDir 'Resources'
 		}
-		output.classesDir = 'Classes'
+		output.classesDir   = 'Classes'
+		output.resourcesDir = 'Classes'
 	}
 	test {
 		java {
 			srcDir 'Tests'
 		}
-		output.classesDir = 'Classes'
+		output.classesDir   = 'Classes'
+		output.resourcesDir = 'Classes'
 	}
 }
 
 /**
- * Create a list of all immediate dependencies.
- *
- * @return Comma-seperated list of dependencies.
+ * Fix for Gradle's JAR task putting duplicates in the resulting archive.  Uses
+ * the Ant JAR task instead.
  */
-def listDependencies() {
-	def deps = '';
-	configurations.compile.dependencies.each {
-		deps += "${it.name}-${it.version}.jar, "
-	}
-	return !deps.isEmpty() ? deps.substring(0, deps.length() - 2) : deps;
-}
+task jar(
+	dependsOn: JavaPlugin.CLASSES_TASK_NAME,
+	overwrite: true,
+	type: Jar) {
 
-/**
- * Reconfigure the JAR task to create a manifest file with some extra
- * information.
- */
-jar {
 	doFirst {
 		baseName = "${project.artifact}"
+		archiveName = "${baseName}-${version}.${extension}"
 	}
-	exclude('**/tests/*')
-	includeEmptyDirs = false
-//	manifest {
-//		attributes 'Class-Path': "${ -> listDependencies() }"
-//	}
+	doLast {
+		ant.jar(
+			destfile: "${archivePath}",
+			duplicate: 'preserve',
+			excludes: '**/tests/*') {
+			fileset(dir: sourceSets.main.output.classesDir)
+			fileset(dir: sourceSets.main.output.resourcesDir)
+		}
+	}
 }
