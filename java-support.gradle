@@ -28,25 +28,26 @@ sourceSets {
 }
 
 /**
- * Fix for Gradle's JAR task putting duplicates in the resulting archive.  Uses
- * the Ant JAR task instead.
+ * Fix for Gradle's JAR task putting duplicates in the resulting archive with my
+ * setup.
  */
 task jar(
+	description: 'Assembles a jar archive containing the main classes.',
 	dependsOn: JavaPlugin.CLASSES_TASK_NAME,
+	group: BasePlugin.BUILD_GROUP,
 	overwrite: true,
 	type: Jar) {
 
+	inputs.dir sourceSets.main.output.classesDir
+
+	exclude('**/tests/*')
+	includeEmptyDirs = false
 	doFirst {
 		baseName = "${project.artifact}"
-		archiveName = "${baseName}-${version}.${extension}"
 	}
-	doLast {
-		ant.jar(
-			destfile: "${archivePath}",
-			duplicate: 'preserve',
-			excludes: '**/tests/*') {
-			fileset(dir: sourceSets.main.output.classesDir)
-			fileset(dir: sourceSets.main.output.resourcesDir)
-		}
-	}
+	from(sourceSets.main.output.classesDir)
+}
+project.defaultArtifacts.addCandidate(new org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact(jar));
+artifacts {
+	runtime jar
 }
