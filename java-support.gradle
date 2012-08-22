@@ -5,8 +5,6 @@
  * @author Emanuel Rabina
  */
 
-project.ext.artifact = ''
-
 sourceSets {
 	main {
 		java {
@@ -38,14 +36,9 @@ task jar(
 	overwrite: true,
 	type: Jar) {
 
-	inputs.dir sourceSets.main.output.classesDir
-
+	from(sourceSets.main.output.classesDir)
 	exclude('**/tests/*')
 	includeEmptyDirs = false
-	doFirst {
-		baseName = "${project.artifact}"
-	}
-	from(sourceSets.main.output.classesDir)
 }
 project.defaultArtifacts.addCandidate(new org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact(jar));
 artifacts {

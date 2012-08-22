@@ -8,6 +8,7 @@
 
 apply plugin: 'signing'
 
+project.ext.artifact      = ''
 project.ext.website       = ''
 project.ext.author        = ''
 project.ext.authorEmail   = ''
