@@ -150,6 +150,8 @@ signing {
  * Used for testing, upload everything to the local repository.
  */
 install {
+	dependsOn(jar)	// Does cause the JAR task to run twice, but fixes the 'bad JAR'
+					// it creates (has duplicate class files)
 	doFirst {
 		repositories.mavenDeployer.pom = generatePom()
 	}
@@ -166,6 +168,8 @@ install {
  * Upload everything to Maven central.
  */
 uploadArchives {
+	dependsOn(jar)	// Does cause the JAR task to run twice, but fixes the 'bad JAR'
+					// it creates (has duplicate class files)
 	doFirst {
 		repositories.mavenDeployer.pom = generatePom()
 	}
