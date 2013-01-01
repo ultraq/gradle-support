@@ -12,8 +12,8 @@ configurations {
 }
 
 dependencies {
-	ajc 'org.aspectj:aspectjtools:1.7.0'
-	compile 'org.aspectj:aspectjrt:1.7.0'
+	ajc 'org.aspectj:aspectjtools:1.7.1'
+	compile 'org.aspectj:aspectjrt:1.7.1'
 }
 
 task compileJava(dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME, overwrite: true) {
