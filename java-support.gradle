@@ -40,7 +40,3 @@ task jar(
 	exclude('**/tests/*')
 	includeEmptyDirs = false
 }
-//project.defaultArtifacts.addCandidate(new org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact(jar));
-//artifacts {
-//	runtime jar
-//}

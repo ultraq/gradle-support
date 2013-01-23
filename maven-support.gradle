@@ -8,12 +8,8 @@
 
 apply plugin: 'signing'
 
-project.ext.artifact      = ''
-project.ext.website       = ''
-project.ext.author        = ''
-project.ext.authorEmail   = ''
-project.ext.authorWebsite = ''
-project.ext.year          = ''
+project.ext.artifact = ''
+project.ext.year     = ''
 
 /**
  * Introduce a 'provided' configuration.
@@ -33,7 +29,7 @@ def generatePom() {
 			packaging     'jar'
 			name          project.name
 			description   project.description
-			url           project.website
+			url           "http://www.ultraq.net.nz/programming/${project.artifact}/"
 			inceptionYear project.year
 			licenses {
 				license {
@@ -50,9 +46,8 @@ def generatePom() {
 			developers {
 				developer {
 					id    'emanuelrabina'
-					name  project.author
-					email project.authorEmail
-					url   project.authorWebsite
+					name  'Emanuel Rabina'
+					url   'http://www.ultraq.net.nz/'
 					roles {
 						role 'author'
 						role 'developer'
