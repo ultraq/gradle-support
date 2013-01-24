@@ -5,6 +5,10 @@
  * @author Emanuel Rabina
  */
 
+repositories {
+	mavenCentral()
+}
+
 sourceSets {
 	main {
 		java {
