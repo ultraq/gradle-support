@@ -13,30 +13,10 @@ sourceSets {
 		resources {
 			srcDir 'Resources'
 		}
-		output.classesDir   = 'Classes'
-		output.resourcesDir = 'Classes'
 	}
 	test {
 		java {
 			srcDir 'Tests'
 		}
-		output.classesDir   = 'Classes'
-		output.resourcesDir = 'Classes'
 	}
-}
-
-/**
- * Fix for Gradle's JAR task putting duplicates in the resulting archive with my
- * setup.
- */
-task jar(
-	description: 'Assembles a jar archive containing the main classes.',
-	dependsOn: JavaPlugin.CLASSES_TASK_NAME,
-	group: BasePlugin.BUILD_GROUP,
-	overwrite: true,
-	type: Jar) {
-
-	from(sourceSets.main.output.classesDir)
-	exclude('**/tests/*')
-	includeEmptyDirs = false
 }
