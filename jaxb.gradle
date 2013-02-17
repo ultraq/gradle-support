@@ -48,6 +48,21 @@ def latestModificationTime(files) {
 }
 
 /**
+ * Convert an array or list into a space-separated string.
+ * 
+ * @param list
+ * @return A string of the list's elements, separated by spaces.
+ */
+def listAsSpaceSeparatedString(list) {
+
+	def string = '';
+	list.each {
+		string += "${it.toString()} ";
+	}
+	return string.trim();
+}
+
+/**
  * Task to create Java class files from XML schemas.
  */
 task xjc(
@@ -73,7 +88,7 @@ task xjc(
 		ant.xjc(
 			destDir: outputDir,
 			extension: 'true') {
-			schema(dir: schemaDir, includes: includes)
+			schema(dir: schemaDir, includes: listAsSpaceSeparatedString(depends))
 			args.each { val ->
 				arg(value: val)
 			}
