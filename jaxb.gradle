@@ -70,14 +70,15 @@ task xjc(
 	dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
 
 	ext.schemaDir = 'Schema'
-	ext.depends   = ['**/*.xsd']
+	ext.schemas   = ['**/*.xsd']
+	ext.bindings  = ['**/*.jxb']
 	ext.outputDir = 'Java'
-	ext.produces  = []
+	ext.classes   = []
 	ext.args      = []
 
 	onlyIf {
-		def schemaModifiedTime = latestModificationTime(fileTree(dir: schemaDir, includes: depends))
-		def outputModifiedTime = latestModificationTime(fileTree(dir: outputDir, includes: produces))
+		def schemaModifiedTime = latestModificationTime(fileTree(dir: schemaDir, includes: schemas + bindings))
+		def outputModifiedTime = latestModificationTime(fileTree(dir: outputDir, includes: classes))
 		return schemaModifiedTime > outputModifiedTime
 	}
 	doLast {
@@ -88,7 +89,8 @@ task xjc(
 		ant.xjc(
 			destDir: outputDir,
 			extension: 'true') {
-			schema(dir: schemaDir, includes: listAsSpaceSeparatedString(depends))
+			schema(dir: schemaDir, includes: listAsSpaceSeparatedString(schemas))
+			binding(dir: schemaDir, includes: listAsSpaceSeparatedString(bindings))
 			args.each { val ->
 				arg(value: val)
 			}
