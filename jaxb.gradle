@@ -23,14 +23,6 @@ dependencies {
 	)
 }
 
-sourceSets {
-	main {
-		resources {
-			srcDir 'Schema'
-		}
-	}
-}
-
 /**
  * Get the latest modification time of the files in the file collection.
  * 
@@ -69,7 +61,7 @@ task xjc(
 	description: 'XML schema to Java compiler',
 	dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
 
-	ext.schemaDir = 'Schema'
+	ext.schemaDir = 'Resources'
 	ext.schemas   = ['**/*.xsd']
 	ext.bindings  = ['**/*.jxb']
 	ext.outputDir = 'Java'
