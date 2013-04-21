@@ -5,12 +5,8 @@
  * @author Emanuel Rabina
  */
 
-eclipse {
-	classpath {
-		defaultOutputDir = file("${projectDir}/Classes")
-	}
-	jdt {
-		sourceCompatibility = project.sourceCompatibility
-		targetCompatibility = project.sourceCompatibility
-	}
-}
+eclipse.classpath.defaultOutputDir = file("${projectDir}/Classes")
+
+// Not using closures due to the name conflict of 'project'
+eclipse.jdt.sourceCompatibility = project.sourceCompatibility
+eclipse.jdt.targetCompatibility = project.sourceCompatibility
