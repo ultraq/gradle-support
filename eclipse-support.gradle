@@ -1,0 +1,16 @@
+
+/**
+ * Common Gradle script configuration for Eclipse projects and tasks.
+ * 
+ * @author Emanuel Rabina
+ */
+
+eclipse {
+	classpath {
+		defaultOutputDir = file("${projectDir}/Classes")
+	}
+	jdt {
+		sourceCompatibility = project.sourceCompatibility
+		targetCompatibility = project.sourceCompatibility
+	}
+}
