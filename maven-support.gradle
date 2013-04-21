@@ -12,15 +12,20 @@ project.ext.artifact = ''
 project.ext.year     = ''
 
 /**
- * Introduce a 'provided' configuration.
+ * Introduce 'optional' and 'provided' configuration modifiers.
  */
-configurations {
-	provided
-	compile.extendsFrom(provided)
+project.ext.optionalDependencies = []
+project.ext.optional = {
+	optionalDependencies << it
+}
+project.ext.providedDependencies = []
+project.ext.provided = {
+	providedDependencies << it
 }
 
 /**
- * Generate the pom.xml file.
+ * Generate the pom.xml file, modifying the dependencies to support the optional
+ * and provided configurations.
  */
 def generatePom() {
 	def pom = pom {
@@ -55,16 +60,13 @@ def generatePom() {
 					timezone '+12'
 				}
 			}
-			dependencies {
-				configurations.provided.dependencies.each { dep ->
-					dependency {
-						groupId    dep.group
-						artifactId dep.name
-						version    dep.version
-						scope      'provided'
-					}
-				}
-			}
+		}
+	}.whenConfigured { pom ->
+		optionalDependencies.each { dep ->
+			pom.dependencies.find { it.artifactId == dep.name }.optional = true
+		}
+		providedDependencies.each { dep ->
+			pom.dependencies.find { it.artifactId == dep.name }.scope = 'provided'
 		}
 	}
 }
