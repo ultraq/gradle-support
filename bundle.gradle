@@ -30,7 +30,7 @@ task sourcesZip(
  */
 task bundle(
 	description: 'Create the overall distribution archive',
-	dependsOn: [jar, javadoc, sourcesZip],
+	dependsOn: [test, jar, javadoc, sourcesZip],
 	type: Zip) {
 
 	doFirst {
