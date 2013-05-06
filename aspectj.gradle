@@ -38,9 +38,7 @@ task compileJava(dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME, overwrite: t
 
 			sourceroots {
 				sourceSets.main.java.srcDirs.each { dir ->
-					if (dir.exists()) {
-						pathelement(location: dir.absolutePath)
-					}
+					pathelement(location: dir.absolutePath)
 				}
 			}
 		}
