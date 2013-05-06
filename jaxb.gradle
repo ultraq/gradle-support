@@ -27,8 +27,6 @@ sourceSets {
 	main {
 		resources {
 			srcDir 'Schema'
-			exclude '**/*.xsd'
-			exclude '**/*.jxb'
 		}
 	}
 }
