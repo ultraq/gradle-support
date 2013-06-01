@@ -6,8 +6,6 @@
  * @author Emanuel Rabina
  */
 
-project.defaultTasks 'bundle'
-
 /**
  * Create the source file archive (ZIP).
  */
@@ -30,7 +28,7 @@ task sourcesZip(
  */
 task bundle(
 	description: 'Create the overall distribution archive',
-	dependsOn: [test, jar, javadoc, sourcesZip],
+	dependsOn: [jar, javadoc, sourcesZip],
 	type: Zip) {
 
 	doFirst {
@@ -49,4 +47,11 @@ task bundle(
 		include 'README.md'
 	}
 	into project.name
+}
+
+/**
+ * Make the bundle part of the assemble task.
+ */
+assemble {
+	dependsOn bundle
 }

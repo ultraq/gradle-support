@@ -27,3 +27,7 @@ sourceSets {
 		}
 	}
 }
+
+jar {
+	dependsOn test
+}
