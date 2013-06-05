@@ -63,6 +63,27 @@ def listAsSpaceSeparatedString(list) {
 }
 
 /**
+ * Add the missing @XmlRootElement annotation to a JAXB-generated class.
+ * 
+ * @param classfile
+ * @param classname
+ * @param elementname
+ */
+def addMissingRootElement(classfile, classname, elementname) {
+
+	ant.replace(file: classfile) {
+		replacetoken('import javax.xml.bind.annotation.XmlType;');
+		replacevalue('import javax.xml.bind.annotation.XmlRootElement;\n' +
+					 'import javax.xml.bind.annotation.XmlType;');
+	}
+	ant.replace(file: classfile) {
+		replacetoken("public class ${classname} {");
+		replacevalue("@XmlRootElement(name = \"${elementname}\")\n" +
+					 "public class ${classname} {");
+	}
+}
+
+/**
  * Task to create Java class files from XML schemas.
  */
 task xjc(
