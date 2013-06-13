@@ -13,10 +13,12 @@ sourceSets {
 	main {
 		java.srcDirs      = ['Java']
 		resources.srcDirs = java.srcDirs
+		output.resourcesDir = output.classesDir
 	}
 	test {
 		java.srcDirs      = ['Tests']
 		resources.srcDirs = java.srcDirs
+		output.resourcesDir = output.classesDir
 	}
 }
 
