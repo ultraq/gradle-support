@@ -12,8 +12,21 @@ configurations {
 }
 
 dependencies {
-	ajc 'org.aspectj:aspectjtools:1.7.2'
-	compile 'org.aspectj:aspectjrt:1.7.2'
+	ajc 'org.aspectj:aspectjtools:1.7.3'
+	compile 'org.aspectj:aspectjrt:1.7.3'
+}
+
+sourceSets {
+	main {
+		java {
+			include '**/*.java'
+			include '**/*.aj'
+		}
+		resources {
+			exclude '**/*.java'
+			exclude '**/*.aj'
+		}
+	}
 }
 
 task compileJava(dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME, overwrite: true) {
