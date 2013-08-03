@@ -29,30 +29,28 @@ sourceSets {
 	}
 }
 
-task compileJava(dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME, overwrite: true) {
-	dependsOn configurations.ajc.getTaskDependencyFromProjectDependency(true, 'compileJava')
+/**
+ * Replace the standard compile action with that of the IAJC Ant task.
+ */
+compileJava.deleteAllActions()
+compileJava << {
+	ant.taskdef(
+		resource: 'org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties',
+		classpath: configurations.ajc.asPath)
+	ant.iajc(
+		source: sourceCompatibility,
+		target: targetCompatibility,
+		destDir: sourceSets.main.output.classesDir.absolutePath,
+		fork: 'true',
+		X: 'noInline',
+		aspectPath: configurations.aspects.asPath,
+		inpath: configurations.ajInpath.asPath,
+		sourceRootCopyFilter: '**/*.java,**/*.aj',
+		classpath: configurations.compile.asPath) {
 
-	inputs.dir sourceSets.main.java.srcDirs
-	outputs.dir sourceSets.main.output.classesDir
-
-	doLast {
-		ant.taskdef(
-			resource: 'org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties',
-			classpath: configurations.ajc.asPath)
-		ant.iajc(
-			source: sourceCompatibility,
-			target: targetCompatibility,
-			destDir: sourceSets.main.output.classesDir.absolutePath,
-			fork: 'true', 
-			aspectPath: configurations.aspects.asPath,
-			inpath: configurations.ajInpath.asPath,
-			sourceRootCopyFilter: '**/*.java,**/*.aj',
-			classpath: configurations.compile.asPath) {
-
-			sourceroots {
-				sourceSets.main.java.srcDirs.each { dir ->
-					pathelement(location: dir.absolutePath)
-				}
+		sourceroots {
+			sourceSets.main.java.srcDirs.each { dir ->
+				pathelement(location: dir.absolutePath)
 			}
 		}
 	}
