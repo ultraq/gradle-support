@@ -115,7 +115,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 		baseName = "${project.artifact}"
 	}
 	classifier = 'sources'
-	from sourceSets.main.allSource
+	sourceSets.main.java.srcDirs.each { dir ->
+		from dir.absolutePath
+	}
 }
 
 /**

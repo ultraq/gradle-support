@@ -18,10 +18,6 @@ dependencies {
 
 sourceSets {
 	main {
-		java {
-			include '**/*.java'
-			include '**/*.aj'
-		}
 		resources {
 			exclude '**/*.java'
 			exclude '**/*.aj'
