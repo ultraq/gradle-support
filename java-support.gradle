@@ -24,15 +24,5 @@ sourceSets {
 
 jar {
 	dependsOn test
-
-	/*
-	 * Workaround for having duplicated files in the resulting JAR, taken from here:
-	 * http://forums.gradle.org/gradle/topics/standard_jar_task_generates_a_jar_with_duplicate_entries_if_we_change_the_resource_output_folder
-	 */
-	doFirst {
-		sourceSets.main.output.resourcesDir = "/does/not/exist"
-	}
-	doLast {
-		sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
-	}
+	duplicatesStrategy 'exclude'
 }
