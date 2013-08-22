@@ -8,8 +8,9 @@
 
 apply plugin: 'signing'
 
-project.ext.artifact = ''
-project.ext.year     = ''
+project.ext.artifact     = ''
+project.ext.year         = ''
+project.ext.contributors = []
 
 /**
  * Introduce 'optional' and 'provided' configuration modifiers.
@@ -58,6 +59,24 @@ def generatePom() {
 						role 'developer'
 					}
 					timezone '+12'
+				}
+			}
+			if (!project.contributors.isEmpty()) {
+				contributors {
+					project.contributors.each { c ->
+						contributor {
+							name  c.name
+							email c.email
+							roles {
+								c.roles.each { r ->
+									role r.role
+								}
+							}
+							properties {
+								contribution c.contribution
+							}
+						}
+					}
 				}
 			}
 		}
