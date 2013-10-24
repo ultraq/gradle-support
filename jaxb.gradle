@@ -13,6 +13,7 @@ configurations {
 dependencies {
 	xjc(
 		'com.sun.xml.bind:jaxb-impl:2.2.7',
+		'com.sun.xml.bind:jaxb-xjc:2.2.7',
 
 		// Use the XJC taks from the JAXB2 Commons project to allow plugin use
 		'org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.3'
@@ -59,7 +60,7 @@ def listAsSpaceSeparatedString(list) {
 }
 
 /**
- * Add the missing @XmlRootElement annotation to a JAXB-generated class.
+ * Add the missing <tt>XmlRootElement</tt> annotation to a JAXB-generated class.
  * 
  * @param classfile
  * @param classname
@@ -68,14 +69,14 @@ def listAsSpaceSeparatedString(list) {
 def addMissingRootElement(classfile, classname, elementname) {
 
 	ant.replace(file: classfile) {
-		replacetoken('import javax.xml.bind.annotation.XmlType;');
+		replacetoken('import javax.xml.bind.annotation.XmlType;')
 		replacevalue('import javax.xml.bind.annotation.XmlRootElement;\n' +
-					 'import javax.xml.bind.annotation.XmlType;');
+					 'import javax.xml.bind.annotation.XmlType;')
 	}
 	ant.replace(file: classfile) {
-		replacetoken("public class ${classname} {");
+		replacetoken("public class ${classname} {")
 		replacevalue("@XmlRootElement(name = \"${elementname}\")\n" +
-					 "public class ${classname} {");
+					 "public class ${classname} {")
 	}
 }
 
