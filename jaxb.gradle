@@ -20,10 +20,12 @@ dependencies {
 	)
 }
 
-sourceSets {
-	main {
-		resources {
-			srcDir 'Schema'
+if (project.getPlugins().hasPlugin('java')) {
+	sourceSets {
+		main {
+			resources {
+				srcDir 'Schema'
+			}
 		}
 	}
 }
@@ -42,21 +44,6 @@ def latestModificationTime(files) {
 		}
 	}
 	return modificationTime;
-}
-
-/**
- * Convert an array or list into a space-separated string.
- * 
- * @param list
- * @return A string of the list's elements, separated by spaces.
- */
-def listAsSpaceSeparatedString(list) {
-
-	def string = '';
-	list.each {
-		string += "${it.toString()} ";
-	}
-	return string.trim();
 }
 
 /**
@@ -84,13 +71,12 @@ def addMissingRootElement(classfile, classname, elementname) {
  * Task to create Java class files from XML schemas.
  */
 task xjc(
-	description: 'XML schema to Java compiler',
-	dependsOn: JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
+	description: 'XML schema to Java compiler') {
 
 	ext.schemaDir = 'Schema'
+	ext.outputDir = 'Java'
 	ext.schemas   = ['**/*.xsd']
 	ext.bindings  = ['**/*.jxb']
-	ext.outputDir = 'Java'
 	ext.classes   = []
 	ext.args      = []
 
@@ -107,12 +93,17 @@ task xjc(
 		ant.xjc(
 			destDir: outputDir,
 			extension: 'true') {
-			schema(dir: schemaDir, includes: listAsSpaceSeparatedString(schemas))
-			binding(dir: schemaDir, includes: listAsSpaceSeparatedString(bindings))
+			schema(dir: schemaDir, includes: schemas.join(' '))
+			binding(dir: schemaDir, includes: bindings.join(' '))
 			args.each { val ->
 				arg(value: val)
 			}
 		}
 	}
 }
-compileJava.dependsOn(xjc)
+
+// Insert XJC into the task dependency graph when used with a Java project
+if (project.getPlugins().hasPlugin('java')) {
+	xjc.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
+	compileJava.dependsOn(xjc)
+}
