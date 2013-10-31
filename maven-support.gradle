@@ -184,6 +184,9 @@ install {
  * Upload everything to Maven central.
  */
 uploadArchives {
+	ext.sonatypeUsername = project.hasProperty('sonatypeUsername') ? sonatypeUsername : ''
+	ext.sonatypePassword = project.hasProperty('sonatypePassword') ? sonatypePassword : ''
+
 	doFirst {
 		repositories.mavenDeployer.pom = generatePom()
 	}
