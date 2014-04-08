@@ -13,18 +13,6 @@ project.ext.year         = ''
 project.ext.contributors = []
 
 /**
- * Introduce 'optional' and 'provided' configuration modifiers.
- */
-project.ext.optionalDependencies = []
-project.ext.optional = {
-	optionalDependencies << it
-}
-project.ext.providedDependencies = []
-project.ext.provided = {
-	providedDependencies << it
-}
-
-/**
  * Generate the pom.xml file, modifying the dependencies to support the optional
  * and provided configurations.
  */
