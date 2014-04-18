@@ -1,11 +1,11 @@
 
 /**
- * Common Gradle script configuration for Java projects and tasks.
- * 
+ * Common Gradle script configuration for simple projects.
+ *
  * @author Emanuel Rabina
  */
 
-/*
+/* 
  * Introduce 'optional' and 'provided' configuration modifiers.
  */
 project.ext.optionalDependencies = []
@@ -17,7 +17,9 @@ project.ext.provided = {
 	providedDependencies << it
 }
 
-
+/* 
+ * Include Maven central and snapshot repositories by default.
+ */
 repositories {
 	mavenCentral()
 	maven {
@@ -25,15 +27,31 @@ repositories {
 	}
 }
 
+/* 
+ * Make 'Source' the main source directory.
+ */
+def sourceDir = ['Source']
+def testDir   = ['Tests']
+
 sourceSets {
 	main {
-		java.srcDirs      = ['Java']
-		resources.srcDirs = java.srcDirs
+		if (java) {
+			java.srcDirs = sourceDir
+		}
+		if (groovy) {
+			groovy.srcDirs = sourceDir
+		}
+		resources.srcDirs = sourceDir
 		output.resourcesDir = output.classesDir
 	}
 	test {
-		java.srcDirs      = ['Tests']
-		resources.srcDirs = java.srcDirs
+		if (java) {
+			java.srcDirs = testDir
+		}
+		if (groovy) {
+			groovy.srcDir = testDir
+		}
+		resources.srcDirs = testDir
 		output.resourcesDir = output.classesDir
 	}
 }
