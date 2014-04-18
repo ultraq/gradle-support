@@ -49,7 +49,7 @@ sourceSets {
 			java.srcDirs = testDir
 		}
 		if (groovy) {
-			groovy.srcDir = testDir
+			groovy.srcDirs = testDir
 		}
 		resources.srcDirs = testDir
 		output.resourcesDir = output.classesDir
