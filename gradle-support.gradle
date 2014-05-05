@@ -1,6 +1,7 @@
 
 /**
- * Common Gradle script configuration for simple projects.
+ * Common Gradle script configuration for simple projects.  Made to be applied
+ * _after_ all standard plugins.
  *
  * @author Emanuel Rabina
  */
@@ -28,33 +29,40 @@ repositories {
 }
 
 /* 
- * Make 'Source' the main source directory.
+ * Adjust source directories for the way I use them:
+ * 
+ *  - Source  - project source code
+ *  - Tests   - project test code
+ *  - Content - web application code
  */
 def sourceDir = ['Source']
 def testDir   = ['Tests']
 
-sourceSets {
-	main {
-		if (java) {
-			java.srcDirs = sourceDir
+if (project.plugins.hasPlugin('java')) {
+	sourceSets {
+		main {
+			java.srcDirs        = sourceDir
+			resources.srcDirs   = sourceDir
+			output.resourcesDir = output.classesDir
+	
 		}
-		if (groovy) {
-			groovy.srcDirs = sourceDir
+		test {
+			java.srcDirs        = testDir
+			resources.srcDirs   = testDir
+			output.resourcesDir = output.classesDir
 		}
-		resources.srcDirs = sourceDir
-		output.resourcesDir = output.classesDir
-	}
-	test {
-		if (java) {
-			java.srcDirs = testDir
-		}
-		if (groovy) {
-			groovy.srcDirs = testDir
-		}
-		resources.srcDirs = testDir
-		output.resourcesDir = output.classesDir
 	}
 }
+if (project.plugins.hasPlugin('groovy')) {
+	sourceSets {
+		main.groovy.srcDirs = sourceDir
+		test.groovy.srcDirs = sourceDir
+	}
+}
+if (plugins.hasPlugin('war')) {
+	project.webAppDirName = 'Content'
+}
+
 
 jar {
 	dependsOn test

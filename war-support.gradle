@@ -1,8 +1,0 @@
-
-/**
- * Common Gradle script configuration for web applications.
- *
- * @author Emanuel Rabina
- */
-
-project.webAppDirName = 'Content'
