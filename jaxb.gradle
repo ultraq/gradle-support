@@ -1,7 +1,8 @@
 
 /**
- * Common Gradle build script to make use of JAXB's XJC tool and any XJC
- * plugins used throughout my projects.
+ * Common Gradle build script to make use of JAXB's XJC tool and any XJC plugins
+ * used throughout my projects.  Assumes the java plugin has already been
+ * applied.
  * 
  * @author Emanuel Rabina
  */
@@ -20,12 +21,10 @@ dependencies {
 	)
 }
 
-if (project.getPlugins().hasPlugin('java')) {
-	sourceSets {
-		main {
-			resources {
-				srcDir 'Schema'
-			}
+sourceSets {
+	main {
+		resources {
+			srcDir 'Schema'
 		}
 	}
 }
@@ -74,7 +73,7 @@ task xjc(
 	description: 'XML schema to Java compiler') {
 
 	ext.schemaDir = 'Schema'
-	ext.outputDir = 'Java'
+	ext.outputDir = 'Source'
 	ext.schemas   = ['**/*.xsd']
 	ext.bindings  = ['**/*.jxb']
 	ext.classes   = []
@@ -102,8 +101,6 @@ task xjc(
 	}
 }
 
-// Insert XJC into the task dependency graph when used with a Java project
-if (project.getPlugins().hasPlugin('java')) {
-	xjc.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
-	compileJava.dependsOn(xjc)
-}
+// Insert XJC into the task dependency graph
+xjc.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
+compileJava.dependsOn(xjc)
