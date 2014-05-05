@@ -29,16 +29,14 @@ repositories {
 }
 
 /* 
- * Adjust source directories for the way I use them:
- * 
- *  - Source  - project source code
- *  - Tests   - project test code
- *  - Content - web application code
+ * Adjust plugins, source and build directories, and any standard Gradle tasks
+ * for the way I use them.
  */
-def sourceDir = ['Source']
-def testDir   = ['Tests']
+def sourceDir  = ['Source']
+def testDir    = ['Tests']
+def contentDir = 'Content'
 
-if (project.plugins.hasPlugin('java')) {
+if (plugins.hasPlugin('java')) {
 	sourceSets {
 		main {
 			java.srcDirs        = sourceDir
@@ -52,19 +50,30 @@ if (project.plugins.hasPlugin('java')) {
 			output.resourcesDir = output.classesDir
 		}
 	}
+	jar {
+		dependsOn test
+		duplicatesStrategy 'exclude'
+	}
 }
-if (project.plugins.hasPlugin('groovy')) {
+
+if (plugins.hasPlugin('groovy')) {
 	sourceSets {
 		main.groovy.srcDirs = sourceDir
 		test.groovy.srcDirs = sourceDir
 	}
 }
+
 if (plugins.hasPlugin('war')) {
 	project.webAppDirName = 'Content'
 }
 
-
-jar {
-	dependsOn test
-	duplicatesStrategy 'exclude'
+if (plugins.hasPlugin('eclipse')) {
+	eclipse.classpath.defaultOutputDir = file(plugins.hasPlugin('war') ?
+		"${webAppDir}/WEB-INF/classes" :
+		"${projectDir}/Classes"
+	)
+	eclipse.jdt {
+		sourceCompatibility = project.sourceCompatibility
+		targetCompatibility = project.sourceCompatibility
+	}
 }
