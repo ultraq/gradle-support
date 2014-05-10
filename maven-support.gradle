@@ -53,8 +53,10 @@ def generatePom() {
 				contributors {
 					project.contributors.each { c ->
 						contributor {
-							name  c.name
-							email c.email
+							name c.name
+							if (c.email) {
+								email c.email
+							}
 							roles {
 								c.roles.each { r ->
 									role r.role
