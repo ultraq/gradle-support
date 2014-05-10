@@ -59,7 +59,7 @@ def generatePom() {
 							}
 							roles {
 								c.roles.each { r ->
-									role r.role
+									role r
 								}
 							}
 							properties {
