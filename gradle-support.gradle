@@ -64,7 +64,7 @@ if (plugins.hasPlugin('groovy')) {
 }
 
 if (plugins.hasPlugin('war')) {
-	project.webAppDirName = 'Content'
+	project.webAppDirName = contentDir
 }
 
 if (plugins.hasPlugin('eclipse')) {

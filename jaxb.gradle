@@ -21,14 +21,6 @@ dependencies {
 	)
 }
 
-sourceSets {
-	main {
-		resources {
-			srcDir 'Schema'
-		}
-	}
-}
-
 /**
  * Get the latest modification time of the files in the file collection.
  * 
