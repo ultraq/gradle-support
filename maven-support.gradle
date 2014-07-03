@@ -41,6 +41,7 @@ def generatePom() {
 				developer {
 					id    'emanuelrabina'
 					name  'Emanuel Rabina'
+					email 'emanuelrabina@gmail.com'
 					url   'http://www.ultraq.net.nz/'
 					roles {
 						role 'author'
