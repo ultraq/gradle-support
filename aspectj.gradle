@@ -19,7 +19,6 @@ dependencies {
 sourceSets {
 	main {
 		resources {
-			exclude '**/*.java'
 			exclude '**/*.aj'
 		}
 	}

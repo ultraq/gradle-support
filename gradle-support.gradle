@@ -39,8 +39,11 @@ def contentDir = 'Content'
 if (plugins.hasPlugin('java')) {
 	sourceSets {
 		main {
-			java.srcDirs        = sourceDir
-			resources.srcDirs   = sourceDir
+			java.srcDirs      = sourceDir
+			resources.srcDirs = sourceDir
+			resources {
+				exclude '**/*.java'
+			}
 			output.resourcesDir = output.classesDir
 	
 		}
@@ -58,8 +61,15 @@ if (plugins.hasPlugin('java')) {
 
 if (plugins.hasPlugin('groovy')) {
 	sourceSets {
-		main.groovy.srcDirs = sourceDir
-		test.groovy.srcDirs = sourceDir
+		main {
+			groovy.srcDirs = sourceDir
+			resources {
+				exclude '**/*.groovy'
+			}
+		}
+		test {
+			groovy.srcDirs = testDir
+		}
 	}
 }
 
