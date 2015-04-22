@@ -76,3 +76,14 @@ if (plugins.hasPlugin('groovy')) {
 if (plugins.hasPlugin('war')) {
 	project.webAppDirName = contentDir
 }
+
+if (plugins.hasPlugin('eclipse')) {
+	eclipse.classpath.defaultOutputDir = file(plugins.hasPlugin('war') ?
+		"${webAppDir}/WEB-INF/classes" :
+		"${projectDir}/Classes"
+	)
+	eclipse.jdt {
+		sourceCompatibility = project.sourceCompatibility
+		targetCompatibility = project.sourceCompatibility
+	}
+}
