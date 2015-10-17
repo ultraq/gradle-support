@@ -8,8 +8,15 @@
 
 apply plugin: 'signing'
 
-project.ext.artifact     = ''
-project.ext.year         = ''
+project.ext.artifact = ''
+project.ext.year = ''
+project.ext.licenses = [
+	[
+		name: 'The Apache Software License, Version 2.0',
+		url: 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+		distribution: 'repo'
+	]
+]
 project.ext.contributors = []
 
 /**
@@ -17,7 +24,7 @@ project.ext.contributors = []
  * and provided configurations.
  */
 def generatePom() {
-	def pom = pom {
+	return pom {
 		project {
 			artifactId    project.artifact
 			packaging     'jar'
@@ -25,11 +32,15 @@ def generatePom() {
 			description   project.description
 			url           "http://www.ultraq.net.nz/programming/${project.artifact}/"
 			inceptionYear project.year
-			licenses {
-				license {
-					name         'The Apache Software License, Version 2.0'
-					url          'http://www.apache.org/licenses/LICENSE-2.0.txt'
-					distribution 'repo'
+			if (project.licenses) {
+				licenses {
+					project.licenses.each { license ->
+						license {
+							name         license.name
+							url          license.url
+							distribution license.distribution
+						}
+					}
 				}
 			}
 			scm {
@@ -47,10 +58,10 @@ def generatePom() {
 						role 'author'
 						role 'developer'
 					}
-					timezone '+12'
+					timezone 'Pacific/Auckland'
 				}
 			}
-			if (!project.contributors.isEmpty()) {
+			if (project.contributors) {
 				contributors {
 					project.contributors.each { c ->
 						contributor {
@@ -93,11 +104,11 @@ task writePoms {
 	doLast {
 		generatePom().writeTo(pomXml)
 		pomProperties.withWriter { out ->
-			out.println '#Generated using Gradle'
-			out.println '#' + new Date().format('EEE MMM dd HH:mm:ss zzz yyyy')
-			out.println "version=${project.version}"
-			out.println "groupId=${project.group}"
-			out.println "artifactId=${project.artifact}"
+			out.println "# Generated using Gradle"
+			out.println "# ${new Date().format('EEE MMM dd HH:mm:ss zzz yyyy')}"
+			out.println "groupId    = ${project.group}"
+			out.println "artifactId = ${project.artifact}"
+			out.println "version    = ${project.version}"
 		}
 	}
 }
