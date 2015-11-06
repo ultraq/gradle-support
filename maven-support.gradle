@@ -34,11 +34,11 @@ def generatePom() {
 			inceptionYear project.year
 			if (project.licenses) {
 				licenses {
-					project.licenses.each { license ->
+					project.licenses.each { l ->
 						license {
-							name         license.name
-							url          license.url
-							distribution license.distribution
+							name         l.name
+							url          l.url
+							distribution l.distribution
 						}
 					}
 				}
