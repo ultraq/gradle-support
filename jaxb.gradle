@@ -94,5 +94,7 @@ task xjc(
 }
 
 // Insert XJC into the task dependency graph
-xjc.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
-compileJava.dependsOn(xjc)
+if (plugins.hasPlugin('java')) {
+	xjc.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
+	compileJava.dependsOn(xjc)
+}
