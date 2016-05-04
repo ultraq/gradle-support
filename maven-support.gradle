@@ -46,9 +46,9 @@ def generatePom = {
 				}
 			}
 			scm {
-				url                 "scm:git:git@github.com:ultraq/${project.artifact}.git"
 				connection          "scm:git:git@github.com:ultraq/${project.artifact}.git"
 				developerConnection "scm:git:git@github.com:ultraq/${project.artifact}.git"
+				url                 "https://github.com/ultraq/${project.artifact}"
 			}
 			developers {
 				developer {
