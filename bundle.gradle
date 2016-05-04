@@ -9,7 +9,7 @@
 def isGroovyProject = plugins.hasPlugin('groovy')
 
 /**
- * Create the source file archive.
+ * Create the source files archive.
  */
 task sourcesZip(
 	description: 'Create a zip file of all the project source files',

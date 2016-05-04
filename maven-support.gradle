@@ -6,6 +6,8 @@
  * @author Emanuel Rabina
  */
 
+def isGroovyProject = plugins.hasPlugin('groovy')
+
 apply plugin: 'signing'
 
 project.ext.artifact = ''
@@ -23,7 +25,7 @@ project.ext.contributors = []
  * Generate the pom.xml file, modifying the dependencies to support the optional
  * and provided configurations.
  */
-def generatePom() {
+def generatePom = {
 	return pom {
 		project {
 			artifactId    project.artifact
@@ -129,38 +131,42 @@ jar {
 }
 
 /**
- * Create the source file archive (JAR).
+ * Create the source files archive.
  */
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(
+	dependsOn: classes,
+	type: Jar) {
+
 	doFirst {
 		baseName = "${project.artifact}"
 	}
 	classifier = 'sources'
-	sourceSets.main.java.srcDirs.each { dir ->
-		from dir.absolutePath
-	}
+	from sourceSets.main.allSource
 }
 
 /**
  * Create the javadoc archive.
  */
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(
+	dependsOn: isGroovyProject ? groovydoc : javadoc,
+	type: Jar) {
+
 	doFirst {
 		baseName = "${project.artifact}"
 	}
 	classifier = 'javadoc'
-	from javadoc.destinationDir
+	from (isGroovyProject ? groovydoc : javadoc).destinationDir
 }
 
 /**
- * Include source and javadoc JARs as part of the release.
+ * Include source and javadoc jars as part of the release.
  */
 artifacts {
 	archives sourcesJar, javadocJar
 }
 
 /**
- * Sign all JARs for Maven central.
+ * Sign all jars for Maven central.
  */
 signing {
 	sign configurations.archives
