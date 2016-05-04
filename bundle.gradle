@@ -6,11 +6,13 @@
  * @author Emanuel Rabina
  */
 
+def isGroovyProject = plugins.hasPlugin('groovy')
+
 /**
- * Create the source file archive (ZIP).
+ * Create the source file archive.
  */
 task sourcesZip(
-	description: 'Create a ZIP archive of all the project source files',
+	description: 'Create a zip file of all the project source files',
 	type: Zip) {
 
 	doFirst {
@@ -22,13 +24,16 @@ task sourcesZip(
 }
 
 /**
- * Creates the distribution archive for standalone downloads, a ZIP file
- * containing: the project JAR, source ZIP, folder containing all required
- * dependencies, and the license and readme files.
+ * Creates a zip file for standalone downloads, containing:
+ *  - the project 'binary'
+ *  - the source files
+ *  - folder of all required dependencies
+ *  - folder of API documenation
+ *  - and the license and readme files
  */
 task bundle(
 	description: 'Create the overall distribution archive',
-	dependsOn: [jar, javadoc, sourcesZip],
+	dependsOn: [jar, isGroovyProject ? groovydoc : javadoc, sourcesZip],
 	type: Zip) {
 
 	doFirst {
@@ -39,8 +44,8 @@ task bundle(
 	from(configurations.runtime) {
 		into 'Libraries'
 	}
-	from(javadoc.destinationDir) {
-		into 'Javadoc'
+	from((isGroovyProject ? groovydoc : javadoc).destinationDir) {
+		into 'Documentation'
 	}
 	from('.') {
 		include 'LICENSE.txt'
