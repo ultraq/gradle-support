@@ -1,4 +1,3 @@
-
 /**
  * Common Gradle build script to make use of JAXB's XJC tool and any XJC plugins
  * used throughout my projects.  Assumes the java plugin has already been

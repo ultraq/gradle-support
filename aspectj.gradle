@@ -1,4 +1,3 @@
-
 /**
  * Copied from http://www.breskeby.com/2010/02/using-gradle-with-aspectj/
  * It didn't work straight off for me, so below are just the modifications I

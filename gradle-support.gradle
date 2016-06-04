@@ -1,8 +1,7 @@
-
 /**
  * Common Gradle script configuration for simple projects.  Made to be applied
  * _after_ all standard plugins.
- *
+ * 
  * @author Emanuel Rabina
  */
 

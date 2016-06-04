@@ -1,4 +1,3 @@
-
 /**
  * Common Gradle script configuration for projects that need to publish to
  * Maven repositories.
