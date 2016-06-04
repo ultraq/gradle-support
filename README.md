@@ -2,7 +2,7 @@
 Gradle Support
 ==============
 
-[![GitHub Release](https://img.shields.io/github/release/ultraq/gradle-support.svg?maxAge=3600)](https://github.com/ultraq/gradle-support/releases/latest)
+[![GitHub Tag](https://img.shields.io/github/tag/ultraq/gradle-support.svg?maxAge=3600)](https://github.com/ultraq/gradle-support/tags)
 
 Just a bunch of Gradle scripts that help support my workflow.  The scripts are
 very geared towards how I work, so might not be of much use to anybody else.
