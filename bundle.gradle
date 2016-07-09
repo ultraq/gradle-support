@@ -43,8 +43,15 @@ task bundle(
 	from(configurations.runtime) {
 		into 'Libraries'
 	}
-	from((isGroovyProject ? groovydoc : javadoc).destinationDir) {
-		into 'Documentation'
+	if (isGroovyProject) {
+		from(groovydoc.destinationDir) {
+			into 'Groovydoc'
+		}
+	}
+	else {
+		from(javadoc.destinationDir) {
+			into 'Javadoc'
+		}
 	}
 	from('.') {
 		include 'LICENSE.txt'
