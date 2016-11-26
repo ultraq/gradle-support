@@ -18,6 +18,7 @@ project.ext.licenses = [
 		distribution: 'repo'
 	]
 ]
+project.ext.developers = []
 project.ext.contributors = []
 
 /**
@@ -51,7 +52,7 @@ def generatePom = {
 			}
 			developers {
 				developer {
-					id    'emanuelrabina'
+					id    'ultraq'
 					name  'Emanuel Rabina'
 					email 'emanuelrabina@gmail.com'
 					url   'http://www.ultraq.net.nz/'
@@ -60,6 +61,24 @@ def generatePom = {
 						role 'developer'
 					}
 					timezone 'Pacific/Auckland'
+				}
+				if (project.developers) {
+					project.developers.each { d ->
+						developer {
+							name d.name
+							if (d.email) {
+								email d.email
+							}
+							if (d.url) {
+								url d.url
+							}
+							roles {
+								d.roles.each { r ->
+									role r
+								}
+							}
+						}
+					}
 				}
 			}
 			if (project.contributors) {
