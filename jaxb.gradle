@@ -27,13 +27,13 @@ dependencies {
  */
 def latestModificationTime(files) {
 
-	def modificationTime = 0;
+	def modificationTime = 0
 	files.each { file ->
 		if (modificationTime < file.lastModified()) {
 			modificationTime = file.lastModified()
 		}
 	}
-	return modificationTime;
+	return modificationTime
 }
 
 /**
@@ -62,6 +62,8 @@ def addMissingRootElement(classfile, classname, elementname) {
  */
 task xjc(
 	description: 'XML schema to Java compiler') {
+
+	System.setProperty('javax.xml.accessExternalSchema', 'all')
 
 	ext.schemaDir = 'Schema'
 	ext.outputDir = 'Source'
