@@ -31,8 +31,8 @@ repositories {
  * Adjust plugins, source and build directories, and any standard Gradle tasks
  * for the way I use them.
  */
-def sourceDir  = ['Source']
-def testDir    = ['Tests']
+def sourceDir  = ['source']
+def testDir    = ['tests']
 def contentDir = 'Content'
 
 if (plugins.hasPlugin('java')) {
@@ -73,20 +73,5 @@ if (plugins.hasPlugin('groovy')) {
 	groovydoc {
 		link('http://docs.oracle.com/javase/8/docs/api/', 'java.', 'javax.', 'org.xml.')
 		link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
-	}
-}
-
-if (plugins.hasPlugin('war')) {
-	project.webAppDirName = contentDir
-}
-
-if (plugins.hasPlugin('eclipse')) {
-	eclipse.classpath.defaultOutputDir = file(plugins.hasPlugin('war') ?
-		"${webAppDir}/WEB-INF/classes" :
-		"${projectDir}/Classes"
-	)
-	eclipse.jdt {
-		sourceCompatibility = project.sourceCompatibility
-		targetCompatibility = project.sourceCompatibility
 	}
 }

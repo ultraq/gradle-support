@@ -65,8 +65,8 @@ task xjc(
 
 	System.setProperty('javax.xml.accessExternalSchema', 'all')
 
-	ext.schemaDir = 'Schema'
-	ext.outputDir = 'Source'
+	ext.schemaDir = 'schema'
+	ext.outputDir = 'source'
 	ext.schemas   = ['**/*.xsd']
 	ext.bindings  = ['**/*.jxb']
 	ext.classes   = []

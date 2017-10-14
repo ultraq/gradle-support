@@ -32,7 +32,7 @@ def generatePom = {
 			packaging     'jar'
 			name          project.name
 			description   project.description
-			url           "http://www.ultraq.net.nz/programming/${project.artifact}/"
+			url           "https://github.com/ultraq/${project.artifact}/"
 			inceptionYear project.year
 			if (project.licenses) {
 				licenses {

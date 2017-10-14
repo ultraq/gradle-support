@@ -41,16 +41,16 @@ task bundle(
 	from(jar.outputs.files)
 	from(sourcesZip.outputs.files)
 	from(configurations.runtime) {
-		into 'Libraries'
+		into 'libraries'
 	}
 	if (isGroovyProject) {
 		from(groovydoc.destinationDir) {
-			into 'Groovydoc'
+			into 'groovydoc'
 		}
 	}
 	else {
 		from(javadoc.destinationDir) {
-			into 'Javadoc'
+			into 'javadoc'
 		}
 	}
 	from('.') {
