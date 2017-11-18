@@ -31,25 +31,27 @@ repositories {
  * Adjust plugins, source and build directories, and any standard Gradle tasks
  * for the way I use them.
  */
-def sourceDir  = ['source']
-def testDir    = ['tests']
-def contentDir = 'Content'
+def sourceDirectories = ['source']
+def testDirectories   = ['tests']
 
 if (plugins.hasPlugin('java')) {
 	sourceSets {
 		main {
-			java.srcDirs      = sourceDir
-			resources.srcDirs = sourceDir
+			java {
+				srcDirs = sourceDirectories
+			}
 			resources {
+				srcDirs = sourceDirectories
 				exclude '**/*.java'
 			}
-			output.resourcesDir = output.classesDir
-	
 		}
 		test {
-			java.srcDirs        = testDir
-			resources.srcDirs   = testDir
-			output.resourcesDir = output.classesDir
+			java {
+				srcDirs = testDirectories
+			}
+			resources {
+				srcDirs = testDirectories
+			}
 		}
 	}
 	jar {
@@ -61,13 +63,17 @@ if (plugins.hasPlugin('java')) {
 if (plugins.hasPlugin('groovy')) {
 	sourceSets {
 		main {
-			groovy.srcDirs = sourceDir
+			groovy {
+				srcDirs = sourceDirectories
+			}
 			resources {
 				exclude '**/*.groovy'
 			}
 		}
 		test {
-			groovy.srcDirs = testDir
+			groovy {
+				srcDirs = testDirectories
+			}
 		}
 	}
 	groovydoc {
