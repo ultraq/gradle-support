@@ -81,3 +81,26 @@ if (plugins.hasPlugin('groovy')) {
 		link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
 	}
 }
+
+/* 
+ * Codenarc configuration to use my shared config.
+ */
+if (plugins.hasPlugin('codenarc')) {
+	codenarc {
+		def sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
+		config = resources.text.fromString(sharedConfig)
+	}
+}
+
+/* 
+ * Cobertura plugin for including the proper Groovy output directories and
+ * emitting HTML reports for local viewing.
+ */
+if (plugins.hasPlugin('net.saliman.cobertura')) {
+	cobertura {
+		coverageDirs = [
+			sourceSets.main.output.classesDirs
+		]
+		coverageFormats = ['html', 'xml']
+	}
+}
