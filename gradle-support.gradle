@@ -54,6 +54,16 @@ if (plugins.hasPlugin('java')) {
 			}
 		}
 	}
+	// Make IntelliJ use the same build directories as Gradle so that I'm not
+	// having to ignore 2 sets of build outputs.
+	if (plugins.hasPlugin('idea')) {
+		idea {
+			module {
+				outputDir file('build/classes/java/main')
+				testOutputDir file('build/classes/test')
+			}
+		}
+	}
 	jar {
 		dependsOn test
 		duplicatesStrategy 'exclude'
@@ -73,6 +83,16 @@ if (plugins.hasPlugin('groovy')) {
 		test {
 			groovy {
 				srcDirs = testDirectories
+			}
+		}
+	}
+	// Make IntelliJ use the same build directories as Gradle so that I'm not
+	// having to ignore 2 sets of build outputs.
+	if (plugins.hasPlugin('idea')) {
+		idea {
+			module {
+				outputDir file('build/classes/groovy/main')
+				testOutputDir file('build/classes/test')
 			}
 		}
 	}
