@@ -124,3 +124,15 @@ if (plugins.hasPlugin('net.saliman.cobertura')) {
 		coverageFormats = ['html', 'xml']
 	}
 }
+
+/* 
+ * JaCoCo plugin for including XML output for coveralls.
+ */
+if (plugins.hasPlugin('jacoco')) {
+	jacocoTestReport {
+		reports {
+			xml.enabled = true
+			html.enabled = true
+		}
+	}
+}
