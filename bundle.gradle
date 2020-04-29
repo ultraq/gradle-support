@@ -14,9 +14,6 @@ task sourcesZip(
 	description: 'Create a zip file of all the project source files',
 	type: Zip) {
 
-	doFirst {
-		baseName = "${project.artifact}"
-	}
 	from sourceSets.main.allSource
 	destinationDir = file("${project.buildDir}/src")
 	classifier = 'src'
@@ -35,12 +32,12 @@ task bundle(
 	dependsOn: [jar, isGroovyProject ? groovydoc : javadoc, sourcesZip],
 	type: Zip) {
 
-	doFirst {
-		archiveName = "${project.name} ${project.version}.zip"
-	}
 	from(jar.outputs.files)
 	from(sourcesZip.outputs.files)
-	from(configurations.runtime) {
+	from(configurations.runtimeClasspath) {
+		into 'libraries'
+	}
+	from(configurations.runtime) { // For backwards compatibility with Gradle 5 and older
 		into 'libraries'
 	}
 	if (isGroovyProject) {
@@ -57,7 +54,7 @@ task bundle(
 		include 'LICENSE.txt'
 		include 'README.md'
 	}
-	into project.name
+	into "${project.name}-${-> project.version}"
 }
 
 /**
