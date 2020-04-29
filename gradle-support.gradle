@@ -136,3 +136,40 @@ if (plugins.hasPlugin('jacoco')) {
 		}
 	}
 }
+
+/* 
+ * Bundle support via the new distribution plugin.
+ */
+if (plugins.hasPlugin('distribution')) {
+	distributions {
+		main {
+			contents {
+				from(jar.outputs.files)
+				if (plugins.hasPlugin('groovy')) {
+					from(groovydoc.destinationDir) {
+						into 'groovydoc'
+					}
+				}
+				else {
+					from(javadoc.destinationDir) {
+						into 'javadoc'
+					}
+				}
+				from(configurations.runtimeClasspath) {
+					into 'libraries'
+				}
+				from(sourceSets.main.java.srcDirs[0]) {
+					into 'source'
+				}
+				from('.') {
+					include 'LICENSE.txt'
+					include 'README.md'
+				}
+			}
+		}
+	}
+	distZip {
+		dependsOn plugins.hasPlugin('groovy') ? 'groovydoc' : 'javadoc'
+		duplicatesStrategy = 'exclude'
+	}
+}
