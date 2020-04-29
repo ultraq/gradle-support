@@ -162,6 +162,7 @@ if (plugins.hasPlugin('distribution')) {
 					into 'source'
 				}
 				from('.') {
+					include 'CHANGELOG.md'
 					include 'LICENSE.txt'
 					include 'README.md'
 				}
