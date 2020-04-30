@@ -1,6 +1,9 @@
 /**
  * Common Gradle script configuration for projects that need to publish to
- * Maven repositories.
+ * Maven repositories.  Used for the original maven plugin.
+ * 
+ * This script is deprecated in favour of the maven-publish-support.gradle
+ * script, which is built for the newer maven-publish plugin.
  * 
  * @author Emanuel Rabina
  */

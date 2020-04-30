@@ -1,0 +1,114 @@
+/**
+ * Common Gradle script configuration for projects that need to publish to
+ * Maven repositories.  Uses the newer maven-publish plugin.
+ * 
+ * @author Emanuel Rabina
+ */
+
+apply plugin: 'signing'
+
+project.ext.artifact = ''
+project.ext.year = ''
+project.ext.licenses = [
+	[
+		name: 'The Apache Software License, Version 2.0',
+		url: 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+		distribution: 'repo'
+	]
+]
+project.ext.developers = []
+project.ext.contributors = []
+
+/**
+ * Also put together javadoc and source JARs for upload.
+ */
+java {
+	// Only add javadoc JAR for plain Java projects - there isn't a similar
+	// extension for adding groovydocs
+	if (!plugins.hasPlugin('groovy')) {
+		withJavadocJar()
+	}
+	withSourcesJar()
+}
+
+/**
+ * Publishing configuration to customize the pom file
+ */
+publishing {
+	publications {
+		library(MavenPublication) {
+			from components.java
+			pom {
+				url = "https://github.com/ultraq/${project.name}/"
+				inceptionYear = project.year
+				licenses {
+					project.licenses.each { l ->
+						license {
+							name = l.name
+							url = l.url
+							distribution = l.distribution
+						}
+					}
+				}
+				scm {
+					connection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
+					developerConnection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
+					url = "https://github.com/ultraq/${project.artifact}"
+				}
+				developers {
+					developer {
+						id = 'ultraq'
+						name = 'Emanuel Rabina'
+						email = 'emanuelrabina@gmail.com'
+						url = 'http://www.ultraq.net.nz/'
+						roles = [
+							'author',
+							'developer'
+						]
+						timezone = 'Pacific/Auckland'
+					}
+					project.developers.each { d ->
+						developer {
+							name = d.name
+							email = d.email
+							url = d.url
+							roles = d.roles
+						}
+					}
+				}
+				if (project.contributors) {
+					contributors {
+						project.contributors.each { c ->
+							contributor {
+								name = c.name
+								email = c.email
+								roles = c.roles
+								properties {
+									contribution = c.contribution
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			url = project.version.endsWith('SNAPSHOT') ?
+				'https://oss.sonatype.org/content/repositories/snapshots/' :
+				'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+			credentials {
+				username = project.hasProperty('sonatypeUsername') ? sonatypeUsername : ''
+				password = project.hasProperty('sonatypePassword') ? sonatypePassword : ''
+			}
+		}
+	}
+}
+
+/**
+ * Sign the JARs that will be uploaded to Maven central.
+ */
+signing {
+	sign publishing.publications.library
+}
