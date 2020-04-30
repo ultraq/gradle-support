@@ -23,11 +23,7 @@ project.ext.contributors = []
  * Also put together javadoc and source JARs for upload.
  */
 java {
-	// Only add javadoc JAR for plain Java projects - there isn't a similar
-	// extension for adding groovydocs
-	if (!plugins.hasPlugin('groovy')) {
-		withJavadocJar()
-	}
+	withJavadocJar()
 	withSourcesJar()
 }
 
@@ -38,53 +34,57 @@ publishing {
 	publications {
 		library(MavenPublication) {
 			from components.java
-			pom {
-				url = "https://github.com/ultraq/${project.name}/"
-				inceptionYear = project.year
-				licenses {
-					project.licenses.each { l ->
-						license {
-							name = l.name
-							url = l.url
-							distribution = l.distribution
+			afterEvaluate {
+				pom {
+					name = project.name
+					description = project.description
+					url = "https://github.com/ultraq/${project.name}/"
+					inceptionYear = project.year
+					licenses {
+						project.licenses.each { l ->
+							license {
+								name = l.name
+								url = l.url
+								distribution = l.distribution
+							}
 						}
 					}
-				}
-				scm {
-					connection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
-					developerConnection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
-					url = "https://github.com/ultraq/${project.artifact}"
-				}
-				developers {
-					developer {
-						id = 'ultraq'
-						name = 'Emanuel Rabina'
-						email = 'emanuelrabina@gmail.com'
-						url = 'http://www.ultraq.net.nz/'
-						roles = [
-							'author',
-							'developer'
-						]
-						timezone = 'Pacific/Auckland'
+					scm {
+						connection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
+						developerConnection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
+						url = "https://github.com/ultraq/${project.artifact}"
 					}
-					project.developers.each { d ->
+					developers {
 						developer {
-							name = d.name
-							email = d.email
-							url = d.url
-							roles = d.roles
+							id = 'ultraq'
+							name = 'Emanuel Rabina'
+							email = 'emanuelrabina@gmail.com'
+							url = 'http://www.ultraq.net.nz/'
+							roles = [
+								'author',
+								'developer'
+							]
+							timezone = 'Pacific/Auckland'
+						}
+						project.developers.each { d ->
+							developer {
+								name = d.name
+								email = d.email
+								url = d.url
+								roles = d.roles
+							}
 						}
 					}
-				}
-				if (project.contributors) {
-					contributors {
-						project.contributors.each { c ->
-							contributor {
-								name = c.name
-								email = c.email
-								roles = c.roles
-								properties {
-									contribution = c.contribution
+					if (project.contributors) {
+						contributors {
+							project.contributors.each { c ->
+								contributor {
+									name = c.name
+									email = c.email
+									roles = c.roles
+									properties {
+										contribution = c.contribution
+									}
 								}
 							}
 						}
