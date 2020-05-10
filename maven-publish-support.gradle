@@ -82,9 +82,9 @@ publishing {
 									name = c.name
 									email = c.email
 									roles = c.roles
-									properties {
-										contribution = c.contribution
-									}
+									properties = [
+										contribution: c.contribution
+									]
 								}
 							}
 						}
