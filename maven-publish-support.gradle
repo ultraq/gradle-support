@@ -17,7 +17,6 @@ project.ext.licenses = [
 	]
 ]
 project.ext.developers = []
-project.ext.contributors = []
 
 /**
  * Also put together javadoc and source JARs for upload.
@@ -72,20 +71,6 @@ publishing {
 								email = d.email
 								url = d.url
 								roles = d.roles
-							}
-						}
-					}
-					if (project.contributors) {
-						contributors {
-							project.contributors.each { c ->
-								contributor {
-									name = c.name
-									email = c.email
-									roles = c.roles
-									properties = [
-										contribution: c.contribution
-									]
-								}
 							}
 						}
 					}
