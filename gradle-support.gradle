@@ -32,7 +32,7 @@ repositories {
  * for the way I use them.
  */
 def sourceDirectories = ['source']
-def testDirectories   = ['tests']
+def testDirectories   = ['test', 'tests']
 
 if (plugins.hasPlugin('java')) {
 	sourceSets {
