@@ -32,7 +32,7 @@ repositories {
  * for the way I use them.
  */
 def sourceDirectories = ['source']
-def testDirectories   = ['test', 'tests']
+def testDirectories   = ['test', 'tests'] // TODO: Remove tests directory with next major version
 
 if (plugins.hasPlugin('java')) {
 	sourceSets {

@@ -2,6 +2,11 @@
  * Copied from http://www.breskeby.com/2010/02/using-gradle-with-aspectj/
  * It didn't work straight off for me, so below are just the modifications I
  * needed for my own projects.
+ * 
+ * Most of what I wanted from AspectJ I can do with Groovy, so this script will
+ * likely be removed with the next major version of these support scripts.
+ * 
+ * @author Emanuel Rabina
  */
 
 configurations {
