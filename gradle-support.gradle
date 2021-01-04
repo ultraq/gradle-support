@@ -32,7 +32,7 @@ repositories {
  * for the way I use them.
  */
 def sourceDirectories = ['source']
-def testDirectories   = ['test', 'tests'] // TODO: Remove tests directory with next major version
+def testDirectories   = ['test']
 
 if (plugins.hasPlugin('java')) {
 	sourceSets {
@@ -110,19 +110,6 @@ if (plugins.hasPlugin('codenarc')) {
 		def sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
 		config = resources.text.fromString(sharedConfig)
 		toolVersion = '2.0.0'
-	}
-}
-
-/* 
- * Cobertura plugin for including the proper Groovy output directories and
- * emitting HTML reports for local viewing.
- */
-if (plugins.hasPlugin('net.saliman.cobertura')) {
-	cobertura {
-		coverageDirs = [
-			sourceSets.main.output.classesDirs
-		]
-		coverageFormats = ['html', 'xml']
 	}
 }
 
