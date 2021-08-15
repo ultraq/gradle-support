@@ -84,6 +84,9 @@ if (plugins.hasPlugin('groovy')) {
 			groovy {
 				srcDirs = testDirectories
 			}
+			resources {
+				srcDirs = testDirectories
+			}
 		}
 	}
 	// Make IntelliJ use the same build directories as Gradle so that I'm not
@@ -119,8 +122,8 @@ if (plugins.hasPlugin('codenarc')) {
 if (plugins.hasPlugin('jacoco')) {
 	jacocoTestReport {
 		reports {
-			xml.enabled = true
-			html.enabled = true
+			xml.required = true
+			html.required = true
 		}
 	}
 }
