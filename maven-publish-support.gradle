@@ -7,7 +7,6 @@
 
 apply plugin: 'signing'
 
-project.ext.artifact = ''
 project.ext.year = ''
 project.ext.licenses = [
 	[
@@ -49,9 +48,9 @@ publishing {
 						}
 					}
 					scm {
-						connection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
-						developerConnection = "scm:git:git@github.com:ultraq/${project.artifact}.git"
-						url = "https://github.com/ultraq/${project.artifact}"
+						connection = "scm:git:git@github.com:ultraq/${project.name}.git"
+						developerConnection = "scm:git:git@github.com:ultraq/${project.name}.git"
+						url = "https://github.com/ultraq/${project.name}"
 					}
 					developers {
 						developer {
