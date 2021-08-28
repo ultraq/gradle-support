@@ -25,6 +25,10 @@ java {
 	withSourcesJar()
 }
 
+tasks.named('sourcesJar') {
+	duplicatesStrategy = 'exclude'
+}
+
 /**
  * Publishing configuration to customize the pom file
  */

@@ -52,10 +52,6 @@ if (plugins.hasPlugin('java')) {
 			}
 		}
 	}
-	jar {
-		dependsOn test
-		duplicatesStrategy 'exclude'
-	}
 }
 
 if (plugins.hasPlugin('groovy')) {
