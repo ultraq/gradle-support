@@ -6,18 +6,6 @@
  */
 
 /* 
- * Introduce 'optional' and 'provided' configuration modifiers.
- */
-project.ext.optionalDependencies = []
-project.ext.optional = {
-	optionalDependencies << it
-}
-project.ext.providedDependencies = []
-project.ext.provided = {
-	providedDependencies << it
-}
-
-/* 
  * Include Maven central and snapshot repositories by default.
  */
 repositories {
