@@ -60,7 +60,7 @@ publishing {
 						developer {
 							id = 'ultraq'
 							name = 'Emanuel Rabina'
-							email = 'emanuelrabina@hey.com'
+							email = 'emanuelrabina@gmail.com'
 							url = 'http://www.ultraq.net.nz/'
 							roles = [
 								'author',
