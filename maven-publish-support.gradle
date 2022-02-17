@@ -21,7 +21,14 @@ project.ext.developers = []
  * Also put together javadoc and source JARs for upload.
  */
 java {
-	withJavadocJar()
+	if (plugins.hasPlugin('groovy')) {
+		tasks.named('assemble') {
+			dependsOn groovydocJar
+		}
+	}
+	else if (plugins.hasPlugin('java')) {
+		withJavadocJar()
+	}
 	withSourcesJar()
 }
 
@@ -36,6 +43,11 @@ publishing {
 	publications {
 		library(MavenPublication) {
 			from components.java
+			if (plugins.hasPlugin('groovy')) {
+				artifact(groovydocJar) {
+					classifier = 'javadoc'
+				}
+			}
 			afterEvaluate {
 				pom {
 					name = project.name

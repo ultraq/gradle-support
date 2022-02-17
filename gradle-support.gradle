@@ -42,6 +42,7 @@ if (plugins.hasPlugin('java')) {
 			}
 		}
 	}
+
 	// Make IntelliJ use the same build directories as Gradle so that I'm not
 	// having to ignore 2 sets of build outputs.
 	if (plugins.hasPlugin('idea')) {
@@ -73,6 +74,7 @@ if (plugins.hasPlugin('groovy')) {
 			}
 		}
 	}
+
 	// Make IntelliJ use the same build directories as Gradle so that I'm not
 	// having to ignore 2 sets of build outputs.
 	if (plugins.hasPlugin('idea')) {
@@ -83,6 +85,7 @@ if (plugins.hasPlugin('groovy')) {
 			}
 		}
 	}
+
 	processResources {
 		filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') {
 			expand([
@@ -90,9 +93,17 @@ if (plugins.hasPlugin('groovy')) {
 			])
 		}
 	}
+
 	groovydoc {
 		link('http://docs.oracle.com/javase/8/docs/api/', 'java.', 'javax.', 'org.xml.')
 		link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
+	}
+
+	// A task to collect the groovydoc files into a JAR, replacing the javadoc one
+	task groovydocJar(type: Jar, dependsOn: groovydoc) {
+		from groovydoc.destinationDir
+		destinationDirectory = file('build/libs')
+		archiveClassifier = 'javadoc'
 	}
 }
 
@@ -151,10 +162,12 @@ if (plugins.hasPlugin('distribution')) {
 			}
 		}
 	}
+
 	// I never use the TAR files
 	distTar {
 		enabled = false
 	}
+
 	distZip {
 		dependsOn plugins.hasPlugin('groovy') ? 'groovydoc' : 'javadoc'
 		duplicatesStrategy = 'exclude'
