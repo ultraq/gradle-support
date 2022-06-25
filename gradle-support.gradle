@@ -154,7 +154,7 @@ if (plugins.hasPlugin('distribution')) {
 				from(sourceSets.main.java.srcDirs[0]) {
 					into 'source'
 				}
-				from('.') {
+				from(rootProject.projectDir) {
 					include 'CHANGELOG.md'
 					include 'LICENSE.txt'
 					include 'README.md'
