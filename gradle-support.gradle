@@ -94,6 +94,11 @@ if (plugins.hasPlugin('groovy')) {
 		}
 	}
 
+	// Fix for NoClassDefFoundError when running groovydoc via Gradle and using Groovy 4.0.2+
+	dependencies {
+		compileOnly 'com.github.javaparser:javaparser-core:3.24.2'
+	}
+
 	groovydoc {
 		link('http://docs.oracle.com/javase/8/docs/api/', 'java.', 'javax.', 'org.xml.')
 		link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
