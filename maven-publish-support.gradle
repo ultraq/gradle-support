@@ -52,7 +52,7 @@ publishing {
 				pom {
 					name = project.name
 					description = project.description
-					url = "https://github.com/ultraq/${project.name}/"
+					url = "https://github.com/ultraq/${project.rootProject.name}/"
 					inceptionYear = project.year
 					licenses {
 						project.licenses.each { l ->
@@ -64,9 +64,9 @@ publishing {
 						}
 					}
 					scm {
-						connection = "scm:git:git@github.com:ultraq/${project.name}.git"
-						developerConnection = "scm:git:git@github.com:ultraq/${project.name}.git"
-						url = "https://github.com/ultraq/${project.name}"
+						connection = "scm:git:git@github.com:ultraq/${project.rootProject.name}.git"
+						developerConnection = "scm:git:git@github.com:ultraq/${project.rootProject.name}.git"
+						url = "https://github.com/ultraq/${project.rootProject.name}"
 					}
 					developers {
 						developer {
