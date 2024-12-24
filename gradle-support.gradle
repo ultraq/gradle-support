@@ -1,21 +1,21 @@
 /**
  * Common Gradle script configuration for simple projects.  Made to be applied
  * _after_ all standard plugins.
- * 
+ *
  * @author Emanuel Rabina
  */
 
-/* 
+/*
  * Include Maven central and snapshot repositories by default.
  */
 repositories {
 	mavenCentral()
 	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots/'
+		url = 'https://oss.sonatype.org/content/repositories/snapshots/'
 	}
 }
 
-/* 
+/*
  * Adjust plugins, source and build directories, and any standard Gradle tasks
  * for the way I use them.
  */
@@ -48,8 +48,8 @@ if (plugins.hasPlugin('java')) {
 	if (plugins.hasPlugin('idea')) {
 		idea {
 			module {
-				outputDir file('build/classes/java/main')
-				testOutputDir file('build/classes/test')
+				outputDir = file('build/classes/java/main')
+				testOutputDir = file('build/classes/test')
 			}
 		}
 	}
@@ -80,8 +80,8 @@ if (plugins.hasPlugin('groovy')) {
 	if (plugins.hasPlugin('idea')) {
 		idea {
 			module {
-				outputDir file('build/classes/groovy/main')
-				testOutputDir file('build/classes/test')
+				outputDir = file('build/classes/groovy/main')
+				testOutputDir = file('build/classes/test')
 			}
 		}
 	}
@@ -112,7 +112,7 @@ if (plugins.hasPlugin('groovy')) {
 	}
 }
 
-/* 
+/*
  * Codenarc configuration to use my shared config.
  */
 if (plugins.hasPlugin('codenarc')) {
@@ -122,7 +122,7 @@ if (plugins.hasPlugin('codenarc')) {
 	}
 }
 
-/* 
+/*
  * JaCoCo plugin for including XML output for coveralls.
  */
 if (plugins.hasPlugin('jacoco')) {
@@ -134,7 +134,7 @@ if (plugins.hasPlugin('jacoco')) {
 	}
 }
 
-/* 
+/*
  * Bundle support via the new distribution plugin.
  */
 if (plugins.hasPlugin('distribution')) {
