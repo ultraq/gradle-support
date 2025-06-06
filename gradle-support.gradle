@@ -96,7 +96,7 @@ if (plugins.hasPlugin('groovy')) {
 
 	// Fix for NoClassDefFoundError when running groovydoc via Gradle and using Groovy 4.0.2+
 	dependencies {
-		compileOnly 'com.github.javaparser:javaparser-core:3.24.2'
+		compileOnly 'com.github.javaparser:javaparser-symbol-solver-core:3.26.4'
 	}
 
 	groovydoc {
@@ -123,7 +123,7 @@ if (plugins.hasPlugin('codenarc')) {
 }
 
 /*
- * JaCoCo plugin for including XML output for coveralls.
+ * JaCoCo plugin for including XML output for code coverage.
  */
 if (plugins.hasPlugin('jacoco')) {
 	jacocoTestReport {
