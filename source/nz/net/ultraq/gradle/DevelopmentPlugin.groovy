@@ -20,19 +20,15 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
-import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.quality.CodeNarcExtension
-import org.gradle.api.plugins.quality.CodeNarcPlugin
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.gradle.plugins.ide.idea.IdeaPlugin
-import org.gradle.testing.jacoco.plugins.JacocoPlugin
+import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
 
@@ -103,7 +99,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureDirectories(Project project) {
 
-		project.pluginManager.withPlugin('java') {
+		project.pluginManager.withPlugin('java') { javaPlugin ->
 			var sourceSets = project.extensions.getByType(SourceSetContainer)
 			sourceSets.named('main').configure { sourceSet ->
 				sourceSet.java.srcDirs = sourceDirectories
@@ -115,13 +111,15 @@ class DevelopmentPlugin implements Plugin<Project> {
 				sourceSet.resources.srcDirs = testDirectories
 			}
 
-			project.pluginManager.withPlugin('idea') { IdeaPlugin ideaPlugin ->
-				ideaPlugin.model.module.outputDir = project.file('build/classes/java/main')
-				ideaPlugin.model.module.testOutputDir = project.file('build/classes/test')
+			project.pluginManager.withPlugin('idea') { ideaPlugin ->
+				project.extensions.getByType(IdeaModel).module { module ->
+					module.outputDir = project.file('build/classes/java/main')
+					module.testOutputDir = project.file('build/classes/test')
+				}
 			}
 		}
 
-		project.pluginManager.withPlugin('groovy') { GroovyPlugin groovyPlugin ->
+		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
 			var sourceSets = project.extensions.getByType(SourceSetContainer)
 			sourceSets.named('main').configure { sourceSet ->
 				sourceSet.extensions.getByType(GroovySourceDirectorySet).srcDirs = sourceDirectories
@@ -132,9 +130,11 @@ class DevelopmentPlugin implements Plugin<Project> {
 				sourceSet.resources.srcDirs = testDirectories
 			}
 
-			project.pluginManager.withPlugin('idea') { IdeaPlugin ideaPlugin ->
-				ideaPlugin.model.module.outputDir = project.file('build/classes/groovy/main')
-				ideaPlugin.model.module.testOutputDir = project.file('build/classes/test')
+			project.pluginManager.withPlugin('idea') { ideaPlugin ->
+				project.extensions.getByType(IdeaModel).module { module ->
+					module.outputDir = project.file('build/classes/groovy/main')
+					module.testOutputDir = project.file('build/classes/test')
+				}
 			}
 		}
 	}
@@ -144,7 +144,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureDistribution(Project project) {
 
-		project.pluginManager.withPlugin('distribution') { DistributionPlugin distributionPlugin ->
+		project.pluginManager.withPlugin('distribution') { distributionPlugin ->
 			project.extensions.getByType(DistributionContainer).named('main') { main ->
 				main.contents { spec ->
 					project.tasks.named('jar').configure { jar ->
@@ -184,7 +184,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureGroovydocs(Project project) {
 
-		project.pluginManager.withPlugin('groovy') { GroovyPlugin groovyPlugin ->
+		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
 			// TODO: Maybe not needed any more with Gradle 9?
 			// Fix for NoClassDefFoundError when running groovydoc via Gradle and using Groovy 4.0.2+
 //		dependencies {
@@ -220,7 +220,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureResourceProcessing(Project project) {
 
-		project.pluginManager.withPlugin('groovy') { GroovyPlugin groovyPlugin ->
+		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
 			project.tasks.named('processResources', ProcessResources).configure { processResources ->
 				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
 					file.expand([
@@ -236,12 +236,12 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureVerification(Project project) {
 
-		project.pluginManager.withPlugin('codenarc') { CodeNarcPlugin codeNarcPlugin ->
+		project.pluginManager.withPlugin('codenarc') { codeNarcPlugin ->
 			var sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
 			project.extensions.getByType(CodeNarcExtension).config = project.resources.text.fromString(sharedConfig)
 		}
 
-		project.pluginManager.withPlugin('jacoco') { JacocoPlugin jacocoPlugin ->
+		project.pluginManager.withPlugin('jacoco') { jacocoPlugin ->
 			project.tasks.withType(JacocoReport).configureEach { reportTask ->
 				reportTask.reports { JacocoReportsContainer reportsContainer ->
 					reportsContainer.xml.required.set(true)
