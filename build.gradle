@@ -1,3 +1,41 @@
-// This build file is really only here so IDEs can detect this is a Gradle
-// project and set it up accordingly.
-description = 'A bunch of Gradle scripts that help support my workflow'
+/*
+ * Copyright 2025, Emanuel Rabina (http://www.ultraq.net.nz/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+	id 'java-gradle-plugin'
+	id 'groovy'
+}
+apply from: './gradle-support.gradle'
+
+description = 'Gradle support plugins for use in my own projects'
+version = '5.0.0-SNAPSHOT'
+group = 'nz.net.ultraq.gradle'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+		vendor = JvmVendorSpec.ADOPTIUM
+	}
+}
+
+gradlePlugin {
+	plugins {
+		developmentPlugin {
+			id = 'nz.net.ultraq.gradle.development-plugin'
+			implementationClass = 'nz.net.ultraq.gradle.DevelopmentPlugin'
+		}
+	}
+}
