@@ -194,12 +194,12 @@ class DevelopmentPlugin implements Plugin<Project> {
 			project.tasks.named('groovydoc', Groovydoc).configure { groovydoc ->
 				groovydoc.link('http://docs.oracle.com/javase/8/docs/api/', 'java.', 'javax.', 'org.xml.')
 				groovydoc.link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
+			}
 
-				project.tasks.register('groovydocJar', Jar) { groovydocJar ->
-					groovydocJar.from(groovydoc.destinationDir)
-					groovydocJar.destinationDirectory.set(project.file('build/libs'))
-					groovydocJar.archiveClassifier.set('javadoc')
-				}
+			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+				groovydocJar.from(project.tasks.getByName('groovydoc').destinationDir)
+				groovydocJar.destinationDirectory.set(project.file('build/libs'))
+				groovydocJar.archiveClassifier.set('javadoc')
 			}
 		}
 	}
