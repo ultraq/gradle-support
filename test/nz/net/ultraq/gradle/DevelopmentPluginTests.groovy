@@ -22,6 +22,8 @@ import spock.lang.Specification
 import spock.lang.TempDir
 
 /**
+ * Tests to make sure the development plugin can run.
+ *
  * @author Emanuel Rabina
  */
 class DevelopmentPluginTests extends Specification {

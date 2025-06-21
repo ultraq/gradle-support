@@ -185,17 +185,10 @@ class DevelopmentPlugin implements Plugin<Project> {
 	private void configureGroovydocs(Project project) {
 
 		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-			// TODO: Maybe not needed any more with Gradle 9?
-			// Fix for NoClassDefFoundError when running groovydoc via Gradle and using Groovy 4.0.2+
-//		dependencies {
-//			compileOnly 'com.github.javaparser:javaparser-symbol-solver-core:3.26.4'
-//		}
-
 			project.tasks.named('groovydoc', Groovydoc).configure { groovydoc ->
-				groovydoc.link('http://docs.oracle.com/javase/8/docs/api/', 'java.', 'javax.', 'org.xml.')
-				groovydoc.link('http://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.codehaus.groovy.')
+				groovydoc.link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.', 'javax.', 'org.xml.')
+				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
 			}
-
 			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
 				groovydocJar.from(project.tasks.getByName('groovydoc').destinationDir)
 				groovydocJar.destinationDirectory.set(project.file('build/libs'))
