@@ -14,6 +14,28 @@
  * limitations under the License.
  */
 
-// This build file is really only here so IDEs can detect this is a Gradle
-// project and set it up accordingly.
-description = 'A bunch of Gradle scripts that help support my workflow'
+plugins {
+	id 'java-gradle-plugin'
+	id 'groovy'
+}
+apply from: './gradle-support.gradle'
+
+description = 'Gradle support plugins for use in my own projects'
+version = '5.0.0-SNAPSHOT'
+group = 'nz.net.ultraq.gradle'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+		vendor = JvmVendorSpec.ADOPTIUM
+	}
+}
+
+gradlePlugin {
+	plugins {
+		developmentPlugin {
+			id = 'nz.net.ultraq.gradle.development-plugin'
+			implementationClass = 'nz.net.ultraq.gradle.DevelopmentPlugin'
+		}
+	}
+}
