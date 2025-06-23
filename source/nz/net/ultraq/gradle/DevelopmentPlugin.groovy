@@ -32,6 +32,8 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
 
+import groovy.transform.CompileStatic
+
 /**
  * <p>Gradle plugin for my JVM-based projects.</p>
  *
@@ -77,6 +79,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DevelopmentPlugin implements Plugin<Project> {
 
 	protected List<String> sourceDirectories = ['source']
@@ -190,7 +193,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
 			}
 			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
-				groovydocJar.from(project.tasks.getByName('groovydoc').destinationDir)
+				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
 				groovydocJar.destinationDirectory.set(project.file('build/libs'))
 				groovydocJar.archiveClassifier.set('javadoc')
 			}

@@ -17,12 +17,22 @@
 plugins {
 	id 'java-gradle-plugin'
 	id 'groovy'
+	id 'maven-publish'
 }
-apply from: './gradle-support.gradle'
 
 description = 'Gradle support plugins for use in my own projects'
 version = '5.0.0-SNAPSHOT'
 group = 'nz.net.ultraq.gradle'
+
+sourceSets {
+	main.groovy.srcDirs = ['source']
+	test.groovy.srcDirs = ['test']
+}
+
+dependencies {
+	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
 java {
 	toolchain {
@@ -37,17 +47,21 @@ gradlePlugin {
 			id = 'nz.net.ultraq.gradle.development-plugin'
 			implementationClass = 'nz.net.ultraq.gradle.DevelopmentPlugin'
 		}
+		publishingPlugin {
+			id = 'nz.net.ultraq.gradle.publishing-plugin'
+			implementationClass = 'nz.net.ultraq.gradle.PublishingPlugin'
+		}
 	}
 }
 
-dependencies {
-	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+test {
+	useJUnitPlatform()
 }
 
-testing {
-	suites {
-		test {
-			useJUnitJupiter()
+publishing {
+	repositories {
+		maven {
+			url = file('../test-maven-repository')
 		}
 	}
 }
