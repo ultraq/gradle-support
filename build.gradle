@@ -19,15 +19,12 @@ plugins {
 	id 'groovy'
 	id 'maven-publish'
 }
+// TODO: Once published, this plugin can rely on itself!
+apply from: './gradle-support.gradle'
 
 description = 'Gradle support plugins for use in my own projects'
 version = '5.0.0-SNAPSHOT'
 group = 'nz.net.ultraq.gradle'
-
-sourceSets {
-	main.groovy.srcDirs = ['source']
-	test.groovy.srcDirs = ['test']
-}
 
 dependencies {
 	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'

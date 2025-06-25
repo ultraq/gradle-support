@@ -16,16 +16,17 @@
 
 package nz.net.ultraq.gradle
 
+import nz.net.ultraq.gradle.PublishingPluginExtension.License
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Property
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.signing.SigningExtension
-
-import groovy.transform.CompileStatic
 
 /**
  * <p>Gradle plugin for publishing my JVM-based projects to Maven Central.</p>
@@ -40,7 +41,6 @@ import groovy.transform.CompileStatic
  *
  * @author Emanuel Rabina
  */
-@CompileStatic
 class PublishingPlugin implements Plugin<Project> {
 
 	@Override
@@ -61,6 +61,7 @@ class PublishingPlugin implements Plugin<Project> {
 	private void configureArtifacts(Project project) {
 
 		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
+			// TODO: If groovydocJar task available?
 			project.tasks.named('assemble') { assembleTask ->
 				assembleTask.dependsOn('groovydocJar')
 			}
@@ -83,8 +84,19 @@ class PublishingPlugin implements Plugin<Project> {
 	private PublishingPluginExtension configureExtension(Project project) {
 
 		var extension = project.extensions.create('publishingPlugin', PublishingPluginExtension)
-		extension.contributors.convention([])
-		extension.licences.convention([])
+		extension.licenses.convention([
+			new License() {
+				@Override
+				Property<String> getName() {
+					return project.objects.property(String).value('The Apache Software License, Version 2.0')
+				}
+
+				@Override
+				Property<String> getUrl() {
+					return project.objects.property(String).value('http://www.apache.org/licenses/LICENSE-2.0.txt')
+				}
+			}
+		])
 		return extension
 	}
 
@@ -107,11 +119,13 @@ class PublishingPlugin implements Plugin<Project> {
 					pom.description.set(project.description)
 					pom.url.set("https://github.com/ultraq/${project.rootProject.name}")
 					pom.inceptionYear.set(extension.year)
-					pom.licenses { licences ->
-						extension.licences.get().each { extLicence ->
-							licences.license { license ->
-								license.name.set(extLicence.name)
-								license.url.set(extLicence.url)
+					if (extension.licenses) {
+						pom.licenses { licences ->
+							extension.licenses.get().each { extLicence ->
+								licences.license { license ->
+									license.name.set(extLicence.name)
+									license.url.set(extLicence.url)
+								}
 							}
 						}
 					}
@@ -127,12 +141,14 @@ class PublishingPlugin implements Plugin<Project> {
 							developer.url.set('https://www.ultraq.net.nz')
 						}
 					}
-					pom.contributors { contributors ->
-						extension.contributors.get().each { extContributor ->
-							contributors.contributor { contributor ->
-								contributor.name.set(extContributor.name)
-								contributor.email.set(extContributor.email)
-								contributor.url.set(extContributor.url)
+					if (extension.contributors) {
+						pom.contributors { contributors ->
+							extension.contributors.get().each { extContributor ->
+								contributors.contributor { contributor ->
+									contributor.name.set(extContributor.name)
+									contributor.email.set(extContributor.email)
+									contributor.url.set(extContributor.url)
+								}
 							}
 						}
 					}

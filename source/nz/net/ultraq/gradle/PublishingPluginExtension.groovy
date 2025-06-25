@@ -16,6 +16,7 @@
 
 package nz.net.ultraq.gradle
 
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -26,8 +27,8 @@ import org.gradle.api.provider.Property
  */
 interface PublishingPluginExtension {
 
-	Property<List<Contributor>> getContributors()
-	Property<List<Licence>> getLicences()
+	ListProperty<Contributor> getContributors()
+	ListProperty<License> getLicenses()
 	Property<String> getYear()
 
 	interface Contributor {
@@ -36,7 +37,7 @@ interface PublishingPluginExtension {
 		Property<String> getUrl()
 	}
 
-	interface Licence {
+	interface License {
 		Property<String> getName()
 		Property<String> getUrl()
 	}

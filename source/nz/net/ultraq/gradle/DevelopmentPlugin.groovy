@@ -24,15 +24,13 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
+import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
-
-import groovy.transform.CompileStatic
 
 /**
  * <p>Gradle plugin for my JVM-based projects.</p>
@@ -79,7 +77,6 @@ import groovy.transform.CompileStatic
  *
  * @author Emanuel Rabina
  */
-@CompileStatic
 class DevelopmentPlugin implements Plugin<Project> {
 
 	protected List<String> sourceDirectories = ['source']
@@ -169,13 +166,15 @@ class DevelopmentPlugin implements Plugin<Project> {
 						.include('README.md')
 				}
 			}
-			project.tasks.named('distTar', Task).configure { task ->
-				task.enabled = false
+			project.tasks.named('distTar', Task).configure { distTar ->
+				distTar.enabled = false
 			}
-			project.tasks.named('distZip', Zip).configure { task ->
-				task.dependsOn('javadoc')
-				task.dependsOn('groovydoc')
-				task.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			project.tasks.named('distZip', Zip).configure { distZip ->
+				distZip.dependsOn('javadoc')
+				project.pluginManager.withPlugin('groovy') { groovyPlugin ->
+					distZip.dependsOn('groovydoc')
+				}
+				distZip.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 			}
 		}
 	}
@@ -192,7 +191,10 @@ class DevelopmentPlugin implements Plugin<Project> {
 				groovydoc.link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.', 'javax.', 'org.xml.')
 				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
 			}
+
+			// TODO: Put groovydocJar registration in different plugin dedicated to groovydoc config?
 			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+				groovydocJar.group = 'build'
 				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
 				groovydocJar.destinationDirectory.set(project.file('build/libs'))
 				groovydocJar.archiveClassifier.set('javadoc')
