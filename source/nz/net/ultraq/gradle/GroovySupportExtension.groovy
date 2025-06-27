@@ -29,11 +29,11 @@ import org.gradle.jvm.tasks.Jar
  *
  * @author Emanuel Rabina
  */
-abstract class GroovyExtension {
+abstract class GroovySupportExtension {
 
 	private final Project project
 
-	GroovyExtension(Project project) {
+	GroovySupportExtension(Project project) {
 
 		this.project = project
 	}
@@ -50,7 +50,7 @@ abstract class GroovyExtension {
 	 */
 	void withGroovydocJar(Action<GroovydocJarOptions> configure = null) {
 
-		var groovydocJarTask = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+		project.tasks.register('groovydocJar', Jar) { groovydocJar ->
 			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
 			groovydocJar.group = 'build'
 			groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).map { it -> it.destinationDir })
@@ -67,7 +67,7 @@ abstract class GroovyExtension {
 			}
 		}
 		project.tasks.named('assemble').configure { assembleTask ->
-			assembleTask.dependsOn(groovydocJarTask.get())
+			assembleTask.dependsOn('groovydocJar')
 		}
 	}
 

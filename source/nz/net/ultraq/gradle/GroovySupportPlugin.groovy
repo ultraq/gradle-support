@@ -20,18 +20,39 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
- * A plugin that works in tandem with Gradle's built-in {@code groovy} plugin to
- * help Groovy projects achieve configuration parity with Java projects.
- * Mainly, by allowing Groovy outputs/artifacts to participate in all the usual
- * lifecycle tasks.
- * <p>
- * <strong>For Groovydocs:</strong> currently, the {@code groovydoc} task is
- * totally separated from the rest of the Gradle lifecycle, making it hard to
- * add to other tasks which expect a {@code javadoc} artifact like pushing
- * documentation to Maven Central or building a distributable that includes the
- * documentation.  This plugin can be used to modify tasks to insert groovydocs
- * into the build process, including the option to replace the {@code javadoc}
- * artifact with it.
+ * Works in tandem with Gradle's built-in {@code groovy} plugin to help Groovy
+ * projects achieve configuration parity with Java projects.  Mainly, by
+ * allowing Groovy outputs/artifacts to participate in all the usual lifecycle
+ * tasks.
+ *
+ * <pre>
+ * // build.gradle
+ * plugins {
+ *   id 'nz.net.ultraq.gradle.groovy-support' version 'x.y.z'
+ * }
+ *
+ * groovy {
+ *   withGroovydocJar() {
+ *     replaceJavadoc = true
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>This plugin adds a {@code groovy} script block which can be used for
+ * configuration.
+ *
+ * <p>The {@code withGroovydocJar()} method is similar to Gradle's
+ * {@code withJavadocJar()} in that it adds a {@code groovydocJar} task to the
+ * project, and will also ensure that task will be run when the {@code assemble}
+ * lifecycle tasks is used.
+ *
+ * <p>An optional configuration closure can be supplied to further configure the
+ * task, though the only option right now is {@code replaceJavadoc} which will
+ * make the JAR use the `javadoc` classifier so it can stand in place of the
+ * javadoc JAR.  This is especially useful for things that rely on the presence
+ * of the javadoc JAR for documentation, eg: Maven Central so that 'Download
+ * documentation' options of IDEs can work, or services like <a href="https://javadoc.io">javadoc.io</a>
+ * which use the JAR as the source for documentation.
  *
  * @author Emanuel Rabina
  */
@@ -41,7 +62,7 @@ class GroovySupportPlugin implements Plugin<Project> {
 	void apply(Project project) {
 
 		project.pluginManager.withPlugin('groovy') {
-			project.extensions.create('groovy', GroovyExtension, project)
+			project.extensions.create('groovy', GroovySupportExtension, project)
 		}
 	}
 }

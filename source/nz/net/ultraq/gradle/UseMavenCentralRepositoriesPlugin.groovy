@@ -27,6 +27,13 @@ import org.gradle.api.initialization.Settings
  * to apply across all projects, or {@code build.gradle} to apply to a single
  * project.
  *
+ * <pre>
+ * // settings.gradle or build.gradle
+ * plugins {
+ *   id 'nz.net.ultraq.gradle.use-maven-central-repositories' version 'x.y.z'
+ * }
+ * </pre>
+ *
  * @author Emanuel Rabina
  */
 class UseMavenCentralRepositoriesPlugin implements Plugin {

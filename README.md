@@ -31,8 +31,40 @@ project configuration.
 ```groovy
 // settings.gradle or build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '5.0.0-SNAPSHOT'
+  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '5.0.0'
 }
 ```
 
-### 
+### groovy-support
+
+Works in tandem with Gradle's built-in `groovy` plugin to help Groovy projects
+achieve configuration parity with Java projects.  Mainly, by allowing Groovy
+outputs/artifacts to participate in all the usual lifecycle tasks.
+
+```groovy
+// build.gradle
+plugins {
+  id 'nz.net.ultraq.gradle.groovy-support' version '5.0.0'
+}
+
+groovy {
+  withGroovydocJar() {
+    replaceJavadoc = true
+  }
+}
+```
+
+This plugin adds a `groovy` script block which can be used for
+configuration.
+
+The `withGroovydocJar()` method is similar to Gradle's `withJavadocJar()` in
+that it adds a `groovydocJar` task to the project, and will also ensure that
+task will be run when the `assemble` lifecycle tasks is used.
+
+An optional configuration closure can be supplied to further configure the task,
+though the only option right now is `replaceJavadoc` which will make the JAR use
+the `javadoc` classifier so it can stand in place of the javadoc JAR.  This is
+especially useful for things that rely on the presence of the javadoc JAR for
+documentation, eg: Maven Central so that 'Download documentation' options in
+IDEs can work, or services like [javadoc.io](https://javadoc.io) which use the
+JAR as the source for documentation.
