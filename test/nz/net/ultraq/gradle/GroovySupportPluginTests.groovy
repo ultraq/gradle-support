@@ -22,12 +22,12 @@ import spock.lang.Specification
 import spock.lang.TempDir
 
 /**
- * Tests for the {@link GroovydocPlugin} and the {@code groovydoc { ... }}
+ * Tests for the {@link GroovySupportPlugin} and the {@code groovydoc { ... }}
  * script block that it applies.
  *
  * @author Emanuel Rabina
  */
-class GroovydocPluginTests extends Specification {
+class GroovySupportPluginTests extends Specification {
 
 	@TempDir
 	File testProjectDir
@@ -45,7 +45,7 @@ class GroovydocPluginTests extends Specification {
 		given:
 			buildFile << """
 				plugins {
-          id 'nz.net.ultraq.gradle.groovydoc-plugin'
+          id 'nz.net.ultraq.gradle.groovy-support'
         }
         """
 		when:
@@ -64,9 +64,9 @@ class GroovydocPluginTests extends Specification {
 			buildFile << """
 				plugins {
 				  id 'groovy'
-          id 'nz.net.ultraq.gradle.groovydoc-plugin'
+          id 'nz.net.ultraq.gradle.groovy-support'
         }
-        groovydocSupport {
+        groovy {
           withGroovydocJar() {
             replaceJavadoc = true
           }
@@ -77,7 +77,7 @@ class GroovydocPluginTests extends Specification {
 				.withProjectDir(testProjectDir)
 				.withPluginClasspath()
 				.withDebug(true)
-				.withArguments('groovydocJar')
+				.withArguments('assemble')
 				.build()
 		then:
 			buildResult.task(':groovydocJar').outcome == TaskOutcome.SUCCESS

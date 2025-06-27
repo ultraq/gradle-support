@@ -24,16 +24,16 @@ import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
 
 /**
- * The {@code groovydoc { ... }} script block added to build scripts when the
- * {@link GroovydocPlugin} is applied.
+ * The {@code groovy { ... }} script block added to build scripts when the
+ * {@link GroovySupportPlugin} is applied.
  *
  * @author Emanuel Rabina
  */
-abstract class GroovydocExtension {
+abstract class GroovyExtension {
 
 	private final Project project
 
-	GroovydocExtension(Project project) {
+	GroovyExtension(Project project) {
 
 		this.project = project
 	}
