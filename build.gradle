@@ -19,16 +19,31 @@ plugins {
 	id 'groovy'
 	id 'maven-publish'
 }
-// TODO: Once published, this plugin can rely on itself!
-apply from: './gradle-support.gradle'
 
 description = 'Gradle support plugins for use in my own projects'
 version = '5.0.0-SNAPSHOT'
 group = 'nz.net.ultraq.gradle'
 
+sourceSets {
+	main {
+		[java, groovy, resources]*.srcDirs = ['source']
+		resources.exclude('**/*.java', '**/*.groovy')
+	}
+	test {
+		[java, groovy, resources]*.srcDirs = ['test']
+		resources.exclude('**/*.java', '**/*.groovy')
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url = 'https://central.sonatype.com/repository/maven-snapshots/'
+	}
+}
+
 dependencies {
 	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 java {
@@ -39,7 +54,20 @@ java {
 }
 
 gradlePlugin {
+	website = 'https://github.com/ultraq/gradle-support'
+	vcsUrl = 'https://github.com/ultraq/gradle-support.git'
 	plugins {
+		useMavenCentralRepositories {
+			id = 'nz.net.ultraq.gradle.use-maven-central-repositories'
+			implementationClass = 'nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin'
+			displayName = 'Use Maven Central and Snapshot repositories'
+			description = """
+				Applies the Maven Central and Maven Central Snapshots repositories to the
+				project configuration.  That's it 😅  Can be used either in `settings.gradle`
+				to apply across all projects, or `build.gradle` to apply to a single project.
+			"""
+			tags.set(['maven', 'repository'])
+		}
 		groovySupportPlugin {
 			id = 'nz.net.ultraq.gradle.groovy-support'
 			implementationClass = 'nz.net.ultraq.gradle.GroovySupportPlugin'
@@ -55,8 +83,12 @@ gradlePlugin {
 	}
 }
 
-test {
-	useJUnitPlatform()
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+	}
 }
 
 publishing {
