@@ -40,6 +40,10 @@ java {
 
 gradlePlugin {
 	plugins {
+		groovydocPlugin {
+			id = 'nz.net.ultraq.gradle.groovydoc-plugin'
+			implementationClass = 'nz.net.ultraq.gradle.GroovydocPlugin'
+		}
 		developmentPlugin {
 			id = 'nz.net.ultraq.gradle.development-plugin'
 			implementationClass = 'nz.net.ultraq.gradle.DevelopmentPlugin'

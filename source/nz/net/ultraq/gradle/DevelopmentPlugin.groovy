@@ -26,7 +26,6 @@ import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
-import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
@@ -190,14 +189,6 @@ class DevelopmentPlugin implements Plugin<Project> {
 			project.tasks.named('groovydoc', Groovydoc).configure { groovydoc ->
 				groovydoc.link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.', 'javax.', 'org.xml.')
 				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
-			}
-
-			// TODO: Put groovydocJar registration in different plugin dedicated to groovydoc config?
-			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
-				groovydocJar.group = 'build'
-				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
-				groovydocJar.destinationDirectory.set(project.file('build/libs'))
-				groovydocJar.archiveClassifier.set('javadoc')
 			}
 		}
 	}
