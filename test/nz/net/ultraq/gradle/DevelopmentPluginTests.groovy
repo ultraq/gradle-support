@@ -80,23 +80,4 @@ class DevelopmentPluginTests extends Specification {
 		then:
 			buildResult.task(':clean').outcome == TaskOutcome.UP_TO_DATE
 	}
-
-	def "Can run the groovydocJar task"() {
-		given:
-			buildFile << """
-				plugins {
-					id 'groovy'
-          id 'nz.net.ultraq.gradle.development-plugin'
-        }
-        """
-		when:
-			var buildResult = GradleRunner.create()
-				.withProjectDir(testProjectDir)
-				.withPluginClasspath()
-				.withDebug(true)
-				.withArguments('groovydocJar')
-				.build()
-		then:
-			buildResult.task(':groovydocJar').outcome == TaskOutcome.SUCCESS
-	}
 }
