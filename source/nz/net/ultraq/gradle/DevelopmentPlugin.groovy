@@ -22,14 +22,10 @@ import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.quality.CodeNarcExtension
-import org.gradle.api.tasks.GroovySourceDirectorySet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
 
 /**
  * <p>Gradle plugin for my JVM-based projects.</p>
@@ -84,9 +80,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 
-		configureRepositories(project)
 		configureDirectories(project)
-		configureResourceProcessing(project)
 		configureGroovydocs(project)
 		configureVerification(project)
 		configureDistribution(project)
@@ -99,17 +93,6 @@ class DevelopmentPlugin implements Plugin<Project> {
 	private void configureDirectories(Project project) {
 
 		project.pluginManager.withPlugin('java') { javaPlugin ->
-			var sourceSets = project.extensions.getByType(SourceSetContainer)
-			sourceSets.named('main').configure { sourceSet ->
-				sourceSet.java.srcDirs = sourceDirectories
-				sourceSet.resources.srcDirs = sourceDirectories
-				sourceSet.resources.exclude('**/*.java')
-			}
-			sourceSets.named('test').configure { sourceSet ->
-				sourceSet.java.srcDirs = testDirectories
-				sourceSet.resources.srcDirs = testDirectories
-			}
-
 			project.pluginManager.withPlugin('idea') { ideaPlugin ->
 				project.extensions.getByType(IdeaModel).module { module ->
 					module.outputDir = project.file('build/classes/java/main')
@@ -119,16 +102,6 @@ class DevelopmentPlugin implements Plugin<Project> {
 		}
 
 		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-			var sourceSets = project.extensions.getByType(SourceSetContainer)
-			sourceSets.named('main').configure { sourceSet ->
-				sourceSet.extensions.getByType(GroovySourceDirectorySet).srcDirs = sourceDirectories
-				sourceSet.resources.exclude('**/*.groovy')
-			}
-			sourceSets.named('test').configure { sourceSet ->
-				sourceSet.extensions.getByType(GroovySourceDirectorySet).srcDirs = testDirectories
-				sourceSet.resources.srcDirs = testDirectories
-			}
-
 			project.pluginManager.withPlugin('idea') { ideaPlugin ->
 				project.extensions.getByType(IdeaModel).module { module ->
 					module.outputDir = project.file('build/classes/groovy/main')
@@ -194,33 +167,6 @@ class DevelopmentPlugin implements Plugin<Project> {
 	}
 
 	/**
-	 * Include Maven central and snapshot repositories by default.
-	 */
-	private void configureRepositories(Project project) {
-
-		project.repositories.mavenCentral()
-		project.repositories.maven(repo -> {
-			repo.url = 'https://central.sonatype.com/repository/maven-snapshots/'
-		})
-	}
-
-	/**
-	 * Expand any {@code ${moduleVersion}} placeholders in extension manifests.
-	 */
-	private void configureResourceProcessing(Project project) {
-
-		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-			project.tasks.named('processResources', ProcessResources).configure { processResources ->
-				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
-					file.expand([
-						moduleVersion: project.version
-					])
-				}
-			}
-		}
-	}
-
-	/**
 	 * Configure verification plugins if present.
 	 */
 	private void configureVerification(Project project) {
@@ -232,10 +178,8 @@ class DevelopmentPlugin implements Plugin<Project> {
 
 		project.pluginManager.withPlugin('jacoco') { jacocoPlugin ->
 			project.tasks.withType(JacocoReport).configureEach { reportTask ->
-				reportTask.reports { JacocoReportsContainer reportsContainer ->
-					reportsContainer.xml.required.set(true)
-					reportsContainer.html.required.set(true)
-				}
+				reportTask.reports.xml.required.set(true)
+				reportTask.reports.html.required.set(true)
 			}
 		}
 	}
