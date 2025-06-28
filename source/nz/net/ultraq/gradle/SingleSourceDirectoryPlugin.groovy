@@ -19,7 +19,6 @@ package nz.net.ultraq.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 
@@ -40,25 +39,25 @@ class SingleSourceDirectoryPlugin implements Plugin<Project> {
 			sourceSetContainer.configureEach { sourceSet ->
 				sourceSet.extensions.add('withSingleSourceDirectory', { Object path ->
 					var sourceDirectorySets = [sourceSet.java, sourceSet.resources]
-					sourceSet.extensions.extraProperties.properties.each { _name, property ->
-						if (property instanceof SourceDirectorySet) {
-							sourceDirectorySets << property
-						}
+					if (project.pluginManager.hasPlugin('groovy')) {
+						sourceDirectorySets << sourceSet.extensions.getByName('groovy')
 					}
 					sourceDirectorySets*.srcDirs = [project.file(path)]
 
-					project.pluginManager.withPlugin('java') { javaPlugin ->
+					if (project.pluginManager.hasPlugin('java')) {
 						sourceSet.resources.exclude('**/*.java')
 					}
-					project.pluginManager.withPlugin('groovy') { groovyPlugin ->
+					if (project.pluginManager.hasPlugin('groovy')) {
 						sourceSet.resources.exclude('**/*.groovy')
 					}
 				})
 			}
 
-			if (project.tasks.names.contains('sourcesJar')) {
-				project.tasks.named('sourcesJar', Jar).configure { jarTask ->
-					jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			project.afterEvaluate {
+				if (project.tasks.names.contains('sourcesJar')) {
+					project.tasks.named('sourcesJar', Jar).configure { jarTask ->
+						jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+					}
 				}
 			}
 		}
