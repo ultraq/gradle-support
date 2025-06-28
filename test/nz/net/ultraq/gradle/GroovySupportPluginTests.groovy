@@ -59,7 +59,29 @@ class GroovySupportPluginTests extends Specification {
 			buildResult.task(':help').outcome == TaskOutcome.SUCCESS
 	}
 
-	def "Adds a groovydoc script block to add a groovydocJar task"() {
+	def "Expands 'moduleVersion' properties in Groovy extension module manifest files"() {
+		given:
+			buildFile << """
+				plugins {
+				  id 'groovy'
+          id 'nz.net.ultraq.gradle.groovy-support'
+        }
+        groovy {
+          expandExtensionModuleVersion()
+        }
+        """
+		when:
+			var buildResult = GradleRunner.create()
+				.withProjectDir(testProjectDir)
+				.withPluginClasspath()
+				.withDebug(true)
+				.withArguments('build')
+				.build()
+		then:
+			buildResult.task(':processResources').outcome == TaskOutcome.NO_SOURCE
+	}
+
+	def "Adds a groovydocJar task"() {
 		given:
 			buildFile << """
 				plugins {
@@ -77,7 +99,7 @@ class GroovySupportPluginTests extends Specification {
 				.withProjectDir(testProjectDir)
 				.withPluginClasspath()
 				.withDebug(true)
-				.withArguments('assemble')
+				.withArguments('build')
 				.build()
 		then:
 			buildResult.task(':groovydocJar').outcome == TaskOutcome.SUCCESS

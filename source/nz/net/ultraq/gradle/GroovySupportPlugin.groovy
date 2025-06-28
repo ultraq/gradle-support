@@ -22,12 +22,11 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.jvm.tasks.ProcessResources
 
 /**
- * Works in tandem with Gradle's built-in {@code groovy} plugin to help Groovy
- * projects achieve configuration parity with Java projects.  Mainly, by
- * allowing Groovy outputs/artifacts to participate in all the usual lifecycle
- * tasks.
+ * Works in tandem with Gradle's built-in {@code groovy} plugin to help with the
+ * configuration nuances of  projects.
  *
  * <pre>
  * // build.gradle
@@ -36,6 +35,7 @@ import org.gradle.jvm.tasks.Jar
  * }
  *
  * groovy {
+ *   expandExtensionModuleVersion('moduleVersion', version)
  *   withGroovydocJar() {
  *     replaceJavadoc = true
  *   }
@@ -44,6 +44,11 @@ import org.gradle.jvm.tasks.Jar
  *
  * <p>This plugin adds a {@code groovy} script block which can be used for
  * configuration.
+ *
+ * <p>The {@code expandExtensionModuleVersion()} method will enable processing
+ * of the Groovy extension module manifest file, replacing {@code moduleVersion}
+ * placeholder strings with the project version.  These are the default values
+ * and can be omitted.
  *
  * <p>The {@code withGroovydocJar()} method is similar to Gradle's
  * {@code withJavadocJar()} in that it adds a {@code groovydocJar} task to the
@@ -81,6 +86,28 @@ class GroovySupportPlugin implements Plugin<Project> {
 		GroovySupportExtension(Project project) {
 
 			this.project = project
+		}
+
+		/**
+		 * Expands the {@code moduleVersion} property reference in the Groovy
+		 * extension module manifest file, to the Gradle project version.  Both the
+		 * property name and replacement value can be configured.
+		 *
+		 * @param property
+		 *   The property in the file to expand, defaults to {@code moduleVersion}
+		 *   (meaning both {@code $moduleVersion} and {@code ${moduleVersion}} will
+		 *   be expanded).
+		 * @param value
+		 *   The value to put in the property's place, defaults to the Gradle
+		 *   project version.
+		 */
+		void expandExtensionModuleVersion(String property = 'moduleVersion', String value = project.version) {
+
+			project.tasks.named('processResources', ProcessResources).configure { processResources ->
+				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
+					file.expand([(property): value])
+				}
+			}
 		}
 
 		/**

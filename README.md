@@ -67,6 +67,7 @@ plugins {
 }
 
 groovy {
+	expandExtensionModuleVersion('moduleVersion', version)
   withGroovydocJar() {
     replaceJavadoc = true
   }
@@ -75,6 +76,11 @@ groovy {
 
 This plugin adds a `groovy` script block which can be used for
 configuration.
+
+The `expandExtensionModuleVersion()` method will enable processing of the Groovy
+extension module manifest file, replacing `moduleVersion` property references
+(eg: `$moduleVersion` or `${moduleVersion}`) with the project version.  These
+are the default values and can be omitted.
 
 The `withGroovydocJar()` method is similar to Gradle's `withJavadocJar()` in
 that it adds a `groovydocJar` task to the project, and will also ensure that
