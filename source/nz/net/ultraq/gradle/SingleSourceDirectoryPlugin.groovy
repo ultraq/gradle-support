@@ -38,7 +38,7 @@ class SingleSourceDirectoryPlugin implements Plugin<Project> {
 		var sourceSetContainer = project.extensions.findByType(SourceSetContainer)
 		if (sourceSetContainer) {
 			sourceSetContainer.configureEach { sourceSet ->
-				sourceSet.extensions.extraProperties.set('withSingleSourceDirectory', { Object path ->
+				sourceSet.extensions.add('withSingleSourceDirectory', { Object path ->
 					var sourceDirectorySets = [sourceSet.java, sourceSet.resources]
 					sourceSet.extensions.extraProperties.properties.each { _name, property ->
 						if (property instanceof SourceDirectorySet) {
