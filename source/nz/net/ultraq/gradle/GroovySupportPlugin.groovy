@@ -16,8 +16,12 @@
 
 package nz.net.ultraq.gradle
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.javadoc.Groovydoc
+import org.gradle.jvm.tasks.Jar
 
 /**
  * Works in tandem with Gradle's built-in {@code groovy} plugin to help Groovy
@@ -63,6 +67,58 @@ class GroovySupportPlugin implements Plugin<Project> {
 
 		project.pluginManager.withPlugin('groovy') {
 			project.extensions.create('groovy', GroovySupportExtension, project)
+		}
+	}
+
+	/**
+	 * The {@code groovy { ... }} script block added to build scripts when the
+	 * {@link GroovySupportPlugin} is applied.
+	 */
+	static abstract class GroovySupportExtension {
+
+		private final Project project
+
+		GroovySupportExtension(Project project) {
+
+			this.project = project
+		}
+
+		/**
+		 * Add a {@code groovydocJar} task to the task lifecycle that is run as part
+		 * of {@code assemble}.
+		 *
+		 * @param configure
+		 *   Configure {@code groovydocJar} options.
+		 */
+		void withGroovydocJar(Action<GroovydocJarOptions> configure = null) {
+
+			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+				groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
+				groovydocJar.group = 'build'
+				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).map { it -> it.destinationDir })
+				groovydocJar.destinationDirectory.set(project.file('build/libs'))
+				groovydocJar.archiveClassifier.set('groovydoc')
+
+				if (configure) {
+					var options = project.objects.newInstance(GroovydocJarOptions)
+					configure.execute(options)
+
+					if (options.replaceJavadoc.get()) {
+						groovydocJar.archiveClassifier.set('javadoc')
+					}
+				}
+			}
+			project.tasks.named('assemble').configure { assembleTask ->
+				assembleTask.dependsOn('groovydocJar')
+			}
+		}
+
+		/**
+		 * Options to apply to the {@code groovydocJar} task.
+		 */
+		static interface GroovydocJarOptions {
+
+			Property<Boolean> getReplaceJavadoc()
 		}
 	}
 }
