@@ -1,8 +1,24 @@
+/*
+ * Copyright 2012, Emanuel Rabina (http://www.ultraq.net.nz/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Common Gradle build script to make use of JAXB's XJC tool and any XJC plugins
  * used throughout my projects.  Assumes the java plugin has already been
  * applied.
- * 
+ *
  * @author Emanuel Rabina
  */
 
@@ -22,7 +38,7 @@ dependencies {
 
 /**
  * Get the latest modification time of the files in the file collection.
- * 
+ *
  * @param files
  */
 def latestModificationTime(files) {
@@ -38,7 +54,7 @@ def latestModificationTime(files) {
 
 /**
  * Add the missing <tt>XmlRootElement</tt> annotation to a JAXB-generated class.
- * 
+ *
  * @param classfile
  * @param classname
  * @param elementname
@@ -48,12 +64,12 @@ def addMissingRootElement(classfile, classname, elementname) {
 	ant.replace(file: classfile) {
 		replacetoken('import javax.xml.bind.annotation.XmlType;')
 		replacevalue('import javax.xml.bind.annotation.XmlRootElement;\n' +
-					 'import javax.xml.bind.annotation.XmlType;')
+			'import javax.xml.bind.annotation.XmlType;')
 	}
 	ant.replace(file: classfile) {
 		replacetoken("public class ${classname} {")
 		replacevalue("@XmlRootElement(name = \"${elementname}\")\n" +
-					 "public class ${classname} {")
+			"public class ${classname} {")
 	}
 }
 
@@ -67,10 +83,10 @@ task xjc(
 
 	ext.schemaDir = 'schema'
 	ext.outputDir = 'source'
-	ext.schemas   = ['**/*.xsd']
-	ext.bindings  = ['**/*.jxb']
-	ext.classes   = []
-	ext.args      = []
+	ext.schemas = ['**/*.xsd']
+	ext.bindings = ['**/*.jxb']
+	ext.classes = []
+	ext.args = []
 
 	onlyIf {
 		def schemaModifiedTime = latestModificationTime(fileTree(dir: schemaDir, includes: schemas + bindings))
