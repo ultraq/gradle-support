@@ -38,9 +38,10 @@ import org.gradle.api.initialization.Settings
  */
 class UseMavenCentralRepositoriesPlugin implements Plugin {
 
-	// Because of generic type erasure, I have to dispatch to a Settings or Project handler myself...
 	@Override
 	void apply(Object target) {
+
+		// Because of generic type erasure, I have to dispatch to a Settings or Project handler myself...
 		switch (target) {
 			case Settings -> applyMavenCentralRepositories(target.dependencyResolutionManagement.repositories)
 			case Project -> applyMavenCentralRepositories(target.repositories)
@@ -49,6 +50,7 @@ class UseMavenCentralRepositoriesPlugin implements Plugin {
 	}
 
 	private static void applyMavenCentralRepositories(RepositoryHandler repositories) {
+
 		repositories.mavenCentral()
 		repositories.maven {
 			it.url = 'https://central.sonatype.com/repository/maven-snapshots/'

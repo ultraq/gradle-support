@@ -35,6 +35,25 @@ plugins {
 }
 ```
 
+### single-source-directory
+
+Make the source and resources directories be the same directory.  This is to
+help those that prefer having source code and assets co-located so you're not
+jumping around the file tree looking for related items.
+
+```groovy
+// build.gradle
+plugins {
+  id 'nz.net.ultraq.gradle.single-source-directory' version '5.0.0'
+}
+
+sourceSets {
+  main {
+    withSingleSourceDirectory('source')
+  }
+}
+```
+
 ### groovy-support
 
 Works in tandem with Gradle's built-in `groovy` plugin to help Groovy projects
