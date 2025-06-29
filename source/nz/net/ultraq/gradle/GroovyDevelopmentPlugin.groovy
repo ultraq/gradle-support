@@ -34,6 +34,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.plugins.signing.SigningExtension
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -205,6 +206,9 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	 */
 	private GroovyDevelopmentPlugin publishing() {
 
+		// TODO: The signing, uploading, and automatic releasing, are probably better
+		//       done using one of the existing plugins out there.
+
 		project.pluginManager.withPlugin('maven-publish') {
 			project.pluginManager.apply('signing')
 
@@ -220,30 +224,42 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 							artifact.classifier = 'javadoc'
 						}
 					}
-					project.afterEvaluate {
-						publication.pom { pom ->
-							pom.name.set(project.name)
-							pom.description.set(project.description)
-							pom.url.set("https://github.com/ultraq/${project.rootProject.name}/")
-							pom.licenses { licences ->
-								licences.license { license ->
-									license.name.set('The Apache Software License, Version 2.0')
-									license.url.set('https://www.apache.org/licenses/LICENSE-2.0.txt')
-									license.distribution.set('repo')
-								}
+					publication.pom { pom ->
+						pom.name.set(project.name)
+						pom.description.set(project.description)
+						pom.url.set("https://github.com/ultraq/${project.rootProject.name}/")
+						pom.licenses { licences ->
+							licences.license { license ->
+								license.name.set('The Apache Software License, Version 2.0')
+								license.url.set('https://www.apache.org/licenses/LICENSE-2.0.txt')
+								license.distribution.set('repo')
 							}
-							pom.scm { scm ->
-								scm.connection.set("scm:git:git@github.com:ultraq/${project.rootProject.name}.git")
-								scm.developerConnection.set("scm:git:git@github.com:ultraq/${project.rootProject.name}.git")
-								scm.url.set("https://github.com/ultraq/${project.rootProject.name}")
+						}
+						pom.scm { scm ->
+							scm.connection.set("scm:git:git@github.com:ultraq/${project.rootProject.name}.git")
+							scm.developerConnection.set("scm:git:git@github.com:ultraq/${project.rootProject.name}.git")
+							scm.url.set("https://github.com/ultraq/${project.rootProject.name}")
+						}
+						pom.developers { developers ->
+							developers.developer { developer ->
+								developer.name.set('Emanuel Rabina')
+								developer.email.set('emanuelrabina@gmail.com')
+								developer.url.set('http://www.ultraq.net.nz/')
 							}
-							pom.developers { developers ->
-								developers.developer { developer ->
-									developer.name.set('Emanuel Rabina')
-									developer.email.set('emanuelrabina@gmail.com')
-									developer.url.set('http://www.ultraq.net.nz/')
-								}
-							}
+						}
+					}
+					project.extensions.configure(SigningExtension) { signing ->
+						signing.sign(publication)
+					}
+				}
+				publishing.repositories { repositories ->
+					repositories.maven { maven ->
+						maven.url = project.version.endsWith('SNAPSHOT') ?
+							'https://central.sonatype.com/repository/maven-snapshots/' :
+							'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
+						maven.credentials { credentials ->
+							credentials.username = project.property('sonatypeUsername')
+							credentials.password = project.property('sonatypePassword')
 						}
 					}
 				}
