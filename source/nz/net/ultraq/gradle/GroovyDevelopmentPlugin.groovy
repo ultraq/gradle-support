@@ -183,14 +183,10 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
 				groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
 				groovydocJar.group = 'build'
+				groovydocJar.dependsOn('groovydoc')
 				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
 				groovydocJar.destinationDirectory.set(project.file('build/libs'))
 				groovydocJar.archiveClassifier.set('groovydoc')
-
-				// TODO: Replacement option can maybe be deferred until the Maven publish step?
-				project.pluginManager.withPlugin('distribution') {
-					groovydocJar.archiveClassifier.set('javadoc')
-				}
 			}
 			project.tasks.named('assemble') { assembleTask ->
 				assembleTask.dependsOn('groovydocJar')
@@ -227,7 +223,7 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 					publication.pom { pom ->
 						pom.name.set(project.name)
 						pom.description.set(project.description)
-						pom.url.set("https://github.com/ultraq/${project.rootProject.name}/")
+						pom.url.set("https://github.com/ultraq/${project.rootProject.name}")
 						pom.licenses { licences ->
 							licences.license { license ->
 								license.name.set('The Apache Software License, Version 2.0')
@@ -252,17 +248,17 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 						signing.sign(publication)
 					}
 				}
-				publishing.repositories { repositories ->
-					repositories.maven { maven ->
-						maven.url = project.version.endsWith('SNAPSHOT') ?
-							'https://central.sonatype.com/repository/maven-snapshots/' :
-							'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
-						maven.credentials { credentials ->
-							credentials.username = project.property('sonatypeUsername')
-							credentials.password = project.property('sonatypePassword')
-						}
-					}
-				}
+//				publishing.repositories { repositories ->
+//					repositories.maven { maven ->
+//						maven.url = project.version.endsWith('SNAPSHOT') ?
+//							'https://central.sonatype.com/repository/maven-snapshots/' :
+//							'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
+//						maven.credentials { credentials ->
+//							credentials.username = project.property('sonatypeUsername')
+//							credentials.password = project.property('sonatypePassword')
+//						}
+//					}
+//				}
 			}
 		}
 
