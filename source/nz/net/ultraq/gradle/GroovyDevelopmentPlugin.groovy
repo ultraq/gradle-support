@@ -42,20 +42,13 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
  *   <li>Add {@code MavenCentral} and {@code MavenSnapshot} repositories</li>
  * </ul>
  *
- * <p>If the {@code java} plugin is present, it will:</p>
- * <ul>
- *   <li>Configure {@code source} as the only Java source and resources
- *     directory</li>
- *   <li>Configure {@code test} as the only Java test source and resources
- *     directory</li>
- * </ul>
- *
  * <p>If the {@code groovy} plugin is present, it will:</p>
  * <ul>
  *   <li>Configure {@code source} as the only Groovy source and resources
  *     directory</li>
  *   <li>Configure {@code test} as the only Groovy test source and resources
  *     directory</li>
+ *   <li>Configure all test suites with {@code useJUnitJupiter}</li>
  * </ul>
  *
  * <p>If the {@code codenarc} plugin is present, it will:</p>
@@ -80,22 +73,34 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
  */
 class GroovyDevelopmentPlugin implements Plugin<Project> {
 
+	private Project project
+
 	@Override
 	void apply(Project project) {
 
-		configureRepositories(project)
-		configureDirectories(project)
-		configureResources(project)
-		configureGroovydocs(project)
-		configureVerification(project)
-		configureDistribution(project)
+		configure(project)
+			.repositories()
+			.directories()
+			.resources()
+			.groovydocs()
+			.verification()
+			.distribution()
+	}
+
+	/**
+	 * The entry point into the fluent API for configuring the project.
+	 */
+	private GroovyDevelopmentPlugin configure(Project project) {
+
+		this.project = project
+		return this
 	}
 
 	/**
 	 * Set {@code source} and {@code test} as the combined source & resource
 	 * directories for their respective sourcesets.
 	 */
-	private void configureDirectories(Project project) {
+	private GroovyDevelopmentPlugin directories() {
 
 		project.pluginManager.withPlugin('groovy') {
 			project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
@@ -119,12 +124,14 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 				}
 			}
 		}
+
+		return this
 	}
 
 	/**
 	 * Configure distribution/bundling plugins if present.
 	 */
-	private void configureDistribution(Project project) {
+	private GroovyDevelopmentPlugin distribution() {
 
 		project.pluginManager.withPlugin('distribution') {
 			project.extensions.getByType(DistributionContainer).named('main') { main ->
@@ -150,6 +157,8 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 				distZip.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 			}
 		}
+
+		return this
 	}
 
 	/**
@@ -157,7 +166,7 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	 * when referencing core libraries.  Add a {@code groovydocJar} task to create
 	 * a documentation artifact, replacing the {@code javadoc} one.
 	 */
-	private void configureGroovydocs(Project project) {
+	private GroovyDevelopmentPlugin groovydocs() {
 
 		project.pluginManager.withPlugin('groovy') {
 			project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
@@ -181,25 +190,28 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 				assembleTask.dependsOn('groovydocJar')
 			}
 		}
+
+		return this
 	}
 
 	/**
 	 * Adds the Maven Central and Maven Central Snapshots repositories to the
 	 * project configuration.
 	 */
-	private void configureRepositories(Project project) {
+	private GroovyDevelopmentPlugin repositories() {
 
 		project.repositories.mavenCentral()
 		project.repositories.maven {
 			url = 'https://central.sonatype.com/repository/maven-snapshots/'
 		}
+		return this
 	}
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy
 	 * extension module manifest file, to the Gradle project version.
 	 */
-	private void configureResources(Project project) {
+	private GroovyDevelopmentPlugin resources() {
 
 		project.pluginManager.withPlugin('groovy') {
 			project.tasks.named('processResources', ProcessResources) { processResources ->
@@ -208,12 +220,13 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 				}
 			}
 		}
+		return this
 	}
 
 	/**
 	 * Configure verification plugins if present.
 	 */
-	private void configureVerification(Project project) {
+	private GroovyDevelopmentPlugin verification() {
 
 		project.pluginManager.withPlugin('groovy') {
 			project.extensions.configure(TestingExtension) { testing ->
@@ -236,5 +249,7 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 				reportTask.reports.html.required.set(true)
 			}
 		}
+
+		return this
 	}
 }
