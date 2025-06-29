@@ -21,6 +21,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
@@ -29,6 +30,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
 /**
@@ -212,6 +214,14 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	 * Configure verification plugins if present.
 	 */
 	private void configureVerification(Project project) {
+
+		project.pluginManager.withPlugin('groovy') {
+			project.extensions.configure(TestingExtension) { testing ->
+				testing.suites.configureEach { JvmTestSuite test ->
+					test.useJUnitJupiter()
+				}
+			}
+		}
 
 		project.pluginManager.withPlugin('codenarc') {
 			var sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
