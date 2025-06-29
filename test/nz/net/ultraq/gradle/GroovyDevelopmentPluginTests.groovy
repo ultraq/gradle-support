@@ -66,6 +66,7 @@ class GroovyDevelopmentPluginTests extends Specification {
 					id 'codenarc'
 					id 'jacoco'
 					id 'distribution'
+					id 'maven-publish'
 					id 'idea'
           id 'nz.net.ultraq.gradle.groovy-development'
         }
