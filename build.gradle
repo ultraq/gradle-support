@@ -53,47 +53,9 @@ gradlePlugin {
 	website = 'https://github.com/ultraq/gradle-support'
 	vcsUrl = 'https://github.com/ultraq/gradle-support.git'
 	plugins {
-		useMavenCentralRepositoriesPlugin {
-			id = 'nz.net.ultraq.gradle.use-maven-central-repositories'
-			implementationClass = 'nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin'
-			displayName = 'Use Maven Central and Snapshot repositories'
-			description = '''
-				Applies the Maven Central and Maven Central Snapshots repositories to the
-				project configuration.  That's it 😅  Can be used either in `settings.gradle`
-				to apply across all projects, or `build.gradle` to apply to a single project.
-			'''
-			tags = ['maven', 'repository']
-		}
-		singleSourceDirectoryPlugin {
-			id = 'nz.net.ultraq.gradle.single-source-directory'
-			implementationClass = 'nz.net.ultraq.gradle.SingleSourceDirectoryPlugin'
-			displayName = ''
-			description = '''
-				Make the source and resources directories be the same directory.  This is to
-				help those that prefer having source code and assets co-located so you're not
-				jumping around the file tree looking for related items.
-			'''
-			tags = ['sources', 'resources']
-		}
-		groovySupportPlugin {
-			id = 'nz.net.ultraq.gradle.groovy-support'
-			implementationClass = 'nz.net.ultraq.gradle.GroovySupportPlugin'
-			displayName = 'Groovy artifact configuration for Maven Central and other services'
-			description = '''
-				Works in tandem with Gradle's built-in `groovy` plugin to help Groovy
-				projects achieve configuration parity with Java projects.  Mainly, by
-				allowing Groovy outputs/artifacts to participate in all the usual lifecycle
-				tasks.
-			'''
-			tags = ['groovy', 'groovydoc']
-		}
-		developmentPlugin {
-			id = 'nz.net.ultraq.gradle.development-plugin'
-			implementationClass = 'nz.net.ultraq.gradle.DevelopmentPlugin'
-		}
-		publishingPlugin {
-			id = 'nz.net.ultraq.gradle.publishing-plugin'
-			implementationClass = 'nz.net.ultraq.gradle.PublishingPlugin'
+		groovyDevelopmentPlugin {
+			id = 'nz.net.ultraq.gradle.groovy-development'
+			implementationClass = 'nz.net.ultraq.gradle.GroovyDevelopmentPlugin'
 		}
 	}
 }

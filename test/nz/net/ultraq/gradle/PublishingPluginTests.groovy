@@ -18,6 +18,7 @@ package nz.net.ultraq.gradle
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -26,6 +27,7 @@ import spock.lang.TempDir
  *
  * @author Emanuel Rabina
  */
+@Ignore
 class PublishingPluginTests extends Specification {
 
 	@TempDir

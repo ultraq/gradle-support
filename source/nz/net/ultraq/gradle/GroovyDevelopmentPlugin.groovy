@@ -22,8 +22,12 @@ import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.quality.CodeNarcExtension
+import org.gradle.api.tasks.GroovySourceDirectorySet
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -72,40 +76,44 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
  *
  * @author Emanuel Rabina
  */
-class DevelopmentPlugin implements Plugin<Project> {
-
-	protected List<String> sourceDirectories = ['source']
-	protected List<String> testDirectories = ['test']
+class GroovyDevelopmentPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
 
+		configureRepositories(project)
 		configureDirectories(project)
+		configureResources(project)
 		configureGroovydocs(project)
 		configureVerification(project)
 		configureDistribution(project)
 	}
 
 	/**
-	 * Adjust source and build directories, and any standard Gradle tasks that
-	 * rely on them.
+	 * Set {@code source} and {@code test} as the combined source & resource
+	 * directories for their respective sourcesets.
 	 */
 	private void configureDirectories(Project project) {
 
-		project.pluginManager.withPlugin('java') { javaPlugin ->
-			project.pluginManager.withPlugin('idea') { ideaPlugin ->
-				project.extensions.getByType(IdeaModel).module { module ->
-					module.outputDir = project.file('build/classes/java/main')
-					module.testOutputDir = project.file('build/classes/test')
+		project.pluginManager.withPlugin('groovy') {
+			project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
+				[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs =
+					[project.file(sourceSet.name == 'main' ? 'source' : 'test')]
+				sourceSet.resources.exclude('**/*.java', '**/*.groovy')
+			}
+
+			project.afterEvaluate {
+				if (project.tasks.names.contains('sourcesJar')) {
+					project.tasks.named('sourcesJar', Jar) { jar ->
+						jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+					}
 				}
 			}
-		}
 
-		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-			project.pluginManager.withPlugin('idea') { ideaPlugin ->
-				project.extensions.getByType(IdeaModel).module { module ->
-					module.outputDir = project.file('build/classes/groovy/main')
-					module.testOutputDir = project.file('build/classes/test')
+			project.pluginManager.withPlugin('idea') {
+				project.extensions.configure(IdeaModel) { model ->
+					model.module.outputDir = project.file('build/classes/groovy/main')
+					model.module.testOutputDir = project.file('build/classes/test')
 				}
 			}
 		}
@@ -116,22 +124,16 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureDistribution(Project project) {
 
-		project.pluginManager.withPlugin('distribution') { distributionPlugin ->
+		project.pluginManager.withPlugin('distribution') {
 			project.extensions.getByType(DistributionContainer).named('main') { main ->
 				main.contents { spec ->
-					project.tasks.named('jar').configure { jar ->
-						spec.from(jar.outputs.files)
-					}
-					project.tasks.named('javadoc').configure { javadoc ->
-						spec.from(javadoc).into('javadoc')
-					}
-					project.tasks.named('groovydoc', Groovydoc).configure { groovydoc ->
-						spec.from(groovydoc.destinationDir).into('groovydoc')
-					}
-					project.configurations.named('runtimeClasspath').configure { runtimeClasspath ->
-						spec.from(runtimeClasspath).into('libraries')
-					}
-					spec.from(sourceDirectories).into('source')
+					spec.from(project.tasks.named('jar').get().outputs.files)
+					spec.from(project.tasks.named('groovydoc', Groovydoc).get())
+						.into('groovydoc')
+					spec.from(project.configurations.named('runtimeClasspath').get())
+						.into('libraries')
+					spec.from('source')
+						.into('source')
 					spec.from(project.rootDir)
 						.include('CHANGELOG.md')
 						.include('LICENSE.txt')
@@ -142,10 +144,7 @@ class DevelopmentPlugin implements Plugin<Project> {
 				distTar.enabled = false
 			}
 			project.tasks.named('distZip', Zip).configure { distZip ->
-				distZip.dependsOn('javadoc')
-				project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-					distZip.dependsOn('groovydoc')
-				}
+				distZip.dependsOn('groovydoc')
 				distZip.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 			}
 		}
@@ -158,10 +157,53 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureGroovydocs(Project project) {
 
-		project.pluginManager.withPlugin('groovy') { groovyPlugin ->
-			project.tasks.named('groovydoc', Groovydoc).configure { groovydoc ->
+		project.pluginManager.withPlugin('groovy') {
+			project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
 				groovydoc.link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.', 'javax.', 'org.xml.')
 				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
+			}
+
+			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+				groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
+				groovydocJar.group = 'build'
+				groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
+				groovydocJar.destinationDirectory.set(project.file('build/libs'))
+				groovydocJar.archiveClassifier.set('groovydoc')
+
+				// TODO: Replacement option can maybe be deferred until the Maven publish step?
+				project.pluginManager.withPlugin('distribution') {
+					groovydocJar.archiveClassifier.set('javadoc')
+				}
+			}
+			project.tasks.named('assemble') { assembleTask ->
+				assembleTask.dependsOn('groovydocJar')
+			}
+		}
+	}
+
+	/**
+	 * Adds the Maven Central and Maven Central Snapshots repositories to the
+	 * project configuration.
+	 */
+	private void configureRepositories(Project project) {
+
+		project.repositories.mavenCentral()
+		project.repositories.maven {
+			url = 'https://central.sonatype.com/repository/maven-snapshots/'
+		}
+	}
+
+	/**
+	 * Expands the {@code moduleVersion} property reference in the Groovy
+	 * extension module manifest file, to the Gradle project version.
+	 */
+	private void configureResources(Project project) {
+
+		project.pluginManager.withPlugin('groovy') {
+			project.tasks.named('processResources', ProcessResources) { processResources ->
+				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
+					file.expand([moduleVersion: project.version])
+				}
 			}
 		}
 	}
@@ -171,12 +213,14 @@ class DevelopmentPlugin implements Plugin<Project> {
 	 */
 	private void configureVerification(Project project) {
 
-		project.pluginManager.withPlugin('codenarc') { codeNarcPlugin ->
+		project.pluginManager.withPlugin('codenarc') {
 			var sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
-			project.extensions.getByType(CodeNarcExtension).config = project.resources.text.fromString(sharedConfig)
+			project.extensions.configure(CodeNarcExtension) { codenarc ->
+				codenarc.config = project.resources.text.fromString(sharedConfig)
+			}
 		}
 
-		project.pluginManager.withPlugin('jacoco') { jacocoPlugin ->
+		project.pluginManager.withPlugin('jacoco') {
 			project.tasks.withType(JacocoReport).configureEach { reportTask ->
 				reportTask.reports.xml.required.set(true)
 				reportTask.reports.html.required.set(true)

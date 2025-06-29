@@ -22,12 +22,11 @@ import spock.lang.Specification
 import spock.lang.TempDir
 
 /**
- * Tests for the {@link SingleSourceDirectoryPlugin} and the methods that it
- * applies.
+ * Tests to make sure the development plugin can run.
  *
  * @author Emanuel Rabina
  */
-class SingleSourceDirectoryPluginTests extends Specification {
+class GroovyDevelopmentPluginTests extends Specification {
 
 	@TempDir
 	File testProjectDir
@@ -45,7 +44,7 @@ class SingleSourceDirectoryPluginTests extends Specification {
 		given:
 			buildFile << """
 				plugins {
-          id 'nz.net.ultraq.gradle.single-source-directory'
+          id 'nz.net.ultraq.gradle.groovy-development'
         }
         """
 		when:
@@ -59,18 +58,16 @@ class SingleSourceDirectoryPluginTests extends Specification {
 			buildResult.task(':help').outcome == TaskOutcome.SUCCESS
 	}
 
-	def "Configures a source set"() {
+	def "Configures everything with a stacked project"() {
 		given:
 			buildFile << """
 				plugins {
-				  id 'groovy'
-          id 'nz.net.ultraq.gradle.single-source-directory'
-        }
-        
-        sourceSets {
-          main {
-            withSingleSourceDirectory('source')
-          }
+					id 'groovy'
+					id 'codenarc'
+					id 'jacoco'
+					id 'distribution'
+					id 'idea'
+          id 'nz.net.ultraq.gradle.groovy-development'
         }
         """
 		when:
@@ -78,9 +75,9 @@ class SingleSourceDirectoryPluginTests extends Specification {
 				.withProjectDir(testProjectDir)
 				.withPluginClasspath()
 				.withDebug(true)
-				.withArguments('help')
+				.withArguments('clean')
 				.build()
 		then:
-			buildResult.task(':help').outcome == TaskOutcome.SUCCESS
+			buildResult.task(':clean').outcome == TaskOutcome.UP_TO_DATE
 	}
 }
