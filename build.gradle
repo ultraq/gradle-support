@@ -17,6 +17,7 @@
 plugins {
 	id 'java-gradle-plugin'
 	id 'groovy'
+	id 'jacoco'
 	id 'maven-publish'
 }
 
@@ -57,6 +58,10 @@ gradlePlugin {
 			id = 'nz.net.ultraq.gradle.groovy-development'
 			implementationClass = 'nz.net.ultraq.gradle.GroovyDevelopmentPlugin'
 		}
+		fluentConfigurationPlugin {
+			id = 'nz.net.ultraq.gradle.fluent-configuration'
+			implementationClass = 'nz.net.ultraq.gradle.FluentConfigurationPlugin'
+		}
 	}
 }
 
@@ -67,6 +72,14 @@ testing {
 		}
 	}
 }
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
 
 publishing {
 	repositories {

@@ -14,3 +14,8 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
       - run: ./gradlew build
+      - run: ./gradlew jacocoTestReport
+      - uses: codecov/codecov-action@v4
+        with:
+          directory: build/reports/jacoco/
+          token: ${{ secrets.CODECOV_TOKEN }}
