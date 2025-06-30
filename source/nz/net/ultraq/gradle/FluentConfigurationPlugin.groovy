@@ -23,6 +23,7 @@ import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
 
 import groovy.transform.TupleConstructor
@@ -86,7 +87,22 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 		class GroovyProjectConfig {
 
 			GroovyProjectConfig() {
-				project.pluginManager.apply('groovy')
+				if (!project.pluginManager.hasPlugin('groovy')) {
+					throw new IllegalStateException('Groovy plugin not applied')
+				}
+			}
+
+			/**
+			 * Expands the {@code moduleVersion} property reference in the Groovy
+			 * extension module manifest file, to the Gradle project version.
+			 */
+			GroovyProjectConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+				project.tasks.named('processResources', ProcessResources) { processResources ->
+					processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
+						file.expand([(propertyName): value])
+					}
+				}
+				return this
 			}
 
 			/**
