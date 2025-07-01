@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Adds a {@code configure} script block to a {@code build.gradle} file, within
- * which a fluent API can be used to configure a project.
+ * For any part of the API that can begin a repositories chain.
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPlugin implements Plugin<Project> {
+interface RepositoriesEntry {
 
-	@Override
-	void apply(Project project) {
-
-		project.extensions.create('configure', FluentConfigurationPluginExtension, project)
-	}
+	/**
+	 * Starts a fluent chain for configuring repositories.
+	 */
+	RepositoriesConfig repositories()
 }

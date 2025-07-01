@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Adds a {@code configure} script block to a {@code build.gradle} file, within
- * which a fluent API can be used to configure a project.
+ * Configuration interface for repositories.
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPlugin implements Plugin<Project> {
+interface RepositoriesConfig extends TestingEntry {
 
-	@Override
-	void apply(Project project) {
-
-		project.extensions.create('configure', FluentConfigurationPluginExtension, project)
-	}
+	/**
+	 * Adds the Maven Central and Maven Central Snapshots repositories to the
+	 * project.
+	 */
+	RepositoriesConfig useMavenCentralAndSnapshots()
 }

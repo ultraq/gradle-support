@@ -16,11 +16,10 @@
 
 package nz.net.ultraq.gradle
 
-import nz.net.ultraq.gradle.FluentConfigurationPlugin.FluentConfigurationExtension
-
 import org.gradle.api.Project
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -31,17 +30,19 @@ import spock.lang.Specification
 class FluentConfigurationPluginIntegrationTests extends Specification {
 
 	Project project
-	FluentConfigurationExtension configure
+	FluentConfigurationPluginExtension configure
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
+		project.pluginManager.apply('groovy')
 		project.pluginManager.apply('nz.net.ultraq.gradle.fluent-configuration')
-		configure = project.extensions.getByType(FluentConfigurationExtension)
+		configure = project.extensions.getByType(FluentConfigurationPluginExtension)
 	}
 
 	def "Configures a Groovy project with the Java version"() {
 		when:
-			configure.groovyProject().useJavaVersion(17)
+			configure.groovyProject()
+				.useJavaVersion(17)
 		then:
 			project.pluginManager.hasPlugin('groovy')
 			project.java.toolchain.languageVersion.get() == JavaLanguageVersion.of(17)
@@ -50,9 +51,9 @@ class FluentConfigurationPluginIntegrationTests extends Specification {
 	def "Configures a combined source and resource directory"() {
 		when:
 			configure.groovyProject()
-			configure.sourceSets()
-				.withMainSourceDirectory('source')
-				.withTestSourceDirectory('test')
+				.sourceSets()
+					.withMainSourceDirectory('source')
+					.withTestSourceDirectory('test')
 		then:
 			project.sourceSets.main.java.srcDirs == [project.file('source')] as Set
 			project.sourceSets.test.java.srcDirs == [project.file('test')] as Set
@@ -61,10 +62,22 @@ class FluentConfigurationPluginIntegrationTests extends Specification {
 	def "Configures Maven Central and Snapshot repositories"() {
 		when:
 			configure.groovyProject()
-			configure.repositories().useMavenCentralAndSnapshots()
+				.repositories()
+					.useMavenCentralAndSnapshots()
 		then:
 			project.repositories.size() == 2
 			project.repositories.named('MavenRepo').get() != null
 			project.repositories.named('Maven Central Snapshots').get() != null
+	}
+
+	@Ignore("Can't figure out what changes to assert on")
+	def "Configures JUnit Jupiter for testing"() {
+		when:
+			configure.groovyProject()
+				.testing()
+					.useJUnitJupiter()
+		then:
+			project.testing.suites.test.dependencies
+				.find { it.group == 'org.junit.jupiter' && it.name == 'junit-jupiter' } != null
 	}
 }

@@ -63,18 +63,19 @@ class FluentConfigurationPluginFunctionalTests extends Specification {
 		given:
 			buildFile << """
 				plugins {
+					id 'groovy'
 					id 'nz.net.ultraq.gradle.fluent-configuration'
 				}
 				configure {
 				  groovyProject()
 				    .useJavaVersion(17)
-				  sourceSets()
-				    .withMainSourceDirectory('source')
-				    .withTestSourceDirectory('test')
-				  repositories()
-				    .useMavenCentralAndSnapshots()
-				  testing()
-				    .useJUnitJupiter()
+					  .sourceSets()
+					    .withMainSourceDirectory('source')
+					    .withTestSourceDirectory('test')
+					  .repositories()
+					    .useMavenCentralAndSnapshots()
+					  .testing()
+					    .useJUnitJupiter()
 				}
 				"""
 		when:

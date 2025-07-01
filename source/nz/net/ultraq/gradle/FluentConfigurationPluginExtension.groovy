@@ -1,0 +1,148 @@
+/*
+ * Copyright 2025, Emanuel Rabina (http://www.ultraq.net.nz/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package nz.net.ultraq.gradle
+
+import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
+import nz.net.ultraq.gradle.fluent.RepositoriesConfig
+import nz.net.ultraq.gradle.fluent.SourceSetsConfig
+import nz.net.ultraq.gradle.fluent.TestingConfig
+
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.tasks.GroovySourceDirectorySet
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.testing.base.TestingExtension
+
+import groovy.transform.TupleConstructor
+
+/**
+ * The {@code configure} script block and the entry-point methods for the fluent
+ * API.
+ *
+ * @author Emanuel Rabina
+ */
+@TupleConstructor(defaults = false)
+abstract class FluentConfigurationPluginExtension {
+
+	final Project project
+
+	/**
+	 * Starts a fluent chain for configuring a Groovy project.
+	 */
+	GroovyProjectConfig groovyProject() {
+		return new DefaultGroovyProjectConfig()
+	}
+
+	private class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceSetsConfig, RepositoriesConfig, TestingConfig {
+
+		DefaultGroovyProjectConfig() {
+			if (!project.pluginManager.hasPlugin('groovy')) {
+				throw new IllegalStateException('Groovy plugin not applied')
+			}
+		}
+
+		/**
+		 * Sets a single source directory for both source and resource files in
+		 * the named sourceset.
+		 */
+		private SourceSetsConfig configureSourceDirectoryForSourceSet(Object path, String name) {
+			project.pluginManager.withPlugin('java') {
+				project.extensions.configure(SourceSetContainer) { sourceSets ->
+					sourceSets.named(name) { sourceSet ->
+						var sourceDirectorySets = [sourceSet.java, sourceSet.resources]
+						if (project.pluginManager.hasPlugin('groovy')) {
+							sourceDirectorySets << sourceSet.extensions.getByType(GroovySourceDirectorySet)
+						}
+						sourceDirectorySets*.srcDirs = [project.file(path)]
+						sourceSet.resources.exclude('**/*.java', '**/*.groovy')
+					}
+				}
+			}
+			return this
+		}
+
+		@Override
+		GroovyProjectConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+			project.tasks.named('processResources', ProcessResources) { processResources ->
+				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
+					file.expand([(propertyName): value])
+				}
+			}
+			return this
+		}
+
+		@Override
+		RepositoriesConfig repositories() {
+			return this
+		}
+
+		@Override
+		SourceSetsConfig sourceSets() {
+			return this
+		}
+
+		@Override
+		TestingConfig testing() {
+			return this
+		}
+
+		@Override
+		RepositoriesConfig useMavenCentralAndSnapshots() {
+			project.repositories {
+				mavenCentral()
+				maven {
+					name = 'Maven Central Snapshots'
+					url = 'https://central.sonatype.com/repository/maven-snapshots/'
+				}
+			}
+			return this
+		}
+
+		@Override
+		GroovyProjectConfig useJavaVersion(int version) {
+			project.extensions.configure(JavaPluginExtension) { java ->
+				java.toolchain.languageVersion.set(JavaLanguageVersion.of(version))
+			}
+			return this
+		}
+
+		@Override
+		TestingConfig useJUnitJupiter() {
+			project.pluginManager.withPlugin('jvm-test-suite') {
+				project.extensions.configure(TestingExtension) { testing ->
+					testing.suites.configureEach { JvmTestSuite test ->
+						test.useJUnitJupiter()
+					}
+				}
+			}
+			return this
+		}
+
+		@Override
+		SourceSetsConfig withMainSourceDirectory(Object path) {
+			return configureSourceDirectoryForSourceSet(path, 'main')
+		}
+
+		@Override
+		SourceSetsConfig withTestSourceDirectory(Object path) {
+			return configureSourceDirectoryForSourceSet(path, 'test')
+		}
+	}
+}

@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Adds a {@code configure} script block to a {@code build.gradle} file, within
- * which a fluent API can be used to configure a project.
+ * Configuration interface for sourcesets.
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPlugin implements Plugin<Project> {
+interface SourceSetsConfig extends RepositoriesEntry, TestingEntry {
 
-	@Override
-	void apply(Project project) {
+	/**
+	 * Sets a single source directory for both source and resource files in
+	 * the {@code main} sourceset.
+	 */
+	SourceSetsConfig withMainSourceDirectory(Object path)
 
-		project.extensions.create('configure', FluentConfigurationPluginExtension, project)
-	}
+	/**
+	 * Sets a single source directory for both source and resource files in
+	 * the {@code test} sourceset.
+	 */
+	SourceSetsConfig withTestSourceDirectory(Object path)
 }

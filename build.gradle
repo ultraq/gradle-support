@@ -22,7 +22,7 @@ plugins {
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '5.0.0-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 group = 'nz.net.ultraq.gradle'
 
 sourceSets {
@@ -61,6 +61,12 @@ gradlePlugin {
 		fluentConfigurationPlugin {
 			id = 'nz.net.ultraq.gradle.fluent-configuration'
 			implementationClass = 'nz.net.ultraq.gradle.FluentConfigurationPlugin'
+			displayName = 'A fluent API for configuring projects'
+			description = '''
+				Adds a `configure` script block to a `build.gradle` file, within
+				which a fluent API can be used to configure a project.
+			'''
+			tags = ['fluent', 'configuration']
 		}
 	}
 }
@@ -79,7 +85,6 @@ jacocoTestReport {
 		html.required = true
 	}
 }
-
 
 publishing {
 	repositories {
