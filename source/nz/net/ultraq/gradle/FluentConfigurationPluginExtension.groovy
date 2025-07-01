@@ -22,10 +22,12 @@ import nz.net.ultraq.gradle.fluent.SourceSetsConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import org.gradle.api.Project
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
@@ -63,16 +65,11 @@ abstract class FluentConfigurationPluginExtension {
 		 * the named sourceset.
 		 */
 		private SourceSetsConfig configureSourceDirectoryForSourceSet(Object path, String name) {
-			project.pluginManager.withPlugin('java') {
-				project.extensions.configure(SourceSetContainer) { sourceSets ->
-					sourceSets.named(name) { sourceSet ->
-						var sourceDirectorySets = [sourceSet.java, sourceSet.resources]
-						if (project.pluginManager.hasPlugin('groovy')) {
-							sourceDirectorySets << sourceSet.extensions.getByType(GroovySourceDirectorySet)
-						}
-						sourceDirectorySets*.srcDirs = [project.file(path)]
-						sourceSet.resources.exclude('**/*.java', '**/*.groovy')
-					}
+			project.extensions.configure(SourceSetContainer) { sourceSets ->
+				sourceSets.named(name) { sourceSet ->
+					[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs =
+						[project.file(path)]
+					sourceSet.resources.exclude('**/*.java', '**/*.groovy')
 				}
 			}
 			return this
@@ -105,12 +102,10 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		RepositoriesConfig useMavenCentralAndSnapshots() {
-			project.repositories {
-				mavenCentral()
-				maven {
-					name = 'Maven Central Snapshots'
-					url = 'https://central.sonatype.com/repository/maven-snapshots/'
-				}
+			project.repositories.mavenCentral()
+			project.repositories.maven {
+				name = 'Maven Central Snapshots'
+				url = 'https://central.sonatype.com/repository/maven-snapshots/'
 			}
 			return this
 		}
@@ -125,11 +120,9 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		TestingConfig useJUnitJupiter() {
-			project.pluginManager.withPlugin('jvm-test-suite') {
-				project.extensions.configure(TestingExtension) { testing ->
-					testing.suites.configureEach { JvmTestSuite test ->
-						test.useJUnitJupiter()
-					}
+			project.extensions.configure(TestingExtension) { testing ->
+				testing.suites.configureEach { JvmTestSuite test ->
+					test.useJUnitJupiter()
 				}
 			}
 			return this
@@ -137,6 +130,13 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		SourceSetsConfig withMainSourceDirectory(Object path) {
+			project.afterEvaluate {
+				if (project.tasks.names.contains('sourcesJar')) {
+					project.tasks.named('sourcesJar', Jar) { jar ->
+						jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+					}
+				}
+			}
 			return configureSourceDirectoryForSourceSet(path, 'main')
 		}
 
