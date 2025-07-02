@@ -16,6 +16,8 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.artifacts.dsl.DependencyHandler
+
 /**
  * Configuration interface for testing.
  *
@@ -32,7 +34,12 @@ interface TestingConfig {
 	TestingConfig useJUnitJupiter()
 
 	/**
+	 * Configure the testing dependencies for the project.
+	 */
+	TestingConfig withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure)
+
+	/**
 	 * Set the directory in which test code and assets will reside.
 	 */
-	TestingConfig withTestDirectoryAt(Object path)
+	TestingConfig withTestDirectory(Object path)
 }

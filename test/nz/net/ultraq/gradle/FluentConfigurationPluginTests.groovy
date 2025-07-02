@@ -51,9 +51,9 @@ class FluentConfigurationPluginTests extends Specification {
 		when:
 			configure.createGroovyProject()
 				.configureSource()
-					.withSourceDirectoryAt('source')
+					.withSourceDirectory('source')
 				.configureTesting()
-					.withTestDirectoryAt('test')
+					.withTestDirectory('test')
 		then:
 			project.sourceSets.main.java.srcDirs == [project.file('source')] as Set
 			project.sourceSets.test.java.srcDirs == [project.file('test')] as Set
@@ -74,10 +74,27 @@ class FluentConfigurationPluginTests extends Specification {
 		when:
 			configure.createGroovyProject()
 				.configureTesting()
-					.withTestDirectoryAt('test')
+					.withTestDirectory('test')
 					.useJUnitJupiter()
 		then:
 			project.testing.suites.test.dependencies
 				.find { it.group == 'org.junit.jupiter' && it.name == 'junit-jupiter' } != null
+	}
+
+	def "Adds dependencies through their respective methods"() {
+		when:
+			configure.createGroovyProject()
+				.withDependencies {
+					implementation 'org.apache.groovy:groovy:4.0.27'
+				}
+				.configureTesting()
+					.withTestDependencies {
+						testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+					}
+		then:
+			project.configurations.named('implementation').get().dependencies
+				.find { it.group == 'org.apache.groovy' && it.name == 'groovy' } != null
+			project.configurations.named('testImplementation').get().dependencies
+				.find { it.group == 'org.spockframework' && it.name == 'spock-core' } != null
 	}
 }

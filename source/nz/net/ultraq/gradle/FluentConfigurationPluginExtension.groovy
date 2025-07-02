@@ -21,6 +21,7 @@ import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
@@ -114,6 +115,13 @@ abstract class FluentConfigurationPluginExtension {
 			return this
 		}
 
+		@Override
+		GroovyProjectConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
+
+			project.dependencies(configure)
+			return this
+		}
+
 		/**
 		 * Sets a single source directory for both source and resource files in
 		 * the named sourceset.
@@ -130,7 +138,7 @@ abstract class FluentConfigurationPluginExtension {
 		}
 
 		@Override
-		SourceConfig withSourceDirectoryAt(Object path) {
+		SourceConfig withSourceDirectory(Object path) {
 
 			withDirectoryForSourceSetAt(path, 'main')
 			project.afterEvaluate {
@@ -144,7 +152,14 @@ abstract class FluentConfigurationPluginExtension {
 		}
 
 		@Override
-		TestingConfig withTestDirectoryAt(Object path) {
+		TestingConfig withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
+
+			project.dependencies(configure)
+			return this
+		}
+
+		@Override
+		TestingConfig withTestDirectory(Object path) {
 
 			withDirectoryForSourceSetAt(path, 'test')
 			return this

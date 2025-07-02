@@ -39,5 +39,5 @@ interface SourceConfig extends TestingEntry {
 	 * Start configuration of the source code, ie: {@code main} source set, by
 	 * setting the directory in which source code and assets will reside.
 	 */
-	SourceConfig withSourceDirectoryAt(Object path)
+	SourceConfig withSourceDirectory(Object path)
 }
