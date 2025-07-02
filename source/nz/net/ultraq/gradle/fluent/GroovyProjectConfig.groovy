@@ -21,22 +21,16 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectConfig extends SourceSetsEntry, RepositoriesEntry, TestingEntry {
-
-	/**
-	 * Expands the {@code moduleVersion} property reference in the Groovy
-	 * extension module manifest file to the Gradle project version.
-	 */
-	GroovyProjectConfig expandExtensionModuleVersion()
-
-	/**
-	 * Expands the given property reference in the Groovy extension module
-	 * manifest file to the given value.
-	 */
-	GroovyProjectConfig expandExtensionModuleVersion(String propertyName, String value)
+interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 
 	/**
 	 * Sets the version of Java to use in the toolchain configuration.
 	 */
 	GroovyProjectConfig useJavaVersion(int version)
+
+	/**
+	 * Adds the Maven Central and Maven Central Snapshots repositories to the
+	 * project.
+	 */
+	GroovyProjectConfig useMavenCentralAndSnapshots()
 }

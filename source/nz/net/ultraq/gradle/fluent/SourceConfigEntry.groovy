@@ -17,21 +17,14 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * Configuration interface for sourcesets.
+ * For any part of the API that can begin a sourcesets chain.
  *
  * @author Emanuel Rabina
  */
-interface SourceSetsConfig extends RepositoriesEntry, TestingEntry {
+interface SourceConfigEntry {
 
 	/**
-	 * Sets a single source directory for both source and resource files in
-	 * the {@code main} sourceset.
+	 * Start configuration of source code -related things.
 	 */
-	SourceSetsConfig withMainSourceDirectory(Object path)
-
-	/**
-	 * Sets a single source directory for both source and resource files in
-	 * the {@code test} sourceset.
-	 */
-	SourceSetsConfig withTestSourceDirectory(Object path)
+	SourceConfig configureSource()
 }

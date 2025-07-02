@@ -17,8 +17,7 @@
 package nz.net.ultraq.gradle
 
 import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
-import nz.net.ultraq.gradle.fluent.RepositoriesConfig
-import nz.net.ultraq.gradle.fluent.SourceSetsConfig
+import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import org.gradle.api.Project
@@ -46,37 +45,24 @@ abstract class FluentConfigurationPluginExtension {
 	final Project project
 
 	/**
-	 * Starts a fluent chain for configuring a Groovy project.
+	 * Starts a fluent chain for configuring a Groovy project.  This will apply
+	 * the {@code groovy} plugin.
 	 */
-	GroovyProjectConfig groovyProject() {
+	GroovyProjectConfig createGroovyProject() {
+
 		return new DefaultGroovyProjectConfig()
 	}
 
-	private class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceSetsConfig, RepositoriesConfig, TestingConfig {
+	private class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, TestingConfig {
 
 		DefaultGroovyProjectConfig() {
-			if (!project.pluginManager.hasPlugin('groovy')) {
-				throw new IllegalStateException('Groovy plugin not applied')
-			}
-		}
 
-		/**
-		 * Sets a single source directory for both source and resource files in
-		 * the named sourceset.
-		 */
-		private SourceSetsConfig configureSourceDirectoryForSourceSet(Object path, String name) {
-			project.extensions.configure(SourceSetContainer) { sourceSets ->
-				sourceSets.named(name) { sourceSet ->
-					[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs =
-						[project.file(path)]
-					sourceSet.resources.exclude('**/*.java', '**/*.groovy')
-				}
-			}
-			return this
+			project.pluginManager.apply('groovy')
 		}
 
 		@Override
 		GroovyProjectConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+
 			project.tasks.named('processResources', ProcessResources) { processResources ->
 				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
 					file.expand([(propertyName): value])
@@ -86,22 +72,20 @@ abstract class FluentConfigurationPluginExtension {
 		}
 
 		@Override
-		RepositoriesConfig repositories() {
+		SourceConfig configureSource() {
+
 			return this
 		}
 
 		@Override
-		SourceSetsConfig sourceSets() {
+		TestingConfig configureTesting() {
+
 			return this
 		}
 
 		@Override
-		TestingConfig testing() {
-			return this
-		}
+		GroovyProjectConfig useMavenCentralAndSnapshots() {
 
-		@Override
-		RepositoriesConfig useMavenCentralAndSnapshots() {
 			project.repositories.mavenCentral()
 			project.repositories.maven {
 				name = 'Maven Central Snapshots'
@@ -112,6 +96,7 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		GroovyProjectConfig useJavaVersion(int version) {
+
 			project.extensions.configure(JavaPluginExtension) { java ->
 				java.toolchain.languageVersion.set(JavaLanguageVersion.of(version))
 			}
@@ -120,6 +105,7 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		TestingConfig useJUnitJupiter() {
+
 			project.extensions.configure(TestingExtension) { testing ->
 				testing.suites.configureEach { JvmTestSuite test ->
 					test.useJUnitJupiter()
@@ -128,8 +114,25 @@ abstract class FluentConfigurationPluginExtension {
 			return this
 		}
 
+		/**
+		 * Sets a single source directory for both source and resource files in
+		 * the named sourceset.
+		 */
+		private void withDirectoryForSourceSetAt(Object path, String name) {
+
+			project.extensions.configure(SourceSetContainer) { sourceSets ->
+				sourceSets.named(name) { sourceSet ->
+					[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs =
+						[project.file(path)]
+					sourceSet.resources.exclude('**/*.java', '**/*.groovy')
+				}
+			}
+		}
+
 		@Override
-		SourceSetsConfig withMainSourceDirectory(Object path) {
+		SourceConfig withSourceDirectoryAt(Object path) {
+
+			withDirectoryForSourceSetAt(path, 'main')
 			project.afterEvaluate {
 				if (project.tasks.names.contains('sourcesJar')) {
 					project.tasks.named('sourcesJar', Jar) { jar ->
@@ -137,12 +140,14 @@ abstract class FluentConfigurationPluginExtension {
 					}
 				}
 			}
-			return configureSourceDirectoryForSourceSet(path, 'main')
+			return this
 		}
 
 		@Override
-		SourceSetsConfig withTestSourceDirectory(Object path) {
-			return configureSourceDirectoryForSourceSet(path, 'test')
+		TestingConfig withTestDirectoryAt(Object path) {
+
+			withDirectoryForSourceSetAt(path, 'test')
+			return this
 		}
 	}
 }

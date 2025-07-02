@@ -24,7 +24,7 @@ package nz.net.ultraq.gradle.fluent
 interface TestingEntry {
 
 	/**
-	 * Starts a fluent chain for configuring testing.
+	 * Start configuration of test-related things.
 	 */
-	TestingConfig testing()
+	TestingConfig configureTesting()
 }

@@ -17,14 +17,27 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * For any part of the API that can begin a sourcesets chain.
+ * Configuration interface for the project source code.
  *
  * @author Emanuel Rabina
  */
-interface SourceSetsEntry {
+interface SourceConfig extends TestingEntry {
 
 	/**
-	 * Starts a fluent chain for configuring sourcesets.
+	 * Expands the {@code moduleVersion} property reference in the Groovy
+	 * extension module manifest file to the Gradle project version.
 	 */
-	SourceSetsConfig sourceSets()
+	GroovyProjectConfig expandExtensionModuleVersion()
+
+	/**
+	 * Expands the given property reference in the Groovy extension module
+	 * manifest file to the given value.
+	 */
+	GroovyProjectConfig expandExtensionModuleVersion(String propertyName, String value)
+
+	/**
+	 * Start configuration of the source code, ie: {@code main} source set, by
+	 * setting the directory in which source code and assets will reside.
+	 */
+	SourceConfig withSourceDirectoryAt(Object path)
 }

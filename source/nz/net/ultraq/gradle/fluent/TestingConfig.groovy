@@ -30,4 +30,9 @@ interface TestingConfig {
 	 * Configure all test suites to use JUnit Jupiter.
 	 */
 	TestingConfig useJUnitJupiter()
+
+	/**
+	 * Set the directory in which test code and assets will reside.
+	 */
+	TestingConfig withTestDirectoryAt(Object path)
 }

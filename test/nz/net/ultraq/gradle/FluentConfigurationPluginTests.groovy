@@ -27,21 +27,20 @@ import spock.lang.Specification
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPluginIntegrationTests extends Specification {
+class FluentConfigurationPluginTests extends Specification {
 
 	Project project
 	FluentConfigurationPluginExtension configure
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		project.pluginManager.apply('groovy')
 		project.pluginManager.apply('nz.net.ultraq.gradle.fluent-configuration')
 		configure = project.extensions.getByType(FluentConfigurationPluginExtension)
 	}
 
 	def "Configures a Groovy project with the Java version"() {
 		when:
-			configure.groovyProject()
+			configure.createGroovyProject()
 				.useJavaVersion(17)
 		then:
 			project.pluginManager.hasPlugin('groovy')
@@ -50,10 +49,11 @@ class FluentConfigurationPluginIntegrationTests extends Specification {
 
 	def "Configures a combined source and resource directory"() {
 		when:
-			configure.groovyProject()
-				.sourceSets()
-					.withMainSourceDirectory('source')
-					.withTestSourceDirectory('test')
+			configure.createGroovyProject()
+				.configureSource()
+					.withSourceDirectoryAt('source')
+				.configureTesting()
+					.withTestDirectoryAt('test')
 		then:
 			project.sourceSets.main.java.srcDirs == [project.file('source')] as Set
 			project.sourceSets.test.java.srcDirs == [project.file('test')] as Set
@@ -61,9 +61,8 @@ class FluentConfigurationPluginIntegrationTests extends Specification {
 
 	def "Configures Maven Central and Snapshot repositories"() {
 		when:
-			configure.groovyProject()
-				.repositories()
-					.useMavenCentralAndSnapshots()
+			configure.createGroovyProject()
+				.useMavenCentralAndSnapshots()
 		then:
 			project.repositories.size() == 2
 			project.repositories.named('MavenRepo').get() != null
@@ -73,8 +72,9 @@ class FluentConfigurationPluginIntegrationTests extends Specification {
 	@Ignore("Can't figure out what changes to assert on")
 	def "Configures JUnit Jupiter for testing"() {
 		when:
-			configure.groovyProject()
-				.testing()
+			configure.createGroovyProject()
+				.configureTesting()
+					.withTestDirectoryAt('test')
 					.useJUnitJupiter()
 		then:
 			project.testing.suites.test.dependencies
