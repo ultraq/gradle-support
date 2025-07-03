@@ -19,6 +19,7 @@ package nz.net.ultraq.gradle
 import nz.net.ultraq.gradle.FluentConfigurationPlugin.FluentConfigurationPluginExtension
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Ignore
@@ -99,5 +100,18 @@ class FluentConfigurationPluginTests extends Specification {
 				.find { it.group == 'org.apache.groovy' && it.name == 'groovy' } != null
 			project.configurations.named('testImplementation').get().dependencies
 				.find { it.group == 'org.spockframework' && it.name == 'spock-core' } != null
+	}
+
+	def "Adds links to the groovydoc output"() {
+		when:
+			configure.createGroovyProject()
+				.configureSource()
+					.configureGroovydoc() {
+						link('https://docs.oracle.com/en/java/javase/17/docs/api/', 'java')
+					}
+		then:
+			var link = project.tasks.named('groovydoc', Groovydoc).get().links.first()
+			link.url =='https://docs.oracle.com/en/java/javase/17/docs/api/'
+			link.packages == ['java']
 	}
 }

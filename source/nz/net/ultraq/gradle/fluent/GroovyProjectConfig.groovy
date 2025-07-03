@@ -15,6 +15,7 @@
  */
 
 package nz.net.ultraq.gradle.fluent
+
 /**
  * Configuration interface for putting together a Groovy project in Gradle.
  *

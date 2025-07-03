@@ -72,6 +72,9 @@ configure {
         implementation 'org.apache.groovy:groovy:4.0.27'
       }
       .expandExtensionModuleVersion('moduleVersion', version)
+      .configureGroovydoc() {
+        link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.')
+      }
     .configureTesting()
       .withTestDirectory('test')
       .withTestDependencies() {
@@ -113,6 +116,10 @@ Configure the dependencies for the project.
 
 Expands the given property reference in the Groovy extension module manifest
 file to the given value.
+
+##### `configureGroovydoc(Closure config)`
+
+Configure the `groovydoc` task like you would with the `groovydoc` script block.
 
 #### `configureTesting`
 

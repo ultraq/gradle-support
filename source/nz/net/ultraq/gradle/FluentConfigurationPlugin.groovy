@@ -29,6 +29,7 @@ import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
@@ -72,6 +73,13 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			DefaultGroovyProjectConfig() {
 
 				project.pluginManager.apply('groovy')
+			}
+
+			@Override
+			SourceConfig configureGroovydoc(@DelegatesTo(Groovydoc) Closure config) {
+
+				project.tasks.named('groovydoc', Groovydoc, config)
+				return this
 			}
 
 			@Override
