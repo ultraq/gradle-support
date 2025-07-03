@@ -63,6 +63,7 @@ abstract class FluentConfigurationPluginExtension {
 
 		@Override
 		GroovyProjectConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+		SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
 
 			project.tasks.named('processResources', ProcessResources) { processResources ->
 				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
@@ -116,7 +117,7 @@ abstract class FluentConfigurationPluginExtension {
 		}
 
 		@Override
-		GroovyProjectConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
+		SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
 			project.dependencies(configure)
 			return this

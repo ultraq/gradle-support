@@ -41,18 +41,24 @@ API
 ---
 
 With the fluent configuration plugin added, a `configure` script block is made
-available, within which you can configure the project.
+available, within which you can configure the project:
 
 ```groovy
 configure {
-  groovyProject()
+  createGroovyProject()
     .useJavaVersion(17)
-    .sourceSets()
-      .withMainSourceDirectory('source')
-      .withTestSourceDirectory('test')
-    .repositories()
-      .useMavenCentralAndSnapshots()
-    .testing()
-      .useJUnitJupiter()
+    .useMavenCentralAndSnapshots()
+    .configureSource()
+      .withSourceDirectory('source')
+      .withDependencies() {
+        implementation 'org.apache.groovy:groovy:4.0.27'
+      }
+      .expandExtensionModuleVersion('moduleVersion', version)
+    .configureTesting()
+      .withTestDirectory('test')
+      .withTestDependencies() {
+        testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+      }
+      .useJunitJupiter()
 }
 ```

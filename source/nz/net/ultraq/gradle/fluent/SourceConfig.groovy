@@ -16,6 +16,8 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.artifacts.dsl.DependencyHandler
+
 /**
  * Configuration interface for the project source code.
  *
@@ -27,13 +29,18 @@ interface SourceConfig extends TestingEntry {
 	 * Expands the {@code moduleVersion} property reference in the Groovy
 	 * extension module manifest file to the Gradle project version.
 	 */
-	GroovyProjectConfig expandExtensionModuleVersion()
+	SourceConfig expandExtensionModuleVersion()
 
 	/**
 	 * Expands the given property reference in the Groovy extension module
 	 * manifest file to the given value.
 	 */
-	GroovyProjectConfig expandExtensionModuleVersion(String propertyName, String value)
+	SourceConfig expandExtensionModuleVersion(String propertyName, String value)
+
+	/**
+	 * Configure the dependencies for the project
+	 */
+	SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
 
 	/**
 	 * Start configuration of the source code, ie: {@code main} source set, by

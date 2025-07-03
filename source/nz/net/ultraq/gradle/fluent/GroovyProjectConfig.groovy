@@ -15,9 +15,6 @@
  */
 
 package nz.net.ultraq.gradle.fluent
-
-import org.gradle.api.artifacts.dsl.DependencyHandler
-
 /**
  * Configuration interface for putting together a Groovy project in Gradle.
  *
@@ -35,9 +32,4 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	 * project.
 	 */
 	GroovyProjectConfig useMavenCentralAndSnapshots()
-
-	/**
-	 * Configure the dependencies for the project
-	 */
-	GroovyProjectConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
 }

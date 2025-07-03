@@ -84,11 +84,12 @@ class FluentConfigurationPluginTests extends Specification {
 	def "Adds dependencies through their respective methods"() {
 		when:
 			configure.createGroovyProject()
-				.withDependencies {
-					implementation 'org.apache.groovy:groovy:4.0.27'
-				}
+				.configureSource()
+					.withDependencies() {
+						implementation 'org.apache.groovy:groovy:4.0.27'
+					}
 				.configureTesting()
-					.withTestDependencies {
+					.withTestDependencies() {
 						testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 					}
 		then:
