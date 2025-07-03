@@ -54,6 +54,9 @@ configure {
         implementation 'org.apache.groovy:groovy:4.0.27'
       }
       .expandExtensionModuleVersion('moduleVersion', version)
+      .configureGroovydoc() {
+        link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.')
+      }
     .configureTesting()
       .withTestDirectory('test')
       .withTestDependencies() {

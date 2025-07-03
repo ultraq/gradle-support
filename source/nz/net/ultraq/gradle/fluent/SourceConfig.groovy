@@ -17,6 +17,7 @@
 package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.tasks.javadoc.Groovydoc
 
 /**
  * Configuration interface for the project source code.
@@ -24,6 +25,12 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  * @author Emanuel Rabina
  */
 interface SourceConfig extends TestingEntry {
+
+	/**
+	 * Configure the {@code groovydoc} task like you would with the
+	 * {@code groovydoc} script block.
+	 */
+	SourceConfig configureGroovydoc(@DelegatesTo(Groovydoc) Closure config)
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy
