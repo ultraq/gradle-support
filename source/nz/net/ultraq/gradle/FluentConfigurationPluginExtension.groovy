@@ -62,7 +62,6 @@ abstract class FluentConfigurationPluginExtension {
 		}
 
 		@Override
-		GroovyProjectConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
 		SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
 
 			project.tasks.named('processResources', ProcessResources) { processResources ->

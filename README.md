@@ -62,3 +62,50 @@ configure {
       .useJunitJupiter()
 }
 ```
+
+### createGroovyProject
+
+Starts a fluent chain for configuring a Groovy project.  This will apply the
+`groovy` plugin.
+
+### useJavaVersion(int version)
+
+Sets the version of Java to use in the toolchain configuration.
+
+### useMavenCentralAndSnapshots
+
+Adds the Maven Central and Maven Central Snapshots repositories to the project.
+
+### configureSource
+
+Start configuration of source code -related things.
+
+#### withSourceDirectory(Object path)
+
+Set a combined source & resources directory to use.  This is for those who
+prefer co-locating source code and assets.
+
+#### withDependencies(Closure closure)
+
+Configure the dependencies for the project.
+
+#### expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)
+
+Expands the given property reference in the Groovy extension module manifest
+file to the given value.
+
+### configureTesting
+
+Start configuration of test-related things.
+
+#### withTestDirectory(Object path)
+
+Set the directory in which test code and assets will reside.
+
+#### withTestDependencies(Closure closure)
+
+Configure the testing dependencies for the project.
+
+### useJunitJupiter
+
+Configure all test suites to use JUnit Jupiter.

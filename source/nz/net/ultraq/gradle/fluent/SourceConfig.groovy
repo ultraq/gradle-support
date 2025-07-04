@@ -38,13 +38,13 @@ interface SourceConfig extends TestingEntry {
 	SourceConfig expandExtensionModuleVersion(String propertyName, String value)
 
 	/**
-	 * Configure the dependencies for the project
+	 * Configure the dependencies for the project.
 	 */
 	SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
 
 	/**
-	 * Start configuration of the source code, ie: {@code main} source set, by
-	 * setting the directory in which source code and assets will reside.
+	 * Set the directory in which source code and assets will reside.  This is for
+	 * those who prefer co-locating source code and assets.
 	 */
 	SourceConfig withSourceDirectory(Object path)
 }
