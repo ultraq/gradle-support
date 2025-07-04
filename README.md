@@ -41,6 +41,7 @@ With the fluent configuration plugin added, a `configure` script block is made
 available, within which you can configure the project:
 
 ```groovy
+// build.gradle
 configure {
   createGroovyProject()
     .useJavaVersion(17)
