@@ -4,10 +4,7 @@ Gradle Support
 
 [![Build Status](https://github.com/ultraq/gradle-support/actions/workflows/build.yml/badge.svg)](https://github.com/ultraq/gradle-support/actions)
 
-Gradle plugins that help support my workflow.  The plugins are very geared
-towards how I work, so might not be of much use to anybody else.  Since many of
-my public projects rely on them however, I thought it best to distribute these
-plugins so others can build my projects on their own machines.
+Gradle plugins that help support my workflow.
 
 Before this was a binary plugin repository, it was a collection of plain Gradle
 build scripts that I referenced with raw GitHub URLs to tagged versions.  Gradle
@@ -63,49 +60,49 @@ configure {
 }
 ```
 
-### createGroovyProject
+### `createGroovyProject`
 
 Starts a fluent chain for configuring a Groovy project.  This will apply the
 `groovy` plugin.
 
-### useJavaVersion(int version)
+### `useJavaVersion(int version)`
 
 Sets the version of Java to use in the toolchain configuration.
 
-### useMavenCentralAndSnapshots
+### `useMavenCentralAndSnapshots`
 
 Adds the Maven Central and Maven Central Snapshots repositories to the project.
 
-### configureSource
+### `configureSource`
 
 Start configuration of source code -related things.
 
-#### withSourceDirectory(Object path)
+#### `withSourceDirectory(Object path)`
 
 Set a combined source & resources directory to use.  This is for those who
 prefer co-locating source code and assets.
 
-#### withDependencies(Closure closure)
+#### `withDependencies(Closure closure)`
 
 Configure the dependencies for the project.
 
-#### expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)
+#### `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`
 
 Expands the given property reference in the Groovy extension module manifest
 file to the given value.
 
-### configureTesting
+### `configureTesting`
 
 Start configuration of test-related things.
 
-#### withTestDirectory(Object path)
+#### `withTestDirectory(Object path)`
 
 Set the directory in which test code and assets will reside.
 
-#### withTestDependencies(Closure closure)
+#### `withTestDependencies(Closure closure)`
 
 Configure the testing dependencies for the project.
 
-### useJunitJupiter
+### `useJunitJupiter`
 
 Configure all test suites to use JUnit Jupiter.
