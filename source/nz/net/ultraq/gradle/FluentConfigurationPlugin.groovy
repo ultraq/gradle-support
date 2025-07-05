@@ -100,11 +100,7 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			@Override
 			GroovyProjectConfig useMavenCentralAndSnapshots() {
 
-				project.repositories.mavenCentral()
-				project.repositories.maven {
-					name = 'Maven Central Snapshots'
-					url = 'https://central.sonatype.com/repository/maven-snapshots/'
-				}
+				project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
 				return this
 			}
 

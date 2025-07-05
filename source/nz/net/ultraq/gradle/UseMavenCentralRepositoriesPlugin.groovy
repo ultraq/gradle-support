@@ -53,7 +53,7 @@ class UseMavenCentralRepositoriesPlugin implements Plugin {
 
 		repositories.mavenCentral()
 		repositories.maven {
-			it.url = 'https://central.sonatype.com/repository/maven-snapshots/'
+			url = 'https://central.sonatype.com/repository/maven-snapshots/'
 		}
 	}
 }

@@ -67,8 +67,8 @@ class FluentConfigurationPluginTests extends Specification {
 				.useMavenCentralAndSnapshots()
 		then:
 			project.repositories.size() == 2
-			project.repositories.named('MavenRepo').get() != null
-			project.repositories.named('Maven Central Snapshots').get() != null
+			project.repositories.findByName('MavenRepo') != null
+			project.repositories.find { it.url = 'https://central.sonatype.com/repository/maven-snapshots/' } != null
 	}
 
 	@Ignore("Can't figure out what changes to assert on")
