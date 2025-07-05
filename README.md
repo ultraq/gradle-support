@@ -41,7 +41,7 @@ Plugins
 
 ### use-maven-central-repositories
 
-Adds the Maven Central and Maven Central Snapshots repositories to a singke
+Adds the Maven Central and Maven Central Snapshots repositories to a single
 project, or all projects if added to a settings file.
 
 ```groovy
