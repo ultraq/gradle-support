@@ -16,6 +16,8 @@
 
 package nz.net.ultraq.gradle
 
+import nz.net.ultraq.gradle.FluentConfigurationPlugin.FluentConfigurationPluginExtension
+
 import org.gradle.api.Project
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
