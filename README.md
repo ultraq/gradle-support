@@ -81,6 +81,7 @@ configure {
         testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
       }
       .useJunitJupiter()
+      .useJacoco()
 }
 ```
 
@@ -125,3 +126,8 @@ configure {
 
     - `useJunitJupiter`  
       Configure all test suites to use JUnit Jupiter.
+
+    - `useJacoco`
+      Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
+			after and depend on the `test` task.  XML reports are also enabled so
+			coverage data can be uploaded to services like [codecov](https://codecov.io/).

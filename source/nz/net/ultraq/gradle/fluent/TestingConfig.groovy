@@ -29,6 +29,14 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 interface TestingConfig {
 
 	/**
+	 * Adds the {@code jacoco} plugin, making the added {@code jacocoTestReport}
+	 * task run after and depend on the {@code test} task.  XML reports are also
+	 * enabled so coverage data can be uploaded to services like
+	 * <a href="https://codecov.io/">codecov</a>.
+	 */
+	TestingConfig useJacoco()
+
+	/**
 	 * Configure all test suites to use JUnit Jupiter.
 	 */
 	TestingConfig useJUnitJupiter()

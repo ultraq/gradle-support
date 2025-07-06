@@ -33,6 +33,7 @@ import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 import groovy.transform.TupleConstructor
 
@@ -109,6 +110,22 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			GroovyProjectConfig useMavenCentralAndSnapshots() {
 
 				project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
+				return this
+			}
+
+			@Override
+			TestingConfig useJacoco() {
+
+				project.pluginManager.apply('jacoco')
+				project.tasks.named('test').configure { test ->
+					test.finalizedBy('jacocoTestReport')
+				}
+				project.tasks.named('jacocoTestReport', JacocoReport) { jacocoTestReport ->
+					jacocoTestReport.dependsOn('test')
+					jacocoTestReport.reports { reports ->
+						reports.xml.required.set(true)
+					}
+				}
 				return this
 			}
 

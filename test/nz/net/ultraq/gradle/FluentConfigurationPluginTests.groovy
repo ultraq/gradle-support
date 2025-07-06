@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testing.jacoco.tasks.JacocoReport
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -113,5 +114,18 @@ class FluentConfigurationPluginTests extends Specification {
 			var link = project.tasks.named('groovydoc', Groovydoc).get().links.first()
 			link.url =='https://docs.oracle.com/en/java/javase/17/docs/api/'
 			link.packages == ['java']
+	}
+
+	def "Adds the Jacoco plugin with support for codecov"() {
+		when:
+			configure.createGroovyProject()
+				.configureTesting()
+					.useJacoco()
+		then:
+			project.pluginManager.hasPlugin('jacoco')
+			JacocoReport jacocoTestReportTask = project.tasks.getByName('jacocoTestReport')
+			jacocoTestReportTask.dependsOn.contains('test')
+			jacocoTestReportTask.reports.xml.required.get() == true
+			project.tasks.getByName('test').finalizedBy.mutableValues.contains('jacocoTestReport')
 	}
 }
