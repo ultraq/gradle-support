@@ -84,55 +84,44 @@ configure {
 }
 ```
 
-#### `createGroovyProject`
+ - `createGroovyProject`  
+   Starts a fluent chain for configuring a Groovy project.  This will apply the
+   `groovy` plugin.
 
-Starts a fluent chain for configuring a Groovy project.  This will apply the
-`groovy` plugin.
+    - `useJavaVersion(int version)`  
+      Sets the version of Java to use in the toolchain configuration.
 
-#### `useJavaVersion(int version)`
+    - `useMavenCentralAndSnapshots`  
+      Adds the Maven Central and Maven Central Snapshots repositories to the
+      project by applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
+      plugin.
 
-Sets the version of Java to use in the toolchain configuration.
+    - `configureSource`  
+      Start configuration of source code -related things.
 
-#### `useMavenCentralAndSnapshots`
+       - `withSourceDirectory(Object path)`  
+         Set a combined source & resources directory to use.  This is for those
+         who prefer co-locating source code and assets.
 
-Adds the Maven Central and Maven Central Snapshots repositories to the project
-by applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
-plugin.
+       - `withDependencies(Closure closure)`  
+         Configure the dependencies for the project.
 
-#### `configureSource`
+       - `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`  
+         Expands the given property reference in the Groovy extension module
+         manifest file to the given value.
 
-Start configuration of source code -related things.
+       - `configureGroovydoc(Closure config)`  
+         Configure the `groovydoc` task like you would with the `groovydoc`
+         script block.
 
-##### `withSourceDirectory(Object path)`
+    - `configureTesting`  
+      Start configuration of test-related things.
 
-Set a combined source & resources directory to use.  This is for those who
-prefer co-locating source code and assets.
+       - `withTestDirectory(Object path)`  
+         Set the directory in which test code and assets will reside.
 
-##### `withDependencies(Closure closure)`
+       - `withTestDependencies(Closure closure)`  
+         Configure the testing dependencies for the project.
 
-Configure the dependencies for the project.
-
-##### `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`
-
-Expands the given property reference in the Groovy extension module manifest
-file to the given value.
-
-##### `configureGroovydoc(Closure config)`
-
-Configure the `groovydoc` task like you would with the `groovydoc` script block.
-
-#### `configureTesting`
-
-Start configuration of test-related things.
-
-##### `withTestDirectory(Object path)`
-
-Set the directory in which test code and assets will reside.
-
-##### `withTestDependencies(Closure closure)`
-
-Configure the testing dependencies for the project.
-
-#### `useJunitJupiter`
-
-Configure all test suites to use JUnit Jupiter.
+    - `useJunitJupiter`  
+      Configure all test suites to use JUnit Jupiter.
