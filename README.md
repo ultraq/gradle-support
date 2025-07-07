@@ -121,10 +121,10 @@ configure {
        - `withTestDependencies(Closure closure)`  
          Configure the testing dependencies for the project.
 
-    - `useJunitJupiter`  
-      Configure all test suites to use JUnit Jupiter.
+       - `useJunitJupiter`  
+         Configure all test suites to use JUnit Jupiter.
 
-    - `useJacoco`
-      Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
-			after and depend on the `test` task.  XML reports are also enabled so
-			coverage data can be uploaded to services like [codecov](https://codecov.io/).
+       - `useJacoco`
+         Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
+			   after and depend on the `test` task.  XML reports are also enabled so
+			   coverage data can be uploaded to services like [codecov](https://codecov.io/).
