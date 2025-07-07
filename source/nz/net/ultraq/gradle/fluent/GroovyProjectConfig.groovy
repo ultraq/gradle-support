@@ -24,7 +24,10 @@ package nz.net.ultraq.gradle.fluent
 interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 
 	/**
-	 * Sets the version of Java to use in the toolchain configuration.
+	 * Sets the version of Java to use in the toolchain configuration.  This will
+	 * also update the {@code groovydoc} task to generate docs with links to the
+	 * Java SDK for Java libraries (anything starting with {@code java.} or
+	 * {@code javax.}).
 	 */
 	GroovyProjectConfig useJavaVersion(int version)
 

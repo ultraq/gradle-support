@@ -72,9 +72,6 @@ configure {
         implementation 'org.apache.groovy:groovy:4.0.27'
       }
       .expandExtensionModuleVersion('moduleVersion', version)
-      .configureGroovydoc() {
-        link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.')
-      }
     .configureTesting()
       .withTestDirectory('test')
       .withTestDependencies() {
@@ -87,10 +84,14 @@ configure {
 
  - `createGroovyProject`  
    Starts a fluent chain for configuring a Groovy project.  This will apply the
-   `groovy` plugin.
+   `groovy` plugin, and configure the `groovydoc` task to generate docs with
+   links to any Groovy SDK libraries (those starting with `groovy.` or
+   `org.apache.groovy.`).
 
     - `useJavaVersion(int version)`  
-      Sets the version of Java to use in the toolchain configuration.
+      Sets the version of Java to use in the toolchain configuration.  This will
+      also update the `groovydoc` task to generate docs with links to the Java
+			SDK for Java libraries (anything starting with `java.` or `javax.`).
 
     - `useMavenCentralAndSnapshots`  
       Adds the Maven Central and Maven Central Snapshots repositories to the
@@ -110,10 +111,6 @@ configure {
        - `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`  
          Expands the given property reference in the Groovy extension module
          manifest file to the given value.
-
-       - `configureGroovydoc(Closure config)`  
-         Configure the `groovydoc` task like you would with the `groovydoc`
-         script block.
 
     - `configureTesting`  
       Start configuration of test-related things.

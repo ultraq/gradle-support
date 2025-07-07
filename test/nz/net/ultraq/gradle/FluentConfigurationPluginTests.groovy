@@ -42,13 +42,25 @@ class FluentConfigurationPluginTests extends Specification {
 		configure = project.extensions.getByType(FluentConfigurationPluginExtension)
 	}
 
-	def "Configures a Groovy project with the Java version"() {
+	def "Configures a Groovy project with the Java version"(int version) {
 		when:
 			configure.createGroovyProject()
-				.useJavaVersion(17)
+				.useJavaVersion(version)
 		then:
 			project.pluginManager.hasPlugin('groovy')
-			project.java.toolchain.languageVersion.get() == JavaLanguageVersion.of(17)
+			project.java.toolchain.languageVersion.get() == JavaLanguageVersion.of(version)
+			var links = project.tasks.named('groovydoc', Groovydoc).get().links
+			links.size() == 2
+			verifyAll(links.first()) {
+				url == 'https://docs.groovy-lang.org/latest/html/gapi/'
+				packages == ['groovy.', 'org.apache.groovy.']
+			}
+			verifyAll(links.last()) {
+				url == "https://docs.oracle.com/en/java/javase/${version}/docs/api/java.base/"
+				packages == ['java.', 'javax.']
+			}
+		where:
+			version << [17, 21]
 	}
 
 	def "Configures a combined source and resource directory"() {
@@ -101,19 +113,6 @@ class FluentConfigurationPluginTests extends Specification {
 				.find { it.group == 'org.apache.groovy' && it.name == 'groovy' } != null
 			project.configurations.named('testImplementation').get().dependencies
 				.find { it.group == 'org.spockframework' && it.name == 'spock-core' } != null
-	}
-
-	def "Adds links to the groovydoc output"() {
-		when:
-			configure.createGroovyProject()
-				.configureSource()
-					.configureGroovydoc() {
-						link('https://docs.oracle.com/en/java/javase/17/docs/api/', 'java')
-					}
-		then:
-			var link = project.tasks.named('groovydoc', Groovydoc).get().links.first()
-			link.url =='https://docs.oracle.com/en/java/javase/17/docs/api/'
-			link.packages == ['java']
 	}
 
 	def "Adds the Jacoco plugin with support for codecov"() {

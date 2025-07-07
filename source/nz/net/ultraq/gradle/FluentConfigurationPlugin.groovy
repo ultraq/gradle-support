@@ -62,7 +62,9 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 
 		/**
 		 * Starts a fluent chain for configuring a Groovy project.  This will apply
-		 * the {@code groovy} plugin.
+		 * the {@code groovy} plugin, and configure the {@code groovydoc} task to
+		 * generate docs with links to any Groovy SDK libraries (those starting with
+		 * {@code groovy.} or {@code org.apache.groovy.}).
 		 */
 		GroovyProjectConfig createGroovyProject() {
 
@@ -74,13 +76,9 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			DefaultGroovyProjectConfig() {
 
 				project.pluginManager.apply('groovy')
-			}
-
-			@Override
-			SourceConfig configureGroovydoc(@DelegatesTo(Groovydoc) Closure config) {
-
-				project.tasks.named('groovydoc', Groovydoc, config)
-				return this
+				project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
+					groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
+				}
 			}
 
 			@Override
@@ -134,6 +132,9 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 
 				project.extensions.configure(JavaPluginExtension) { java ->
 					java.toolchain.languageVersion.set(JavaLanguageVersion.of(version))
+				}
+				project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
+					groovydoc.link("https://docs.oracle.com/en/java/javase/${version}/docs/api/java.base/", 'java.', 'javax.')
 				}
 				return this
 			}
