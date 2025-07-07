@@ -23,20 +23,14 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.GroovySourceDirectorySet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.signing.SigningExtension
-import org.gradle.testing.base.TestingExtension
-import org.gradle.testing.jacoco.tasks.JacocoReport
 
 /**
  * <p>Gradle plugin for my JVM-based projects.</p>
@@ -84,9 +78,7 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	void apply(Project project) {
 
 		configure(project)
-			.repositories()
 			.directories()
-			.resources()
 			.groovydocs()
 			.verification()
 			.distribution()
@@ -109,20 +101,6 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	private GroovyDevelopmentPlugin directories() {
 
 		project.pluginManager.withPlugin('groovy') {
-			project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
-				[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs =
-					[project.file(sourceSet.name == 'main' ? 'source' : 'test')]
-				sourceSet.resources.exclude('**/*.java', '**/*.groovy')
-			}
-
-			project.afterEvaluate {
-				if (project.tasks.names.contains('sourcesJar')) {
-					project.tasks.named('sourcesJar', Jar) { jar ->
-						jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-					}
-				}
-			}
-
 			project.pluginManager.withPlugin('idea') {
 				project.extensions.configure(IdeaModel) { model ->
 					model.module.outputDir = project.file('build/classes/groovy/main')
@@ -175,11 +153,6 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	private GroovyDevelopmentPlugin groovydocs() {
 
 		project.pluginManager.withPlugin('groovy') {
-			project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
-				groovydoc.link('https://docs.oracle.com/en/java/javase/21/docs/api/java.base/', 'java.', 'javax.', 'org.xml.')
-				groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
-			}
-
 			project.tasks.register('groovydocJar', Jar) { groovydocJar ->
 				groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
 				groovydocJar.group = 'build'
@@ -266,58 +239,14 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 	}
 
 	/**
-	 * Adds the Maven Central and Maven Central Snapshots repositories to the
-	 * project configuration.
-	 */
-	private GroovyDevelopmentPlugin repositories() {
-
-		project.repositories.mavenCentral()
-		project.repositories.maven {
-			url = 'https://central.sonatype.com/repository/maven-snapshots/'
-		}
-		return this
-	}
-
-	/**
-	 * Expands the {@code moduleVersion} property reference in the Groovy
-	 * extension module manifest file, to the Gradle project version.
-	 */
-	private GroovyDevelopmentPlugin resources() {
-
-		project.pluginManager.withPlugin('groovy') {
-			project.tasks.named('processResources', ProcessResources) { processResources ->
-				processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
-					file.expand([moduleVersion: project.version])
-				}
-			}
-		}
-		return this
-	}
-
-	/**
 	 * Configure verification plugins if present.
 	 */
 	private GroovyDevelopmentPlugin verification() {
-
-		project.pluginManager.withPlugin('groovy') {
-			project.extensions.configure(TestingExtension) { testing ->
-				testing.suites.configureEach { JvmTestSuite test ->
-					test.useJUnitJupiter()
-				}
-			}
-		}
 
 		project.pluginManager.withPlugin('codenarc') {
 			var sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
 			project.extensions.configure(CodeNarcExtension) { codenarc ->
 				codenarc.config = project.resources.text.fromString(sharedConfig)
-			}
-		}
-
-		project.pluginManager.withPlugin('jacoco') {
-			project.tasks.withType(JacocoReport).configureEach { reportTask ->
-				reportTask.reports.xml.required.set(true)
-				reportTask.reports.html.required.set(true)
 			}
 		}
 
