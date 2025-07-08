@@ -16,6 +16,8 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
+
 /**
  * Configuration interface for putting together a Groovy project in Gradle.
  *
@@ -32,8 +34,8 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	GroovyProjectConfig useJavaVersion(int version)
 
 	/**
-	 * Adds the Maven Central and Maven Central Snapshots repositories to the
-	 * project.
+	 * Adds the Maven Central and Snapshots repositories to the project by
+	 * applying the {@link UseMavenCentralRepositoriesPlugin} plugin.
 	 */
-	GroovyProjectConfig useMavenCentralAndSnapshots()
+	GroovyProjectConfig useMavenCentralRepositories()
 }

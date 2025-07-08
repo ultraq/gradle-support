@@ -47,7 +47,7 @@ plugins {
 configure {
   createGroovyProject()
     .useJavaVersion(17)
-    .useMavenCentralAndSnapshots()
+    .useMavenCentralRepositories()
     .configureSource()
       .withSourceDirectory('source')
       .withDependencies() {
@@ -75,9 +75,9 @@ configure {
       also update the `groovydoc` task to generate docs with links to the Java
 			SDK for Java libraries (anything starting with `java.` or `javax.`).
 
-    - `useMavenCentralAndSnapshots`  
-      Adds the Maven Central and Maven Central Snapshots repositories to the
-      project by applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
+    - `useMavenCentralRepositories`  
+      Adds the Maven Central and Snapshots repositories to the project by
+      applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
       plugin.
 
     - `configureSource`  

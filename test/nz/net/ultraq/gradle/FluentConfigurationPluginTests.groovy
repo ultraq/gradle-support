@@ -78,7 +78,7 @@ class FluentConfigurationPluginTests extends Specification {
 	def "Configures Maven Central and Snapshot repositories"() {
 		when:
 			configure.createGroovyProject()
-				.useMavenCentralAndSnapshots()
+				.useMavenCentralRepositories()
 		then:
 			project.repositories.size() == 2
 			project.repositories.findByName('MavenRepo') != null

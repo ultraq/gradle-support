@@ -105,7 +105,7 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			}
 
 			@Override
-			GroovyProjectConfig useMavenCentralAndSnapshots() {
+			GroovyProjectConfig useMavenCentralRepositories() {
 
 				project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
 				return this
