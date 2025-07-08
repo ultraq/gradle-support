@@ -10,8 +10,8 @@ Before this was a binary plugin repository, it was a collection of plain Gradle
 build scripts that I referenced with raw GitHub URLs to tagged versions.  Gradle
 has been discouraging that approach for a *very* long time, so now I'm trying to
 go legit 😅  If you're looking for one of those older scripts, use the
-branch/tag navigation control to select tags not ending with a `-binary` in the
-name to locate them.
+branch/tag navigation control to select tags not ending with `-binary` to locate
+them.
 
 
 Plugins
