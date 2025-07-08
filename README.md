@@ -23,8 +23,8 @@ version to their respective `plugins` block.
 
 ### use-maven-central-repositories
 
-Adds the Maven Central and Maven Central Snapshots repositories to a single
-project, or all projects if added to a settings file.
+Adds the Maven Central and Snapshots repositories to a single project, or all
+projects if added to a settings file.
 
 ```groovy
 // settings.gradle or build.gradle

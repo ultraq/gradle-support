@@ -22,10 +22,8 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.initialization.Settings
 
 /**
- * Applies the Maven Central and Maven Central Snapshots repositories to the
- * project configuration.  That's it 😅  Can be used either in {@code settings.gradle}
- * to apply across all projects, or {@code build.gradle} to apply to a single
- * project.
+ * Adds the Maven Central and Snapshots repositories to a single project, or all
+ * projects if added to a settings file.
  *
  * <pre>
  * // settings.gradle or build.gradle

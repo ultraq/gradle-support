@@ -67,9 +67,8 @@ gradlePlugin {
 			implementationClass = 'nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin'
 			displayName = 'Use Maven Central and Snapshot repositories'
 			description =
-				'Applies the Maven Central and Snapshot repositories to the project configuration.  Can ' +
-				'be used either in `settings.gradle` to apply across all projects, or `build.gradle` to ' +
-				'apply to a single project.'
+				'Adds the Maven Central and Snapshots repositories to a single project, or all projects ' +
+				'if added to a settings file.'
 			tags = ['maven', 'repository']
 		}
 		fluentConfigurationPlugin {
