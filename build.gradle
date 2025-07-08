@@ -24,7 +24,7 @@ plugins {
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '0.1.0'
+version = '0.2.0'
 group = 'nz.net.ultraq.gradle'
 
 sourceSets {
@@ -66,21 +66,19 @@ gradlePlugin {
 			id = 'nz.net.ultraq.gradle.use-maven-central-repositories'
 			implementationClass = 'nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin'
 			displayName = 'Use Maven Central and Snapshot repositories'
-			description = '''
-				Applies the Maven Central and Maven Central Snapshots repositories to the
-				project configuration.  That's it 😅  Can be used either in `settings.gradle`
-				to apply across all projects, or `build.gradle` to apply to a single project.
-			'''
+			description =
+				'Applies the Maven Central and Snapshot repositories to the project configuration.  Can ' +
+				'be used either in `settings.gradle` to apply across all projects, or `build.gradle` to ' +
+				'apply to a single project.'
 			tags = ['maven', 'repository']
 		}
 		fluentConfigurationPlugin {
 			id = 'nz.net.ultraq.gradle.fluent-configuration'
 			implementationClass = 'nz.net.ultraq.gradle.FluentConfigurationPlugin'
 			displayName = 'A fluent API for configuring projects'
-			description = '''
-				Adds a `configure` script block to a `build.gradle` file, within
-				which a fluent API can be used to configure a project.
-			'''
+			description =
+				'Adds a `configure` script block to a `build.gradle` file, within which a fluent API can ' +
+				'be used to configure a project.'
 			tags = ['fluent', 'configuration']
 		}
 	}

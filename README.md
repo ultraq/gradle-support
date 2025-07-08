@@ -14,30 +14,12 @@ branch/tag navigation control to select tags not ending with a `-binary` in the
 name to locate them.
 
 
-Installation
-------------
-
-These plugins are built targeting Gradle 9, so require Java 17 as well.
-
-Add the Maven Central repository to the `pluginManagement` section of your
-`settings.gradle` file so that the plugins can be found (the plugins are being
-submitted to the Gradle Plugin repository and hopefully get approval so this
-step can be removed):
-
-```groovy
-// settings.gradle
-pluginManagement {
-  repositories {
-    mavenCentral()
-  }
-}
-```
-
-Then, add one of the plugins below to their respective `plugins` block.
-
-
 Plugins
 -------
+
+These plugins are built targeting Gradle 9, so require Java 17 as well, and are
+available on the Gradle Plugin Portal so only need to be added by their ID and
+version to their respective `plugins` block.
 
 ### use-maven-central-repositories
 
@@ -47,7 +29,7 @@ project, or all projects if added to a settings file.
 ```groovy
 // settings.gradle or build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.1.0'
+  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.2.0'
 }
 ```
 
@@ -59,7 +41,7 @@ configure the project:
 ```groovy
 // build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.1.0'
+  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.2.0'
 }
 
 configure {
