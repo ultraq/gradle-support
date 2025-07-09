@@ -19,6 +19,11 @@ package nz.net.ultraq.gradle
 import nz.net.ultraq.gradle.FluentConfigurationPlugin.FluentConfigurationPluginExtension
 
 import org.gradle.api.Project
+import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
@@ -126,5 +131,129 @@ class FluentConfigurationPluginTests extends Specification {
 			jacocoTestReportTask.dependsOn.contains('test')
 			jacocoTestReportTask.reports.xml.required.get() == true
 			project.tasks.getByName('test').finalizedBy.mutableValues.contains('jacocoTestReport')
+	}
+
+	def "Creates a Maven publication with a 'main' item"() {
+		when:
+			configure.createMavenPublication()
+		then:
+			project.pluginManager.hasPlugin('maven-publish')
+			var publications = project.extensions.getByType(PublishingExtension).publications
+			verifyAll(publications) {
+				size() == 1
+				first().name == 'main'
+			}
+	}
+
+	def "Adds and configures the main Java JAR"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.addJar() {
+					manifest {
+						attributes('Automatic-Module-Name': 'nz.net.ultraq.gradle.support')
+					}
+				}
+		then:
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			verifyAll(publication.component.get()) {
+				it instanceof SoftwareComponent
+				it.name == 'java'
+			}
+			var jar = project.tasks.named('jar', Jar).get()
+			jar.manifest.attributes['Automatic-Module-Name'] == 'nz.net.ultraq.gradle.support'
+	}
+
+	def "Adds the main sources JAR"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.addSourcesJar()
+		then:
+			var jar = project.tasks.named('sourcesJar', Jar).get()
+			jar.duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+	}
+
+	def "Adds a groovydocJar task and includes it in the main bundle"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.addGroovydocJar()
+		then:
+			var groovydocJar = project.tasks.named('groovydocJar', Jar).get()
+			verifyAll(groovydocJar) {
+				group == 'build'
+				dependsOn.contains('groovydoc')
+				destinationDirectory.get().toString() == project.file("${project.layout.buildDirectory}/libs").toString()
+				archiveClassifier.get() == 'javadoc'
+			}
+			project.tasks.named('assemble').get().dependsOn.contains(groovydocJar)
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			publication.artifacts.find { it.classifier == 'javadoc' } != null
+	}
+
+	def "POM configuration is just a wrapper for the publication pom closure"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.configurePom() {
+					inceptionYear = '2025'
+				}
+		then:
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			publication.pom.inceptionYear.get() == '2025'
+	}
+
+	def "Fills in an Apache 2.0 License"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.configurePom()
+				.useApache20License()
+		then:
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			publication.pom.licenses.size() == 1
+			verifyAll(publication.pom.licenses.first()) {
+				name.get() == 'The Apache Software License, Version 2.0'
+				url.get() == 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution.get() == 'repo'
+			}
+	}
+
+	def "Fills in GitHub SCM details"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.configurePom()
+				.withGitHubScm('ultraq', 'gradle-support')
+		then:
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			verifyAll(publication.pom.scm) {
+				connection.get() == 'scm:git:git@github.com:ultraq/gradle-support.git'
+				developerConnection.get() == 'scm:git:git@github.com:ultraq/gradle-support.git'
+				url.get() == 'https://github.com/ultraq/gradle-support'
+			}
+	}
+
+	def "Adds developer details"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.configurePom()
+				.withDevelopers([
+				  [
+				    name: 'Emanuel Rabina',
+					  email: 'emanuelrabina@gmail.com',
+					  url: 'https://www.ultraq.net.nz'
+				  ]
+				])
+		then:
+			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
+			publication.pom.developers.size() == 1
+			verifyAll(publication.pom.developers.first()) {
+				name.get() == 'Emanuel Rabina'
+				email.get() == 'emanuelrabina@gmail.com'
+				url.get() == 'https://www.ultraq.net.nz'
+			}
 	}
 }

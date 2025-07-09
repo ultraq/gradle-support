@@ -17,14 +17,7 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * For any part of the API that can begin a source code configuration chain.
- *
  * @author Emanuel Rabina
  */
-interface SourceConfigEntry {
-
-	/**
-	 * Start configuration of source code -related things.
-	 */
-	SourceConfig configureSource()
+interface MavenCentralConfig {
 }

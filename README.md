@@ -63,6 +63,32 @@ configure {
       }
       .useJUnitJupiter()
       .useJacoco()
+  
+  createPublication()
+    .addJar() {
+	    manifest {
+		    attributes 'Automatic-Module-Name': 'nz.net.ultraq.gradle.support'
+	    }
+    }
+    .addSourcesJar()
+    .addGroovydocJar()
+    .configurePom() {
+      inceptionYear = '2025'
+      // ...
+    }
+      .useApache20License()
+      .withGitHubScm('ultraq', 'gradle-support')
+      .withDevelopers([
+        [
+          name: 'Emanuel Rabina',
+          email: 'emanuelrabina@gmail.com',
+          url: 'https://www.ultraq.net.nz'
+        ]
+      ])
+    .publishToMavenCentral(
+      providers.gradleProperty('mavenCentralUsername'),
+      providers.gradleProperty('mavenCentralPassword')
+    )
 }
 ```
 
@@ -110,7 +136,56 @@ configure {
 
        - `useJacoco`
          Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
-			   after and depend on the `test` task.  XML reports are also enabled so
-			   coverage data can be uploaded to services like [codecov](https://codecov.io/).
          after and depend on the `test` task.  XML reports are also enabled so
          coverage data can be uploaded to services like [codecov](https://codecov.io/).
+
+ - `createMavenPublication`
+   Starts a fluent chain for configuring publishing artifacts to a Maven
+   repository.  This will apply the `maven-publish` plugin and create a `main`
+   publication which all of the methods in this chain will operate on.
+
+    - `addJar(Closure configure = null)`
+      Adds the main software component to the bundle which can be optionally
+      configured with the given closure.
+
+    - `addSourcesJar`
+      Adds the `sourcesJar` task and makes it part of the bundle to publish.
+
+    - `addGroovydocJar`
+      Adds a `groovydocJar` task, making it part of the bundle to publish.  It
+      will have a `javadoc` classifier so that it can be used as the
+      documentation companion for the compiled code, and so that services like
+      [javadoc.io](https://javadoc.io) can find it.  The task will also have a
+      dependency on the `assemble` lifecycle task so it can be created alongside
+      other artifact outputs.
+
+    - `configurePom(Closure configure)`
+      Configure the POM that will get published.  The Gradle project `name` and
+      `description` properties will also be used for their respective POM
+      elements.
+
+       - `useApache20License`
+         Automatically fill in the `<licences>` section to have a license of the
+         Apache 2.0 license.
+
+       - `withGitHubScm(String user, String repo)`
+         Automatically fill in the `<scm>` section to reference a GitHub
+         project.  The repository will default to the project name.
+
+       - `withDevelopers(List<Map<String,String>> developers)`
+         Set the `<developers>` section with the given developers.  The map
+         properties accepted are `name`, `email`, and `url`.
+
+    - `publishToMavenCentral(String username, String password)`
+      Configure Maven Central publishing.  This will set up both the Maven
+      Central and Snapshot repositories (pushing to snapshots if the project
+      version ends with `-SNAPSHOT`), and apply the `signing` plugin.
+      
+      Note that this is currently using the transitional Portal OSSRH Staging
+      API that Sonatype has created to allow people to slowly migrate to their
+      newer Publisher API.  This will be rewritten to utilize the Publisher API
+      in future
+      
+      While this method takes credential information, DO NOT enter your actual
+      credentials into your build script.  Instead, reference Gradle properties
+      or environment variables.

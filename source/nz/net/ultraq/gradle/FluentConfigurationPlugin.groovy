@@ -17,21 +17,29 @@
 package nz.net.ultraq.gradle
 
 import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
+import nz.net.ultraq.gradle.fluent.MavenCentralConfig
+import nz.net.ultraq.gradle.fluent.MavenPomConfig
+import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.plugins.signing.SigningExtension
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -69,6 +77,17 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 		GroovyProjectConfig createGroovyProject() {
 
 			return new DefaultGroovyProjectConfig()
+		}
+
+		/**
+		 * Starts a fluent chain for configuring publishing artifacts to a Maven
+		 * repository.  This will apply the {@code maven-publish} plugin and create
+		 * a {@code main} publication, which all of the methods in this chain will
+		 * operate on.
+		 */
+		MavenPublicationConfig createMavenPublication() {
+
+			return new DefaultMavenPublicationConfig()
 		}
 
 		private class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, TestingConfig {
@@ -176,13 +195,6 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			SourceConfig withSourceDirectory(Object path) {
 
 				withDirectoryForSourceSetAt(path, 'main')
-				project.afterEvaluate {
-					if (project.tasks.names.contains('sourcesJar')) {
-						project.tasks.named('sourcesJar', Jar) { jar ->
-							jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-						}
-					}
-				}
 				return this
 			}
 
@@ -197,6 +209,150 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			TestingConfig withTestDirectory(Object path) {
 
 				withDirectoryForSourceSetAt(path, 'test')
+				return this
+			}
+		}
+
+		private class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomConfig, MavenCentralConfig {
+
+			private final PublishingExtension publishing
+			private final MavenPublication publication
+
+			DefaultMavenPublicationConfig() {
+
+				project.pluginManager.apply('maven-publish')
+				publishing = project.extensions.getByType(PublishingExtension)
+				publication = publishing.publications.create('main', MavenPublication)
+			}
+
+			@Override
+			MavenPublicationConfig addGroovydocJar() {
+
+				if (!project.pluginManager.hasPlugin('groovy')) {
+					throw new IllegalStateException(
+						'Cannot add groovydocJar task on a non-Groovy project.  Be sure to ' +
+						'add the groovy plugin first, or to have configured a groovy project ' +
+						'using createGroovyProject().'
+					)
+				}
+
+				var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+					groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
+					groovydocJar.group = 'build'
+					groovydocJar.dependsOn('groovydoc')
+					groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
+					groovydocJar.destinationDirectory.set(project.file("${project.layout.buildDirectory}/libs"))
+					groovydocJar.archiveClassifier.set('javadoc')
+				}
+				project.tasks.named('assemble') { assembleTask ->
+					assembleTask.dependsOn(groovydocJar.get())
+				}
+				publication.artifact(groovydocJar.get()) { artifact ->
+					artifact.classifier = 'javadoc'
+				}
+
+				return this
+			}
+
+			@Override
+			MavenPublicationConfig addJar(@DelegatesTo(Jar) Closure configure = null) {
+
+				publication.from(project.components.named('java', SoftwareComponent).get())
+				if (configure) {
+					project.tasks.named('jar', Jar, configure)
+				}
+				return this
+			}
+
+			@Override
+			MavenPublicationConfig addSourcesJar() {
+
+				project.extensions.configure(JavaPluginExtension) { java ->
+					java.withSourcesJar()
+					project.tasks.named('sourcesJar', Jar) { jar ->
+						jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+					}
+				}
+				return this
+			}
+
+			@Override
+			MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure = null) {
+
+				publication.pom { pom ->
+					pom.name.set(project.name)
+					pom.description.set(project.description)
+					if (configure) {
+						configure.delegate = pom
+						configure()
+					}
+				}
+				return this
+			}
+
+			@Override
+			MavenPomConfig useApache20License() {
+
+				publication.pom { pom ->
+					pom.licenses { licences ->
+						licences.license { license ->
+							license.name.set('The Apache Software License, Version 2.0')
+							license.url.set('https://www.apache.org/licenses/LICENSE-2.0.txt')
+							license.distribution.set('repo')
+						}
+					}
+				}
+				return this
+			}
+
+			@Override
+			MavenPomConfig withDevelopers(List<Map<String, String>> developers) {
+
+				publication.pom { pom ->
+					pom.developers { pomDeveloperSpec ->
+						developers.each { developer ->
+							pomDeveloperSpec.developer { pomDeveloper ->
+								pomDeveloper.name.set(developer.name)
+								pomDeveloper.email.set(developer.email)
+								pomDeveloper.url.set(developer.url)
+							}
+						}
+					}
+				}
+				return this
+			}
+
+			@Override
+			MavenPomConfig withGitHubScm(String owner, String repository = project.name) {
+
+				publication.pom { pom ->
+					pom.scm { scm ->
+						scm.connection.set("scm:git:git@github.com:${owner}/${repository}.git")
+						scm.developerConnection.set("scm:git:git@github.com:${owner}/${repository}.git")
+						scm.url.set("https://github.com/${owner}/${repository}")
+					}
+				}
+				return this
+			}
+
+			@Override
+			MavenCentralConfig publishToMavenCentral(String username, String password) {
+
+				project.pluginManager.apply('signing')
+				project.extensions.configure(SigningExtension) { signing ->
+					signing.sign(publication)
+				}
+				publishing.repositories { repositories ->
+					repositories.maven { maven ->
+						maven.url = project.version.endsWith('SNAPSHOT') ?
+							'https://central.sonatype.com/repository/maven-snapshots/' :
+							'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
+						maven.credentials { credentials ->
+							credentials.username = username
+							credentials.password = password
+						}
+					}
+				}
 				return this
 			}
 		}
