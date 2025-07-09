@@ -4,6 +4,7 @@ Gradle Support
 
 [![Build Status](https://github.com/ultraq/gradle-support/actions/workflows/build.yml/badge.svg)](https://github.com/ultraq/gradle-support/actions)
 [![codecov](https://codecov.io/gh/ultraq/gradle-support/graph/badge.svg?token=AhWqCXCZzC)](https://codecov.io/gh/ultraq/gradle-support)
+![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/nz.net.ultraq.gradle.fluent-configuration)
 
 Gradle plugins that help support my workflow.
 
@@ -74,7 +75,7 @@ configure {
     - `useJavaVersion(int version)`  
       Sets the version of Java to use in the toolchain configuration.  This will
       also update the `groovydoc` task to generate docs with links to the Java
-			SDK for Java libraries (anything starting with `java.` or `javax.`).
+      SDK for Java libraries (anything starting with `java.` or `javax.`).
 
     - `useMavenCentralRepositories`  
       Adds the Maven Central and Snapshots repositories to the project by
@@ -111,3 +112,5 @@ configure {
          Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
 			   after and depend on the `test` task.  XML reports are also enabled so
 			   coverage data can be uploaded to services like [codecov](https://codecov.io/).
+         after and depend on the `test` task.  XML reports are also enabled so
+         coverage data can be uploaded to services like [codecov](https://codecov.io/).
