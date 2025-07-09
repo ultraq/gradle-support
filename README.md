@@ -3,6 +3,7 @@ Gradle Support
 ==============
 
 [![Build Status](https://github.com/ultraq/gradle-support/actions/workflows/build.yml/badge.svg)](https://github.com/ultraq/gradle-support/actions)
+[![codecov](https://codecov.io/gh/ultraq/gradle-support/graph/badge.svg?token=AhWqCXCZzC)](https://codecov.io/gh/ultraq/gradle-support)
 
 Gradle plugins that help support my workflow.
 
@@ -18,7 +19,7 @@ Plugins
 -------
 
 These plugins are built targeting Gradle 9, so require Java 17 as well, and are
-available on the Gradle Plugin Portal so only need to be added by their ID and
+available on the Gradle Plugin Portal, so only need to be added by their ID and
 version to their respective `plugins` block.
 
 ### use-maven-central-repositories
@@ -59,7 +60,7 @@ configure {
       .withTestDependencies() {
         testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
       }
-      .useJunitJupiter()
+      .useJUnitJupiter()
       .useJacoco()
 }
 ```
@@ -103,7 +104,7 @@ configure {
        - `withTestDependencies(Closure closure)`  
          Configure the testing dependencies for the project.
 
-       - `useJunitJupiter`  
+       - `useJUnitJupiter`  
          Configure all test suites to use JUnit Jupiter.
 
        - `useJacoco`
