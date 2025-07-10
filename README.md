@@ -64,7 +64,7 @@ configure {
       .useJUnitJupiter()
       .useJacoco()
   
-  createPublication()
+  createMavenPublication()
     .addJar() {
 	    manifest {
 		    attributes 'Automatic-Module-Name': 'nz.net.ultraq.gradle.support'
@@ -85,10 +85,7 @@ configure {
           url: 'https://www.ultraq.net.nz'
         ]
       ])
-    .publishToMavenCentral(
-      providers.gradleProperty('mavenCentralUsername'),
-      providers.gradleProperty('mavenCentralPassword')
-    )
+    .publishToMavenCentral(property('mavenCentralUsername'), property('mavenCentralPassword'))
 }
 ```
 
@@ -184,8 +181,8 @@ configure {
       Note that this is currently using the transitional Portal OSSRH Staging
       API that Sonatype has created to allow people to slowly migrate to their
       newer Publisher API.  This will be rewritten to utilize the Publisher API
-      in future
+      in future.
       
-      While this method takes credential information, DO NOT enter your actual
+      As this method takes credential information, DO NOT enter your actual
       credentials into your build script.  Instead, reference Gradle properties
       or environment variables.
