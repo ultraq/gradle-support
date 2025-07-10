@@ -47,6 +47,7 @@ class FluentConfigurationPluginTests extends Specification {
 		configure = project.extensions.getByType(FluentConfigurationPluginExtension)
 	}
 
+	// @formatter:off
 	def "Configures a Groovy project with the Java version"(int version) {
 		when:
 			configure.createGroovyProject()
@@ -241,11 +242,9 @@ class FluentConfigurationPluginTests extends Specification {
 			configure.createMavenPublication()
 				.configurePom()
 				.withDevelopers([
-				  [
-				    name: 'Emanuel Rabina',
-					  email: 'emanuelrabina@gmail.com',
-					  url: 'https://www.ultraq.net.nz'
-				  ]
+					name: 'Emanuel Rabina',
+					email: 'emanuelrabina@gmail.com',
+					url: 'https://www.ultraq.net.nz'
 				])
 		then:
 			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
@@ -256,4 +255,5 @@ class FluentConfigurationPluginTests extends Specification {
 				url.get() == 'https://www.ultraq.net.nz'
 			}
 	}
+	// @formatter:on
 }

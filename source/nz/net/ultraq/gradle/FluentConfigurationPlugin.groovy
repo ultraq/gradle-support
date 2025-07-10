@@ -231,8 +231,8 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 				if (!project.pluginManager.hasPlugin('groovy')) {
 					throw new IllegalStateException(
 						'Cannot add groovydocJar task on a non-Groovy project.  Be sure to ' +
-						'add the groovy plugin first, or to have configured a groovy project ' +
-						'using createGroovyProject().'
+							'add the groovy plugin first, or to have configured a groovy project ' +
+							'using createGroovyProject().'
 					)
 				}
 
@@ -306,7 +306,7 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			}
 
 			@Override
-			MavenPomConfig withDevelopers(List<Map<String, String>> developers) {
+			MavenPomConfig withDevelopers(Map<String, String>... developers) {
 
 				publication.pom { pom ->
 					pom.developers { pomDeveloperSpec ->

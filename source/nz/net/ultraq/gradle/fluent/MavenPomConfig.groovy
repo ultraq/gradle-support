@@ -33,7 +33,7 @@ interface MavenPomConfig extends MavenCentralEntry {
 	 * Set the {@code <developers>} section with the given developers.  The map
 	 * properties accepted are {@code name}, {@code email}, and {@code ur}.
 	 */
-	MavenPomConfig withDevelopers(List<Map<String,String>> developers)
+	MavenPomConfig withDevelopers(Map<String, String>... developers)
 
 	/**
 	 * Automatically fill in the {@code <scm>} section to reference a GitHub
