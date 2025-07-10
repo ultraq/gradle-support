@@ -255,5 +255,18 @@ class FluentConfigurationPluginTests extends Specification {
 				url.get() == 'https://www.ultraq.net.nz'
 			}
 	}
+
+	def "Publishes to any Maven repository"() {
+		when:
+			configure.createGroovyProject()
+			configure.createMavenPublication()
+				.publishTo {
+					name = 'My local repo'
+					url = project.file('../my-local-repo')
+				}
+		then:
+			project.extensions.getByType(PublishingExtension).repositories.findByName('My local repo') != null
+//			localRepo.url == project.file('../my-local-repo')
+	}
 	// @formatter:on
 }

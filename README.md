@@ -183,3 +183,6 @@ publication which all of the methods in this chain will operate on.
    As this method takes credential information, DO NOT enter your actual
    credentials into your build script.  Instead, reference Gradle properties or
    environment variables.
+
+ - `publishTo(@DelegatesTo(MavenArtifactRepository) Closure configure)`  
+   Publish to any Maven repository of your configuration.

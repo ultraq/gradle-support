@@ -26,6 +26,7 @@ import nz.net.ultraq.gradle.fluent.TestingConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
@@ -331,6 +332,15 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 						scm.developerConnection.set("scm:git:git@github.com:${owner}/${repository}.git")
 						scm.url.set("https://github.com/${owner}/${repository}")
 					}
+				}
+				return this
+			}
+
+			@Override
+			MavenCentralConfig publishTo(@DelegatesTo(MavenArtifactRepository) Closure configure) {
+
+				publishing.repositories { repositories ->
+					repositories.maven(configure)
 				}
 				return this
 			}
