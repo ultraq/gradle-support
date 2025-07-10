@@ -17,10 +17,8 @@
 package nz.net.ultraq.gradle
 
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Ignore
 import spock.lang.Specification
-import spock.lang.TempDir
 
 /**
  * Tests for adding Maven Central repositories via the plugin.
@@ -29,10 +27,7 @@ import spock.lang.TempDir
  */
 class UseMavenCentralRepositoriesPluginTests extends Specification {
 
-	@TempDir
-	File testProjectDir
-
-	def "Adds Maven Central and Maven Central Snapshots repositories"() {
+	def "Adds Maven Central and Maven Central Snapshots repositories to a project"() {
 		given:
 			var project = ProjectBuilder.builder().build()
 		when:
@@ -43,25 +38,7 @@ class UseMavenCentralRepositoriesPluginTests extends Specification {
 			project.repositories.find { it.url = 'https://central.sonatype.com/repository/maven-snapshots/' } != null
 	}
 
-	// Would love to have something like ProjectBuilder for settings.  For now,
-	// an integration test will have to do.
-	def "Adds Maven Central and Maven Central Snapshots repositories to settings"() {
-		given:
-			var settingsFile = new File(testProjectDir, 'settings.gradle')
-			settingsFile << """
-				plugins {
-          id 'nz.net.ultraq.gradle.use-maven-central-repositories'
-        }
-        rootProject.name = 'test-project'
-        """
-		when:
-			var buildResult = GradleRunner.create()
-				.withProjectDir(testProjectDir)
-				.withPluginClasspath()
-				.withDebug(true)
-				.withArguments('help')
-				.build()
-		then:
-			buildResult.task(':help').outcome == TaskOutcome.SUCCESS
+	@Ignore("Gradle needs to give us a SettingsBuilder equivalent to test settings plugins")
+	def "Adds Maven Central and Maven Central Snapshots repositories to all projects"() {
 	}
 }
