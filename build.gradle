@@ -26,6 +26,7 @@ description = 'Gradle support plugins for use in my own projects'
 version = '0.2.1'
 group = 'nz.net.ultraq.gradle'
 
+// @formatter:off
 configure {
 	createGroovyProject()
 		.useJavaVersion(17)
@@ -40,6 +41,7 @@ configure {
 			.useJUnitJupiter()
 			.useJacoco()
 }
+// @formatter:on
 
 gradlePlugin {
 	website = 'https://github.com/ultraq/gradle-support'
