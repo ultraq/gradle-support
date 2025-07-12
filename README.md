@@ -67,7 +67,7 @@ configure {
   createMavenPublication()
     .addJar() {
       manifest {
-        attributes 'Automatic-Module-Name': 'nz.net.ultraq.gradle.support'
+        attributes 'Automatic-Module-Name': 'org.example.myproject'
       }
     }
     .addSourcesJar()
@@ -76,13 +76,16 @@ configure {
       inceptionYear = '2025'
     }
       .useApache20License()
-      .withGitHubScm('ultraq', 'gradle-support')
+      .withGitHubScm('github-user', 'github-repository')
       .withDevelopers([
-        name: 'Emanuel Rabina',
-        email: 'emanuelrabina@gmail.com',
-        url: 'https://www.ultraq.net.nz'
+        name: 'My Name',
+        email: 'me@example.org',
+        url: 'https://example.org'
       ])
-    .publishToMavenCentral(property('mavenCentralUsername'), property('mavenCentralPassword'))
+    .publishToMavenCentral(
+      property('mavenCentralPublisherUsername'),
+      property('mavenCentralPublisherPassword')
+    )
 }
 ```
 
