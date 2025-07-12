@@ -18,6 +18,8 @@ package nz.net.ultraq.gradle.fluent
 
 import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
+import org.gradle.api.tasks.compile.GroovyCompile
+
 /**
  * Configuration interface for putting together a Groovy project in Gradle.
  *
@@ -38,4 +40,9 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	 * applying the {@link UseMavenCentralRepositoriesPlugin} plugin.
 	 */
 	GroovyProjectConfig useMavenCentralRepositories()
+
+	/**
+	 * Pass any compilation options to the `compileGroovy` task.
+	 */
+	GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)
 }

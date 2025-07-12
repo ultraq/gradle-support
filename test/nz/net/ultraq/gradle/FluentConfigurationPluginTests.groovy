@@ -24,6 +24,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
@@ -67,6 +68,16 @@ class FluentConfigurationPluginTests extends Specification {
 			}
 		where:
 			version << [17, 21]
+	}
+
+	def "Configure Groovy compilation options"() {
+		when:
+			configure.createGroovyProject()
+				.withCompileOptions() {
+					groovyOptions.parameters = true
+				}
+		then:
+			project.tasks.named('compileGroovy', GroovyCompile).get().groovyOptions.parameters
 	}
 
 	def "Configures a combined source and resource directory"() {

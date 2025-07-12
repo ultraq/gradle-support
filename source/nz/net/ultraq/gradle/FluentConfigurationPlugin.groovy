@@ -37,6 +37,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -128,6 +129,13 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			GroovyProjectConfig useMavenCentralRepositories() {
 
 				project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
+				return this
+			}
+
+			@Override
+			GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
+
+				project.tasks.named('compileGroovy', GroovyCompile, configure)
 				return this
 			}
 
@@ -232,8 +240,8 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 				if (!project.pluginManager.hasPlugin('groovy')) {
 					throw new IllegalStateException(
 						'Cannot add groovydocJar task on a non-Groovy project.  Be sure to ' +
-							'add the groovy plugin first, or to have configured a groovy project ' +
-							'using createGroovyProject().'
+						'add the groovy plugin first, or to have configured a groovy project ' +
+						'using createGroovyProject().'
 					)
 				}
 

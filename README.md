@@ -50,6 +50,9 @@ configure {
   createGroovyProject()
     .useJavaVersion(17)
     .useMavenCentralRepositories()
+    .withCompileOptions() {
+      groovyOptions.parameters = true
+    }
     .configureSource()
       .withSourceDirectory('source')
       .withDependencies() {
@@ -105,6 +108,9 @@ links to any Groovy SDK libraries (those starting with `groovy.` or
     Adds the Maven Central and Snapshots repositories to the project by
     applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
     plugin.
+
+ - `withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
+   Pass any compilation options to the `compileGroovy` task.
 
  - `configureSource`  
     Start configuration of source code -related things.
