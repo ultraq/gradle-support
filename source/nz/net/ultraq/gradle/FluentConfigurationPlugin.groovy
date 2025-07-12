@@ -103,14 +103,20 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			}
 
 			@Override
-			SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+			SourceConfig expand(String filePattern, Map<String, String> replacements) {
 
 				project.tasks.named('processResources', ProcessResources) { processResources ->
-					processResources.filesMatching('**/org.codehaus.groovy.runtime.ExtensionModule') { file ->
-						file.expand([(propertyName): value])
+					processResources.filesMatching(filePattern) { file ->
+						file.expand(replacements)
 					}
 				}
 				return this
+			}
+
+			@Override
+			SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+
+				return expand('**/org.codehaus.groovy.runtime.ExtensionModule', [(propertyName): value])
 			}
 
 			@Override

@@ -59,6 +59,7 @@ configure {
         implementation 'org.apache.groovy:groovy:4.0.27'
       }
       .expandExtensionModuleVersion('moduleVersion', version)
+      .expand('**/*.properties', [version: version])
     .configureTesting()
       .withTestDirectory('test')
       .withTestDependencies() {
@@ -113,35 +114,39 @@ links to any Groovy SDK libraries (those starting with `groovy.` or
    Pass any compilation options to the `compileGroovy` task.
 
  - `configureSource`  
-    Start configuration of source code -related things.
+   Start configuration of source code -related things.
 
-     - `withSourceDirectory(Object path)`  
-       Set a combined source & resources directory to use.  This is for those
-       who prefer co-locating source code and assets.
+    - `withSourceDirectory(Object path)`  
+      Set a combined source & resources directory to use.  This is for those who
+      prefer co-locating source code and assets.
 
-     - `withDependencies(Closure closure)`  
-       Configure the dependencies for the project.
+    - `withDependencies(Closure closure)`  
+      Configure the dependencies for the project.
 
-     - `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`  
-       Expands the given property reference in the Groovy extension module
-       manifest file to the given value.
- 
+    - `expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version)`  
+      Expands the given property reference in the Groovy extension module
+      manifest file to the given value.
+
+    - `expand(String filePattern, Map<String, String> replacements)`  
+      Expand any of the keys in `replacements` to their mapped values, for any
+      file matched by `filePattern`.
+
  - `configureTesting`  
-    Start configuration of test-related things.
+   Start configuration of test-related things.
  
-     - `withTestDirectory(Object path)`  
-       Set the directory in which test code and assets will reside.
+    - `withTestDirectory(Object path)`  
+      Set the directory in which test code and assets will reside.
 
-     - `withTestDependencies(Closure closure)`  
-      Configure the testing dependencies for the project.
+    - `withTestDependencies(Closure closure)`  
+     Configure the testing dependencies for the project.
 
-     - `useJUnitJupiter`  
-       Configure all test suites to use JUnit Jupiter.
+    - `useJUnitJupiter`  
+      Configure all test suites to use JUnit Jupiter.
  
-     - `useJacoco`  
-       Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
-       after and depend on the `test` task.  XML reports are also enabled so
-       coverage data can be uploaded to services like [codecov](https://codecov.io/).
+    - `useJacoco`  
+      Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
+      after and depend on the `test` task.  XML reports are also enabled so
+      coverage data can be uploaded to services like [codecov](https://codecov.io/).
 
 #### `createMavenPublication`
 
