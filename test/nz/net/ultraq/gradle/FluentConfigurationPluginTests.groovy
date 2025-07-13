@@ -49,12 +49,19 @@ class FluentConfigurationPluginTests extends Specification {
 	}
 
 	// @formatter:off
-	def "Configures a Groovy project with the Java version"(int version) {
+	def "Configures a Groovy library project"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
+		then:
+			project.pluginManager.hasPlugin('java-library')
+			project.pluginManager.hasPlugin('groovy')
+	}
+
+	def "Use the specified Java version"(int version) {
+		when:
+			configure.createGroovyLibrary()
 				.useJavaVersion(version)
 		then:
-			project.pluginManager.hasPlugin('groovy')
 			project.java.toolchain.languageVersion.get() == JavaLanguageVersion.of(version)
 			var links = project.tasks.named('groovydoc', Groovydoc).get().links
 			links.size() == 2
@@ -72,7 +79,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Configure Groovy compilation options"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.withCompileOptions() {
 					groovyOptions.parameters = true
 				}
@@ -82,7 +89,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Configure groovydoc options"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.withGroovydocOptions() {
 					overviewText = project.resources.text.fromString('Hello!')
 				}
@@ -92,7 +99,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Configures a combined source and resource directory"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.configureSource()
 					.withSourceDirectory('source')
 				.configureTesting()
@@ -104,7 +111,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Configures Maven Central and Snapshot repositories"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.useMavenCentralRepositories()
 		then:
 			project.repositories.size() == 2
@@ -115,7 +122,7 @@ class FluentConfigurationPluginTests extends Specification {
 	@Ignore("Can't figure out what changes to assert on")
 	def "Configures JUnit Jupiter for testing"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.configureTesting()
 					.withTestDirectory('test')
 					.useJUnitJupiter()
@@ -126,7 +133,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds dependencies through their respective methods"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.configureSource()
 					.withDependencies() {
 						implementation 'org.apache.groovy:groovy:4.0.27'
@@ -144,7 +151,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds the Jacoco plugin with support for codecov"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 				.configureTesting()
 					.useJacoco()
 		then:
@@ -169,7 +176,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds and configures the main Java JAR"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.addJar() {
 					manifest {
@@ -188,7 +195,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds the main sources JAR"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.addSourcesJar()
 		then:
@@ -198,7 +205,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds a groovydocJar task and includes it in the main bundle"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.addGroovydocJar()
 		then:
@@ -216,7 +223,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "POM configuration is just a wrapper for the publication pom closure"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.configurePom() {
 					inceptionYear = '2025'
@@ -228,7 +235,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Fills in an Apache 2.0 License"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.configurePom()
 				.useApache20License()
@@ -244,7 +251,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Fills in GitHub SCM details"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.configurePom()
 				.withGitHubScm('ultraq', 'gradle-support')
@@ -259,7 +266,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Adds developer details"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.configurePom()
 				.withDevelopers([
@@ -279,7 +286,7 @@ class FluentConfigurationPluginTests extends Specification {
 
 	def "Publishes to any Maven repository"() {
 		when:
-			configure.createGroovyProject()
+			configure.createGroovyLibrary()
 			configure.createMavenPublication()
 				.publishTo {
 					name = 'My local repo'
