@@ -19,6 +19,7 @@ package nz.net.ultraq.gradle.fluent
 import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
 import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.javadoc.Groovydoc
 
 /**
  * Configuration interface for putting together a Groovy project in Gradle.
@@ -45,4 +46,9 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	 * Pass any compilation options to the `compileGroovy` task.
 	 */
 	GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)
+
+	/**
+	 * Pass any groovydoc options to the {@code groovydoc} task.
+	 */
+	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)
 }

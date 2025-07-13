@@ -53,6 +53,9 @@ configure {
     .withCompileOptions() {
       groovyOptions.parameters = true
     }
+    .withGroovydocOptions {
+      overviewText = resources.text.fromString('Hello!')
+    }
     .configureSource()
       .withSourceDirectory('source')
       .withDependencies() {
@@ -112,6 +115,9 @@ links to any Groovy SDK libraries (those starting with `groovy.` or
 
  - `withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
    Pass any compilation options to the `compileGroovy` task.
+
+ - `withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)`  
+   Pass any groovydoc options to the `groovydoc` task.
 
  - `configureSource`  
    Start configuration of source code -related things.

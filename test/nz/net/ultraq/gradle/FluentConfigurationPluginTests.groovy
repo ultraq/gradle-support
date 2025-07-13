@@ -80,6 +80,16 @@ class FluentConfigurationPluginTests extends Specification {
 			project.tasks.named('compileGroovy', GroovyCompile).get().groovyOptions.parameters
 	}
 
+	def "Configure groovydoc options"() {
+		when:
+			configure.createGroovyProject()
+				.withGroovydocOptions() {
+					overviewText = project.resources.text.fromString('Hello!')
+				}
+		then:
+			project.tasks.named('groovydoc', Groovydoc).get().overviewText.asString() == 'Hello!'
+	}
+
 	def "Configures a combined source and resource directory"() {
 		when:
 			configure.createGroovyProject()

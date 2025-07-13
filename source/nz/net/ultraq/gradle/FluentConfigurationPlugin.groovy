@@ -146,6 +146,13 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			}
 
 			@Override
+			GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
+
+				project.tasks.named('groovydoc', Groovydoc, configure)
+				return this
+			}
+
+			@Override
 			TestingConfig useJacoco() {
 
 				project.pluginManager.apply('jacoco')
