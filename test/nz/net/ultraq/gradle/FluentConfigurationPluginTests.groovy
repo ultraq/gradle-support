@@ -49,6 +49,13 @@ class FluentConfigurationPluginTests extends Specification {
 	}
 
 	// @formatter:off
+	def "Configures a Groovy project"() {
+		when:
+			configure.createGroovyProject()
+		then:
+			project.pluginManager.hasPlugin('groovy')
+	}
+
 	def "Configures a Groovy library project"() {
 		when:
 			configure.createGroovyLibrary()

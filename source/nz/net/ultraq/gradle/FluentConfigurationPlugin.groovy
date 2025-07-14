@@ -71,15 +71,22 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 		final Project project
 
 		/**
-		 * Starts a fluent chain for configuring a Groovy library project.  This
-		 * will apply the {@code groovy} and {@code java-library} plugins, and
-		 * configure the {@code groovydoc} task to generate docs with links to any
-		 * Groovy SDK libraries (those starting with {@code groovy.} or
-		 * {@code org.apache.groovy.}).
+		 * Extends {@link #createGroovyProject} with the {@code java-library}
+		 * plugin.
 		 */
 		GroovyProjectConfig createGroovyLibrary() {
 
-			project.pluginManager.apply('java-library')
+			return new DefaultGroovyLibraryConfig()
+		}
+
+		/**
+		 * Starts a fluent chain for configuring a Groovy project.  This will apply
+		 * the {@code groovy} plugin, and configure the {@code groovydoc} task to
+		 * generate docs with links to any Groovy SDK libraries (those starting with
+		 * {@code groovy.} or {@code org.apache.groovy.}).
+		 */
+		GroovyProjectConfig createGroovyProject() {
+
 			return new DefaultGroovyProjectConfig()
 		}
 
@@ -234,6 +241,15 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 
 				withDirectoryForSourceSetAt(path, 'test')
 				return this
+			}
+		}
+
+		private class DefaultGroovyLibraryConfig extends DefaultGroovyProjectConfig {
+
+			DefaultGroovyLibraryConfig() {
+
+				super()
+				project.pluginManager.apply('java-library')
 			}
 		}
 

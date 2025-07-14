@@ -96,12 +96,12 @@ configure {
 }
 ```
 
-#### `createGroovyLibrary`
+#### `createGroovyProject`
 
-Starts a fluent chain for configuring a Groovy library project.  This will apply
-the `groovy` and `java-library` plugins, and configure the `groovydoc` task to
-generate docs with links to any Groovy SDK libraries (those starting with
-`groovy.` or `org.apache.groovy.`).
+Starts a fluent chain for configuring a Groovy project.  This will apply the
+`groovy` plugin, and configure the `groovydoc` task to generate docs with links
+to any Groovy SDK libraries (those starting with `groovy.` or
+`org.apache.groovy.`).
 
  - `useJavaVersion(int version)`  
     Sets the version of Java to use in the toolchain configuration.  This will
@@ -153,6 +153,10 @@ generate docs with links to any Groovy SDK libraries (those starting with
       Adds the `jacoco` plugin, making the added `jacocoTestReport` task run
       after and depend on the `test` task.  XML reports are also enabled so
       coverage data can be uploaded to services like [codecov](https://codecov.io/).
+
+#### `createGroovyLibrary`
+
+Extends `createGroovyProject` to also apply the `groovy-library` plugin.
 
 #### `createMavenPublication`
 
