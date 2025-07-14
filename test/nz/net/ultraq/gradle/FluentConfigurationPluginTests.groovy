@@ -126,6 +126,16 @@ class FluentConfigurationPluginTests extends Specification {
 			project.repositories.find { it.url = 'https://central.sonatype.com/repository/maven-snapshots/' } != null
 	}
 
+	def "Adds the codenarc plugin and uses the specified config file"() {
+		when:
+			configure.createGroovyProject()
+				.configureTesting()
+					.useCodenarc(project.resources.text.fromString('Hello!'))
+		then:
+			project.pluginManager.hasPlugin('codenarc')
+			project.codenarc.config.asString() == 'Hello!'
+	}
+
 	@Ignore("Can't figure out what changes to assert on")
 	def "Configures JUnit Jupiter for testing"() {
 		when:

@@ -68,6 +68,7 @@ configure {
       .withTestDependencies() {
         testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
       }
+      .useCodenarc(resources.text.fromUri('https://example.org/path-to-codenarc-config.groovy'))
       .useJUnitJupiter()
       .useJacoco()
 
@@ -145,6 +146,9 @@ to any Groovy SDK libraries (those starting with `groovy.` or
 
     - `withTestDependencies(Closure closure)`  
      Configure the testing dependencies for the project.
+
+    - `useCodenarc(TextResource codenarcConfig)`  
+      Adds the `codenarc` plugin and specifies the config file to use.
 
     - `useJUnitJupiter`  
       Configure all test suites to use JUnit Jupiter.

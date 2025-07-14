@@ -21,7 +21,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -73,7 +72,6 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 
 		configure(project)
 			.directories()
-			.verification()
 			.distribution()
 	}
 
@@ -131,21 +129,6 @@ class GroovyDevelopmentPlugin implements Plugin<Project> {
 			project.tasks.named('distZip', Zip).configure { distZip ->
 				distZip.dependsOn('groovydoc')
 				distZip.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-			}
-		}
-
-		return this
-	}
-
-	/**
-	 * Configure verification plugins if present.
-	 */
-	private GroovyDevelopmentPlugin verification() {
-
-		project.pluginManager.withPlugin('codenarc') {
-			var sharedConfig = 'https://raw.githubusercontent.com/ultraq/codenarc-config-ultraq/master/codenarc.groovy'.toURL().text
-			project.extensions.configure(CodeNarcExtension) { codenarc ->
-				codenarc.config = project.resources.text.fromString(sharedConfig)
 			}
 		}
 

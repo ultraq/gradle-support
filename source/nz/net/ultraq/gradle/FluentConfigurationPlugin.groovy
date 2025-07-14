@@ -31,9 +31,11 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
@@ -158,6 +160,16 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
 
 				project.tasks.named('groovydoc', Groovydoc, configure)
+				return this
+			}
+
+			@Override
+			TestingConfig useCodenarc(TextResource codenarcConfig) {
+
+				project.pluginManager.apply('codenarc')
+				project.extensions.configure(CodeNarcExtension) { codenarc ->
+					codenarc.config = codenarcConfig
+				}
 				return this
 			}
 

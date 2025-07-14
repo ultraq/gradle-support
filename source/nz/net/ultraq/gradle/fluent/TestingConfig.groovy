@@ -17,6 +17,7 @@
 package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.resources.TextResource
 
 /**
  * Configuration interface for testing.
@@ -27,6 +28,11 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  * @author Emanuel Rabina
  */
 interface TestingConfig {
+
+	/**
+	 * Adds the {@code codenarc} plugin and specifies the config file to use.
+	 */
+	TestingConfig useCodenarc(TextResource codenarcConfig)
 
 	/**
 	 * Adds the {@code jacoco} plugin, making the added {@code jacocoTestReport}
