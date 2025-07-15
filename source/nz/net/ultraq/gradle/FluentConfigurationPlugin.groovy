@@ -293,7 +293,7 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 					groovydocJar.group = 'build'
 					groovydocJar.dependsOn('groovydoc')
 					groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
-					groovydocJar.destinationDirectory.set(project.file("${project.layout.buildDirectory}/libs"))
+					groovydocJar.destinationDirectory.set(project.layout.buildDirectory.dir('libs'))
 					groovydocJar.archiveClassifier.set('javadoc')
 				}
 				project.tasks.named('assemble') { assembleTask ->

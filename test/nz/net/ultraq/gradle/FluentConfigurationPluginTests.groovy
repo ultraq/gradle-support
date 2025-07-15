@@ -230,7 +230,7 @@ class FluentConfigurationPluginTests extends Specification {
 			verifyAll(groovydocJar) {
 				group == 'build'
 				dependsOn.contains('groovydoc')
-				destinationDirectory.get().toString() == project.file("${project.layout.buildDirectory}/libs").toString()
+				destinationDirectory.get() == project.layout.buildDirectory.dir('libs').get()
 				archiveClassifier.get() == 'javadoc'
 			}
 			project.tasks.named('assemble').get().dependsOn.contains(groovydocJar)
