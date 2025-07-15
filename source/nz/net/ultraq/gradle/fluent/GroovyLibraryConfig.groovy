@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import org.gradle.testfixtures.ProjectBuilder
-import spock.lang.Specification
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Tests for the fluent configuration plugin.
+ * Configuration interface for putting together a Groovy library project in
+ * Gradle.
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPluginTests extends Specification {
-
-	def "Adds the fluent configuration extension to the project"() {
-		given:
-			var project = ProjectBuilder.builder().build()
-		when:
-			project.pluginManager.apply('nz.net.ultraq.gradle.fluent-configuration')
-		then:
-			var configure = project.extensions.getByName('configure')
-			configure instanceof FluentConfigurationPluginExtension
-	}
+interface GroovyLibraryConfig extends GroovyProjectConfig {
 }

@@ -16,23 +16,23 @@
 
 package nz.net.ultraq.gradle
 
-import org.gradle.testfixtures.ProjectBuilder
-import spock.lang.Specification
+import nz.net.ultraq.gradle.fluent.GroovyLibraryConfig
+
+import org.gradle.api.Project
+
+import groovy.transform.PackageScope
 
 /**
- * Tests for the fluent configuration plugin.
+ * Implementation for configuring a Groovy library project.
  *
  * @author Emanuel Rabina
  */
-class FluentConfigurationPluginTests extends Specification {
+@PackageScope
+class DefaultGroovyLibraryConfig extends DefaultGroovyProjectConfig implements GroovyLibraryConfig {
 
-	def "Adds the fluent configuration extension to the project"() {
-		given:
-			var project = ProjectBuilder.builder().build()
-		when:
-			project.pluginManager.apply('nz.net.ultraq.gradle.fluent-configuration')
-		then:
-			var configure = project.extensions.getByName('configure')
-			configure instanceof FluentConfigurationPluginExtension
+	DefaultGroovyLibraryConfig(Project project) {
+
+		super(project)
+		project.pluginManager.apply('java-library')
 	}
 }
