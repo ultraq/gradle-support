@@ -94,6 +94,11 @@ configure {
       property('mavenCentralPublisherUsername'),
       property('mavenCentralPublisherPassword')
     )
+
+  createZipDistribution()
+    .withDependenciesIn('libraries')
+    .withSourcesIn('source')
+    .withGroovydocsIn('groovydoc')
 }
 ```
 
@@ -214,3 +219,19 @@ publication which all of the methods in this chain will operate on.
 
  - `publishTo(@DelegatesTo(MavenArtifactRepository) Closure configure)`  
    Publish to any Maven repository of your configuration.
+
+#### `createZipDistribution`
+
+Starts a fluent chain for configuring a ZIP archive.  Applies the `distribution`
+plugin and defaults to including the main JAR, then any `CHANGELOG`, `LICENSE`,
+and `README` files in the project directory.
+
+ - `withDependenciesIn(String directory)`  
+   Include runtime dependencies of the main JAR and place them in the given
+   directory.
+
+ - `withSourcesIn(String directory)`  
+   Include sources for the main JAR and place them in the given directory.
+
+ - `withGroovydocsIn(String directory)`  
+   Include Javadoc for the main JAR and place them in the given directory.

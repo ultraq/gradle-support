@@ -19,11 +19,15 @@ package nz.net.ultraq.gradle
 import nz.net.ultraq.gradle.FluentConfigurationPlugin.FluentConfigurationPluginExtension
 
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -310,8 +314,25 @@ class FluentConfigurationPluginTests extends Specification {
 					url = project.file('../my-local-repo')
 				}
 		then:
-			project.extensions.getByType(PublishingExtension).repositories.findByName('My local repo') != null
-//			localRepo.url == project.file('../my-local-repo')
+			var localRepo = project.extensions.getByType(PublishingExtension).repositories.named('My local repo', MavenArtifactRepository).get()
+			localRepo.url == project.file('../my-local-repo').toURI()
+	}
+
+	def "Creates a basic ZIP distribution"() {
+		when:
+			configure.createGroovyProject()
+			configure.createZipDistribution()
+		then:
+			var distribution = project.extensions.getByType(DistributionContainer).named('main').get()
+			verifyAll(distribution.contents.includes) {
+				contains('CHANGELOG.md')
+				contains('LICENSE.txt')
+				contains('README.md')
+			}
+			!project.tasks.named('distTar', Task).get().enabled
+			verifyAll(project.tasks.named('distZip', Zip).get()) {
+				duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+			}
 	}
 	// @formatter:on
 }

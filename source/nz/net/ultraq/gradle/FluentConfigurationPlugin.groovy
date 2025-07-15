@@ -22,12 +22,16 @@ import nz.net.ultraq.gradle.fluent.MavenPomConfig
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
+import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.distribution.Distribution
+import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
@@ -39,6 +43,7 @@ import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -103,6 +108,17 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			return new DefaultMavenPublicationConfig()
 		}
 
+		/**
+		 * Starts a fluent chain for configuring a ZIP archive.  Applies the
+		 * {@code distribution} plugin and defaults to including the main JAR, then
+		 * any {@code CHANGELOG}, {@code LICENSE}, and {@code README} files in the
+		 * project directory.
+		 */
+		ZipDistributionConfig createZipDistribution() {
+
+			return new DefaultZipDistributionConfig()
+		}
+
 		private class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, TestingConfig {
 
 			DefaultGroovyProjectConfig() {
@@ -152,14 +168,20 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 			@Override
 			GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
 
-				project.tasks.named('compileGroovy', GroovyCompile, configure)
+				project.tasks.named('compileGroovy', GroovyCompile) { compileGroovy ->
+					configure.delegate = compileGroovy
+					configure()
+				}
 				return this
 			}
 
 			@Override
 			GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
 
-				project.tasks.named('groovydoc', Groovydoc, configure)
+				project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
+					configure.delegate = groovydoc
+					configure()
+				}
 				return this
 			}
 
@@ -412,6 +434,80 @@ class FluentConfigurationPlugin implements Plugin<Project> {
 							credentials.username = username
 							credentials.password = password
 						}
+					}
+				}
+				return this
+			}
+		}
+
+		private class DefaultZipDistributionConfig implements ZipDistributionConfig {
+
+			private final Distribution mainDistribution
+
+			DefaultZipDistributionConfig() {
+
+				// TODO: This limitation only exists because of the hard reliance on
+				//       adding a JAR to the ZIP file.  When this plugin moves to
+				//       supporting more than just Groovy projects, then this could be
+				//       relaxed to requiring any JVM-based project.
+				if (!project.pluginManager.hasPlugin('groovy')) {
+					throw new IllegalStateException(
+						'Cannot create ZIP distribution on a non-Groovy project.  Be sure to ' +
+						'add the groovy plugin first, or to have configured a groovy project ' +
+						'using createGroovyProject().'
+					)
+				}
+
+				project.pluginManager.apply('distribution')
+				var distributionContainer = project.extensions.getByType(DistributionContainer).named('main') { main ->
+					main.contents { spec ->
+						spec.from(project.tasks.named('jar', Jar).get().outputs.files)
+						spec.from(project.rootDir) {
+							include('CHANGELOG.md')
+							include('LICENSE.txt')
+							include('README.md')
+						}
+					}
+				}
+				mainDistribution = distributionContainer.get()
+				project.tasks.named('distTar', Task).configure { distTar ->
+					distTar.enabled = false
+				}
+				project.tasks.named('distZip', Zip).configure { distZip ->
+					distZip.dependsOn('groovydoc')
+					distZip.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+				}
+			}
+
+			@Override
+			ZipDistributionConfig withDependenciesIn(String directory) {
+
+				mainDistribution.contents { spec ->
+					spec.from(project.configurations.named('runtimeClasspath').get()) {
+						into(directory)
+					}
+				}
+				return this
+			}
+
+			@Override
+			ZipDistributionConfig withGroovydocsIn(String directory) {
+
+				mainDistribution.contents { spec ->
+					spec.from(project.tasks.named('groovydoc', Groovydoc).get()) {
+						into(directory)
+					}
+				}
+				return this
+			}
+
+			@Override
+			ZipDistributionConfig withSourcesIn(String directory) {
+
+				mainDistribution.contents { spec ->
+					var mainSourceSet = project.extensions.getByType(SourceSetContainer).named('main').get()
+					spec.from(mainSourceSet.extensions.getByType(GroovySourceDirectorySet).srcDirs) {
+						into(directory)
 					}
 				}
 				return this
