@@ -4,7 +4,7 @@ Gradle Support
 
 [![Build Status](https://github.com/ultraq/gradle-support/actions/workflows/build.yml/badge.svg)](https://github.com/ultraq/gradle-support/actions)
 [![codecov](https://codecov.io/gh/ultraq/gradle-support/graph/badge.svg?token=AhWqCXCZzC)](https://codecov.io/gh/ultraq/gradle-support)
-![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/nz.net.ultraq.gradle.fluent-configuration)
+[![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/nz.net.ultraq.gradle.fluent-configuration)](https://plugins.gradle.org/u/ultraq)
 
 Gradle plugins that help support my workflow.
 
@@ -22,6 +22,12 @@ Plugins
 These plugins are built targeting Gradle 9, so require Java 17 as well, and are
 available on the Gradle Plugin Portal, so only need to be added by their ID and
 version to their respective `plugins` block.
+
+> Gradle 9 is still in RC, and while I don't expect too much to change it does
+> mean these plugins are still effectively beta software.
+> 
+> The goal is to have these plugins work with the release version, which
+> includes the configuration cache, before achieving 1.0.0 status.
 
 ### use-maven-central-repositories
 
