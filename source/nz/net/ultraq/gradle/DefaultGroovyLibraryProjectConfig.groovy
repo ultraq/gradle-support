@@ -16,7 +16,7 @@
 
 package nz.net.ultraq.gradle
 
-import nz.net.ultraq.gradle.fluent.GroovyLibraryConfig
+import nz.net.ultraq.gradle.fluent.GroovyLibraryProjectConfig
 
 import org.gradle.api.Project
 
@@ -28,9 +28,9 @@ import groovy.transform.PackageScope
  * @author Emanuel Rabina
  */
 @PackageScope
-class DefaultGroovyLibraryConfig extends DefaultGroovyProjectConfig implements GroovyLibraryConfig {
+class DefaultGroovyLibraryProjectConfig extends DefaultGroovyProjectConfig implements GroovyLibraryProjectConfig {
 
-	DefaultGroovyLibraryConfig(Project project) {
+	DefaultGroovyLibraryProjectConfig(Project project) {
 
 		super(project)
 		project.pluginManager.apply('java-library')

@@ -163,9 +163,16 @@ to any Groovy SDK libraries (those starting with `groovy.` or
       after and depend on the `test` task.  XML reports are also enabled so
       coverage data can be uploaded to services like [codecov](https://codecov.io/).
 
-#### `createGroovyLibrary`
+#### `createGroovyLibraryProject`
 
 Extends `createGroovyProject` to also apply the `groovy-library` plugin.
+
+#### `createGroovyGradlePluginProject`
+
+Extends `createGroovyProject` to also apply the `groovy-gradle-plugin` plugin.
+
+ - `useGradlePluginPortal`  
+   Adds the Gradle Plugin Portal repository to the project.
 
 #### `createMavenPublication`
 

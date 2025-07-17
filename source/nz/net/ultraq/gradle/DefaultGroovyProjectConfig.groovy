@@ -45,7 +45,7 @@ import groovy.transform.PackageScope
 @PackageScope
 class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, TestingConfig {
 
-	private final Project project
+	protected final Project project
 
 	DefaultGroovyProjectConfig(Project project) {
 

@@ -16,6 +16,7 @@
 
 package nz.net.ultraq.gradle
 
+import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectConfig
 import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
@@ -34,12 +35,21 @@ abstract class FluentConfigurationPluginExtension {
 	final Project project
 
 	/**
+	 * Extends {@link #createGroovyProject} with the {@code groovy-gradle-plugin}
+	 * plugin.
+	 */
+	GroovyGradlePluginProjectConfig createGroovyGradlePluginProject() {
+
+		return new DefaultGroovyGradlePluginProject(project)
+	}
+
+	/**
 	 * Extends {@link #createGroovyProject} with the {@code java-library}
 	 * plugin.
 	 */
-	GroovyProjectConfig createGroovyLibrary() {
+	GroovyProjectConfig createGroovyLibraryProject() {
 
-		return new DefaultGroovyLibraryConfig(project)
+		return new DefaultGroovyLibraryProjectConfig(project)
 	}
 
 	/**

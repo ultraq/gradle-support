@@ -22,5 +22,5 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface GroovyLibraryConfig extends GroovyProjectConfig {
+interface GroovyLibraryProjectConfig extends GroovyProjectConfig {
 }
