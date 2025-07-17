@@ -43,6 +43,12 @@ configure {
 }
 // @formatter:on
 
+afterEvaluate {
+	tasks.named('sourcesJar', Jar) {
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	}
+}
+
 gradlePlugin {
 	website = 'https://github.com/ultraq/gradle-support'
 	vcsUrl = 'https://github.com/ultraq/gradle-support.git'
