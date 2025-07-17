@@ -28,9 +28,9 @@ import groovy.transform.PackageScope
  * @author Emanuel Rabina
  */
 @PackageScope
-class DefaultGroovyGradlePluginProject extends DefaultGroovyProjectConfig implements GroovyGradlePluginProjectConfig {
+class DefaultGroovyGradlePluginProjectConfig extends DefaultGroovyProjectConfig implements GroovyGradlePluginProjectConfig {
 
-	DefaultGroovyGradlePluginProject(Project project) {
+	DefaultGroovyGradlePluginProjectConfig(Project project) {
 
 		super(project)
 		project.pluginManager.apply('groovy-gradle-plugin')

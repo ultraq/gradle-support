@@ -40,7 +40,7 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyGradlePluginProjectConfig createGroovyGradlePluginProject() {
 
-		return new DefaultGroovyGradlePluginProject(project)
+		return new DefaultGroovyGradlePluginProjectConfig(project)
 	}
 
 	/**
