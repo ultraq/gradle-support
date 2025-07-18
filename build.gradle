@@ -62,6 +62,15 @@ gradlePlugin {
 				'if added to a settings file.'
 			tags = ['maven', 'repository']
 		}
+		configurePomPlugin {
+			id = 'nz.net.ultraq.gradle.configure-pom'
+			implementationClass = 'nz.net.ultraq.gradle.ConfigurePomPlugin'
+			displayName = 'Configure a project\'s POM'
+			description =
+				'Adds a `configurePom()` method to the Gradle build script that can be used to configure ' +
+				'a Maven POM more succintly.'
+			tags = ['fluent', 'maven', 'pom', 'configuration']
+		}
 		fluentConfigurationPlugin {
 			id = 'nz.net.ultraq.gradle.fluent-configuration'
 			implementationClass = 'nz.net.ultraq.gradle.FluentConfigurationPlugin'
