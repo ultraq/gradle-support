@@ -20,10 +20,12 @@ import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -86,6 +88,41 @@ class DefaultGroovyProjectConfigTests extends Specification {
 			}
 		then:
 			project.tasks.named('groovydoc', Groovydoc).get().overviewText.asString() == 'Hello!'
+	}
+
+	def "Configures the jar task"() {
+		when:
+			config.withJarOptions {
+				manifest {
+					attributes 'Automatic-Module-Name': 'nz.net.ultraq.gradle.support'
+				}
+			}
+		then:
+			var jar = project.tasks.named('jar', Jar).get()
+			jar.manifest.attributes['Automatic-Module-Name'] == 'nz.net.ultraq.gradle.support'
+	}
+
+	def "Adds a sourcesJar task"() {
+		when:
+			config.withSourcesJar()
+		then:
+			var jar = project.tasks.named('sourcesJar', Jar).get()
+			jar.duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+	}
+
+	def "Adds a groovydocJar task"() {
+		when:
+			project.pluginManager.apply('groovy')
+			config.withGroovydocJar()
+		then:
+			var groovydocJar = project.tasks.named('groovydocJar', Jar).get()
+			verifyAll(groovydocJar) {
+				group == 'build'
+				dependsOn.contains('groovydoc')
+				destinationDirectory.get() == project.layout.buildDirectory.dir('libs').get()
+				archiveClassifier.get() == 'javadoc'
+			}
+			project.tasks.named('assemble').get().dependsOn.contains(groovydocJar)
 	}
 
 	def "Configures a combined source and resource directory"() {

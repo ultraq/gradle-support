@@ -81,11 +81,11 @@ Starts a fluent chain to configure the Maven POM.  The Gradle project `name` and
    Automatically fill in the `<licences>` section to have a license of the
    Apache 2.0 license.
 
- - `withGitHubScm(String user, String repo = project.name)`  
+ - `withGitHubScm(String user, String repo = rootProject.name)`  
    Automatically fill in the `<scm>` section to reference a GitHub project.  The
-   repository will default to the project name.
+   repository will default to the root project name.
 
- - `withDevelopers(Map<String,String>... developers)`  
+ - `withDevelopers(Map<String, String>... developers)`  
    Set the `<developers>` section with the given developers.  The map properties
    accepted are `name`, `email`, and `url`.
 
@@ -107,9 +107,16 @@ configure {
     .withCompileOptions() {
       groovyOptions.parameters = true
     }
-    .withGroovydocOptions {
+    .withJarOptions() {
+      manifest {
+        attributes 'Automatic-Module-Name': 'org.example.myproject'
+      }
+    }
+    .withGroovydocOptions() {
       overviewText = resources.text.fromString('Hello!')
     }
+    .withSourcesJar()
+    .withGroovydocJar()
     .configureSource()
       .withSourceDirectory('source')
       .withDependencies() {
@@ -127,13 +134,7 @@ configure {
       .useJacoco()
 
   createMavenPublication()
-    .addJar() {
-      manifest {
-        attributes 'Automatic-Module-Name': 'org.example.myproject'
-      }
-    }
-    .addSourcesJar()
-    .addGroovydocJar()
+    .withArtifacts(jar, sourcesJar, groovydocJar)
     .configurePom() {
       inceptionYear = '2025'
     }
@@ -234,19 +235,8 @@ Starts a fluent chain for configuring publishing artifacts to a Maven
 repository.  This will apply the `maven-publish` plugin and create a `main`
 publication which all of the methods in this chain will operate on.
 
- - `addJar(Closure configure = null)`  
-   Adds the main software component to the bundle which can be optionally
-   configured with the given closure.
-
- - `addSourcesJar`  
-   Adds the `sourcesJar` task and makes it part of the bundle to publish.
-
- - `addGroovydocJar`  
-   Adds a `groovydocJar` task, making it part of the bundle to publish.  It will
-   have a `javadoc` classifier so that it can be used as the documentation
-   companion for the compiled code, and so that services like [javadoc.io](https://javadoc.io)
-   can find it.  The task will also have a  dependency on the `assemble`
-   lifecycle task so it can be created alongside other artifact outputs.
+ - `withArtifacts(Object... sources)`  
+   Add several artifacts to the publication.
 
  - `configurePom(@DelegatesTo(MavenPom) Closure configure)`  
    Configure the POM that will get published.  This method provides the same API

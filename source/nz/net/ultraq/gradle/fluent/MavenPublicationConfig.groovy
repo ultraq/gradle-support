@@ -17,7 +17,6 @@
 package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.tasks.bundling.Jar
 
 /**
  * Configuration interface for putting together Maven publishing artifacts in
@@ -26,34 +25,6 @@ import org.gradle.api.tasks.bundling.Jar
  * @author Emanuel Rabina
  */
 interface MavenPublicationConfig extends MavenCentralEntry {
-
-	/**
-	 * Adds a {@code groovydocJar} task, making it part of the bundle to publish.
-	 * It will be given a `javadoc` classifier so that it can be used as the
-	 * documentation companion for the compiled code, and so that services like
-	 * <a href="https://javadoc.io">javadoc.io</a> can find it.  The task will
-	 * also have a dependency on the {@code assemble} lifecycle task so it can be
-	 * created alongside other artifact outputs.
-	 */
-	MavenPublicationConfig addGroovydocJar()
-
-	/**
-	 * Adds the main software component to the bundle which can be optionally
-	 * configured with the given closure.
-	 */
-	MavenPublicationConfig addJar()
-
-	/**
-	 * Adds the main software component to the bundle which can be optionally
-	 * configured with the given closure.
-	 */
-	MavenPublicationConfig addJar(@DelegatesTo(Jar) Closure configure)
-
-	/**
-	 * Adds the {@code sourcesJar} task and makes it part of the bundle to
-	 * publish.
-	 */
-	MavenPublicationConfig addSourcesJar()
 
 	/**
 	 * Configure the POM that will get published.  The Gradle project {@code name}
@@ -68,4 +39,14 @@ interface MavenPublicationConfig extends MavenCentralEntry {
 	 * POM elements.
 	 */
 	MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure)
+
+	/**
+	 * Add the given artifacts to the publication.
+	 *
+	 * <p>If {@code groovydocJar} is one of the artifacts, it will be given a
+	 * `javadoc` classifier so that it can be used as the documentation companion
+	 * for the main JAR, and so that services like
+	 * <a href="https://javadoc.io">javadoc.io</a> can find it.
+	 */
+	MavenPublicationConfig withArtifacts(Object... artifacts)
 }

@@ -22,12 +22,14 @@ import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -103,11 +105,44 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
+	GroovyProjectConfig withGroovydocJar() {
+
+		var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
+			groovydocJar.group = 'build'
+			groovydocJar.dependsOn('groovydoc')
+			groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
+			groovydocJar.destinationDirectory.set(project.layout.buildDirectory.dir('libs'))
+			groovydocJar.archiveClassifier.set('javadoc')
+		}
+		project.tasks.named('assemble') { assembleTask ->
+			assembleTask.dependsOn(groovydocJar.get())
+		}
+		return this
+	}
+
+	@Override
 	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
 
-		project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
-			configure.delegate = groovydoc
-			configure()
+		project.tasks.named('groovydoc', Groovydoc, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure) {
+
+		project.tasks.named('jar', Jar, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withSourcesJar() {
+
+		project.extensions.configure(JavaPluginExtension) { java ->
+			java.withSourcesJar()
+			project.tasks.named('sourcesJar', Jar) { jar ->
+				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			}
 		}
 		return this
 	}

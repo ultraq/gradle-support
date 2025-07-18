@@ -23,14 +23,10 @@ import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.component.SoftwareComponent
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.plugins.signing.SigningExtension
 
 import groovy.transform.PackageScope
@@ -46,6 +42,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	private final Project project
 	private final PublishingExtension publishing
 	private final MavenPublication publication
+	@Delegate
 	private MavenPomConfig mavenPomConfig
 
 	DefaultMavenPublicationConfig(Project project) {
@@ -57,83 +54,11 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPublicationConfig addGroovydocJar() {
-
-		if (!project.pluginManager.hasPlugin('groovy')) {
-			throw new IllegalStateException(
-				'Cannot add groovydocJar task on a non-Groovy project.  Be sure to ' +
-				'add the groovy plugin first, or to have configured a groovy project ' +
-				'using createGroovyProject().'
-			)
-		}
-
-		var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
-			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
-			groovydocJar.group = 'build'
-			groovydocJar.dependsOn('groovydoc')
-			groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
-			groovydocJar.destinationDirectory.set(project.layout.buildDirectory.dir('libs'))
-			groovydocJar.archiveClassifier.set('javadoc')
-		}
-		project.tasks.named('assemble') { assembleTask ->
-			assembleTask.dependsOn(groovydocJar.get())
-		}
-		publication.artifact(groovydocJar.get()) { artifact ->
-			artifact.classifier = 'javadoc'
-		}
-
-		return this
-	}
-
-	@Override
-	MavenPublicationConfig addJar(@DelegatesTo(Jar) Closure configure = null) {
-
-		publication.from(project.components.named('java', SoftwareComponent).get())
-		if (configure) {
-			project.tasks.named('jar', Jar, configure)
-		}
-		return this
-	}
-
-	@Override
-	MavenPublicationConfig addSourcesJar() {
-
-		project.extensions.configure(JavaPluginExtension) { java ->
-			java.withSourcesJar()
-			project.tasks.named('sourcesJar', Jar) { jar ->
-				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-			}
-		}
-		return this
-	}
-
-	@Override
 	MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure = null) {
 
 		publication.pom { pom ->
 			mavenPomConfig = new DefaultMavenPomConfig(project, pom, configure)
 		}
-		return this
-	}
-
-	@Override
-	MavenPomConfig useApache20License() {
-
-		mavenPomConfig.useApache20License()
-		return this
-	}
-
-	@Override
-	MavenPomConfig withDevelopers(Map<String, String>... developers) {
-
-		mavenPomConfig.withDevelopers(developers)
-		return this
-	}
-
-	@Override
-	MavenPomConfig withGitHubScm(String owner, String repository = project.name) {
-
-		mavenPomConfig.withGitHubScm(owner, repository)
 		return this
 	}
 
@@ -162,6 +87,22 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 					credentials.username = username
 					credentials.password = password
 				}
+			}
+		}
+		return this
+	}
+
+	@Override
+	MavenPublicationConfig withArtifacts(Object... sources) {
+
+		sources.each { source ->
+			if (source instanceof Jar && source.name == 'groovydocJar') {
+				publication.artifact(source) { artifact ->
+					artifact.classifier = 'javadoc'
+				}
+			}
+			else {
+				publication.artifact(source)
 			}
 		}
 		return this
