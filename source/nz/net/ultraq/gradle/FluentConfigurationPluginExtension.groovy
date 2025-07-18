@@ -16,12 +16,14 @@
 
 package nz.net.ultraq.gradle
 
+import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectConfig
 import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectConfig
 import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaApplication
 
 import groovy.transform.TupleConstructor
 
@@ -33,6 +35,14 @@ import groovy.transform.TupleConstructor
 abstract class FluentConfigurationPluginExtension {
 
 	final Project project
+
+	/**
+	 * Extends {@link #createGroovyProject} with the {@code application} plugin.
+	 */
+	GroovyApplicationProjectConfig createGroovyApplicationProject(@DelegatesTo(JavaApplication) Closure configure) {
+
+		return new DefaultGroovyApplicationProjectConfig(project, configure)
+	}
 
 	/**
 	 * Extends {@link #createGroovyProject} with the {@code groovy-gradle-plugin}

@@ -17,9 +17,9 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * For publishing a Maven Central project.
+ * Configure a Groovy application project.
  *
  * @author Emanuel Rabina
  */
-interface MavenCentralConfig {
+interface GroovyApplicationProjectConfig extends GroovyProjectConfig {
 }

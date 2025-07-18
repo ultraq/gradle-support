@@ -222,6 +222,10 @@ to any Groovy SDK libraries (those starting with `groovy.` or
 
 Extends `createGroovyProject` to also apply the `groovy-library` plugin.
 
+#### `createGroovyApplicationProject(@DelegatesTo(JavaApplication) Closure configure)`
+
+Extends `createGroovyProject` to also apply the `application` plugin.
+
 #### `createGroovyGradlePluginProject`
 
 Extends `createGroovyProject` to also apply the `groovy-gradle-plugin` plugin.

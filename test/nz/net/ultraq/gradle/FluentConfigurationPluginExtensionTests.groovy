@@ -51,6 +51,16 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 			project.pluginManager.hasPlugin('groovy')
 	}
 
+	def "Starts configuration of a Groovy application project"() {
+		when:
+			configure.createGroovyApplicationProject {
+				mainClass = 'nz.net.ultraq.gradle.TestApplication'
+			}
+		then:
+			project.pluginManager.hasPlugin('groovy')
+			project.pluginManager.hasPlugin('application')
+	}
+
 	def "Starts configuration of a Groovy library project"() {
 		when:
 			configure.createGroovyLibraryProject()
