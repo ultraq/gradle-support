@@ -76,7 +76,7 @@ class DefaultMavenPomConfig implements MavenPomConfig {
 	}
 
 	@Override
-	MavenPomConfig withGitHubScm(String owner, String repository = project.name) {
+	MavenPomConfig withGitHubScm(String owner, String repository = project.rootProject.name) {
 
 		pom.scm { scm ->
 			scm.connection.set("scm:git:git@github.com:${owner}/${repository}.git")
