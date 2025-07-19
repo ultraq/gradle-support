@@ -235,9 +235,6 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 
 		project.extensions.configure(JavaPluginExtension) { java ->
 			java.withSourcesJar()
-			project.tasks.named('sourcesJar', Jar) { jar ->
-				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-			}
 		}
 		return this
 	}
@@ -246,7 +243,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	SourceConfig withSourceDirectory(Object path) {
 
 		withDirectoryForSourceSetAt(project.file(path), 'main')
-		project.tasks.named('jar', Jar) { jar ->
+		project.tasks.withType(Jar).configureEach { jar ->
 			jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 		}
 		return this

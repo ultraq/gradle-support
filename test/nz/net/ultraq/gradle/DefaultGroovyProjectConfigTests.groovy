@@ -117,8 +117,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 		when:
 			config.withSourcesJar()
 		then:
-			var jar = project.tasks.named('sourcesJar', Jar).get()
-			jar.duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+			project.tasks.named('sourcesJar', Jar)
 	}
 
 	def "Adds a groovydocJar task"() {
