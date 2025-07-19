@@ -22,6 +22,7 @@ import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 
@@ -39,7 +40,7 @@ abstract class FluentConfigurationPluginExtension {
 	/**
 	 * Extends {@link #createGroovyProject} with the {@code application} plugin.
 	 */
-	GroovyApplicationProjectConfig createGroovyApplicationProject(@DelegatesTo(JavaApplication) Closure configure) {
+	GroovyApplicationProjectConfig createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
 		return new DefaultGroovyApplicationProjectConfig(project, configure)
 	}

@@ -20,6 +20,7 @@ import nz.net.ultraq.gradle.fluent.MavenCentralConfig
 import nz.net.ultraq.gradle.fluent.MavenPomConfig
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
@@ -51,21 +52,18 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure = null) {
+	MavenPomConfig configurePom(Action<? extends MavenPom> configure = null) {
 
 		publication.pom { pom ->
 			pom.name.set(project.name)
 			pom.description.set(project.description)
-			if (configure) {
-				configure.delegate = pom
-				configure()
-			}
+			configure?.execute(pom)
 		}
 		return this
 	}
 
 	@Override
-	MavenCentralConfig publishTo(@DelegatesTo(MavenArtifactRepository) Closure configure) {
+	MavenCentralConfig publishTo(Action<? extends MavenArtifactRepository> configure) {
 
 		publishing.repositories { repositories ->
 			repositories.maven(configure)

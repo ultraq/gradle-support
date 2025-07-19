@@ -21,6 +21,7 @@ import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.DuplicatesStrategy
@@ -175,12 +176,9 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
+	GroovyProjectConfig withGroovyCompileOptions(Action<? extends GroovyCompile> configure) {
 
-		project.tasks.named('compileGroovy', GroovyCompile) { compileGroovy ->
-			configure.delegate = compileGroovy
-			configure()
-		}
+		project.tasks.named('compileGroovy', GroovyCompile, configure)
 		return this
 	}
 
@@ -202,28 +200,28 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
+	GroovyProjectConfig withGroovydocOptions(Action<? extends Groovydoc> configure) {
 
 		project.tasks.named('groovydoc', Groovydoc, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure) {
+	GroovyProjectConfig withJarOptions(Action<? extends Jar> configure) {
 
 		project.tasks.named('jar', Jar, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure) {
+	GroovyProjectConfig withJavaCompileOptions(Action<? extends JavaCompile> configure) {
 
 		project.tasks.named('compileJava', JavaCompile, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withShadowJar(@DelegatesTo(ShadowJar) Closure configure) {
+	GroovyProjectConfig withShadowJar(Action<? extends ShadowJar> configure) {
 
 		project.pluginManager.apply('com.gradleup.shadow')
 		project.tasks.named('shadowJar', ShadowJar, configure)

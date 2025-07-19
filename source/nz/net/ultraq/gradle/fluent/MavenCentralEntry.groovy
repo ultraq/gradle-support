@@ -16,6 +16,7 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.Action
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 
 /**
@@ -29,7 +30,7 @@ interface MavenCentralEntry {
 	/**
 	 * Publish to any Maven repository of your configuration.
 	 */
-	MavenCentralConfig publishTo(@DelegatesTo(MavenArtifactRepository) Closure closure)
+	MavenCentralConfig publishTo(Action<? extends MavenArtifactRepository> closure)
 
 	/**
 	 * <p>Configure Maven Central publishing.  This will set up both the Maven

@@ -16,6 +16,7 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.Action
 import org.gradle.api.publish.maven.MavenPom
 
 /**
@@ -38,7 +39,7 @@ interface MavenPublicationConfig extends MavenCentralEntry {
 	 * and {@code description} properties will also be used for their respective
 	 * POM elements.
 	 */
-	MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure)
+	MavenPomConfig configurePom(Action<? extends MavenPom> configure)
 
 	/**
 	 * Add the given artifacts to the publication.

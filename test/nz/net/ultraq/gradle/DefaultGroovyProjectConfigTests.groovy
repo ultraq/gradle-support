@@ -76,8 +76,8 @@ class DefaultGroovyProjectConfigTests extends Specification {
 
 	def "Configure Java compilation options"() {
 		when:
-			config.withJavaCompileOptions() {
-				sourceCompatibility = '17'
+			config.withJavaCompileOptions() { javaCompile ->
+				javaCompile.sourceCompatibility = '17'
 			}
 		then:
 			project.tasks.named('compileJava', JavaCompile).get().sourceCompatibility == '17'
@@ -85,8 +85,8 @@ class DefaultGroovyProjectConfigTests extends Specification {
 
 	def "Configure Groovy compilation options"() {
 		when:
-			config.withGroovyCompileOptions() {
-				groovyOptions.parameters = true
+			config.withGroovyCompileOptions() { groovyCompile ->
+				groovyCompile.groovyOptions.parameters = true
 			}
 		then:
 			project.tasks.named('compileGroovy', GroovyCompile).get().groovyOptions.parameters
@@ -94,8 +94,8 @@ class DefaultGroovyProjectConfigTests extends Specification {
 
 	def "Configure groovydoc options"() {
 		when:
-			config.withGroovydocOptions() {
-				overviewText = project.resources.text.fromString('Hello!')
+			config.withGroovydocOptions() { groovydoc ->
+				groovydoc.overviewText = project.resources.text.fromString('Hello!')
 			}
 		then:
 			project.tasks.named('groovydoc', Groovydoc).get().overviewText.asString() == 'Hello!'
@@ -103,8 +103,8 @@ class DefaultGroovyProjectConfigTests extends Specification {
 
 	def "Configures the jar task"() {
 		when:
-			config.withJarOptions {
-				manifest {
+			config.withJarOptions() { jar ->
+				jar.manifest {
 					attributes 'Automatic-Module-Name': 'nz.net.ultraq.gradle.support'
 				}
 			}
@@ -137,8 +137,8 @@ class DefaultGroovyProjectConfigTests extends Specification {
 
 	def "Applies the shadow JAR plugin and configures it"() {
 		when:
-			config.withShadowJar {
-				archiveClassifier.set('test')
+			config.withShadowJar() { shadowJar ->
+				shadowJar.archiveClassifier.set('test')
 			}
 		then:
 			project.pluginManager.hasPlugin('com.gradleup.shadow')

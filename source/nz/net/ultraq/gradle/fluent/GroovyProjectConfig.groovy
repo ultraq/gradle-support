@@ -19,6 +19,7 @@ package nz.net.ultraq.gradle.fluent
 import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.Action
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.compile.JavaCompile
@@ -48,7 +49,7 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	/**
 	 * Pass any compilation options to the `compileGroovy` task.
 	 */
-	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)
+	GroovyProjectConfig withGroovyCompileOptions(Action<? extends GroovyCompile> configure)
 
 	/**
 	 * Adds a groovydoc JAR archive as output for the build.
@@ -58,23 +59,23 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	/**
 	 * Pass any groovydoc options to the {@code groovydoc} task.
 	 */
-	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)
+	GroovyProjectConfig withGroovydocOptions(Action<? extends Groovydoc> configure)
 
 	/**
 	 * Configure the {@code jar} task.
 	 */
-	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure)
+	GroovyProjectConfig withJarOptions(Action<? extends Jar> configure)
 
 	/**
 	 * Pass any compilation options to the `compileJava` task.
 	 */
-	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure)
+	GroovyProjectConfig withJavaCompileOptions(Action<? extends JavaCompile> configure)
 
 	/**
 	 * Add a shadow JAR archive as output for the build.  This will also disable
 	 * the module metadata task as it's incorrect when building a shadow JAR.
 	 */
-	GroovyProjectConfig withShadowJar(@DelegatesTo(ShadowJar) Closure configure)
+	GroovyProjectConfig withShadowJar(Action<? extends ShadowJar> configure)
 
 	/**
 	 * Adds a sources JAR archive as output for the build.

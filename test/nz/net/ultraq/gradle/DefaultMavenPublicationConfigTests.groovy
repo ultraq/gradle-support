@@ -69,8 +69,8 @@ class DefaultMavenPublicationConfigTests extends Specification {
 	def "POM configuration sets up the POM with some initial values and the configure closure"() {
 		when:
 			project.description = 'Test project description'
-			config.configurePom() {
-				inceptionYear = '2025'
+			config.configurePom() { pom ->
+				pom.inceptionYear = '2025'
 			}
 		then:
 			var publishing = project.extensions.getByName('publishing') as PublishingExtension
@@ -132,9 +132,9 @@ class DefaultMavenPublicationConfigTests extends Specification {
 
 	def "Publishes to any Maven repository"() {
 		when:
-			config.publishTo {
-				name = 'My local repo'
-				url = project.file('../my-local-repo')
+			config.publishTo() { maven ->
+				maven.name = 'My local repo'
+				maven.url = project.file('../my-local-repo')
 			}
 		then:
 			var publishing = project.extensions.getByName('publishing') as PublishingExtension

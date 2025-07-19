@@ -18,6 +18,7 @@ package nz.net.ultraq.gradle
 
 import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectConfig
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 
@@ -31,12 +32,11 @@ import groovy.transform.PackageScope
 @PackageScope
 class DefaultGroovyApplicationProjectConfig extends DefaultGroovyProjectConfig implements GroovyApplicationProjectConfig {
 
-	DefaultGroovyApplicationProjectConfig(Project project, @DelegatesTo(JavaApplication) Closure configure) {
+	DefaultGroovyApplicationProjectConfig(Project project, Action<? extends JavaApplication> configure) {
 
 		super(project)
 		project.pluginManager.apply('application')
 		var application = project.extensions.getByName('application') as JavaApplication
-		configure.delegate = application
-		configure()
+		configure.execute(application)
 	}
 }
