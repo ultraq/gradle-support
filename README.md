@@ -114,7 +114,9 @@ configure {
 Starts a fluent chain for configuring a Groovy project.  This will apply the
 `groovy` plugin, and configure the `groovydoc` task to generate docs with links
 to any Groovy SDK libraries (those starting with `groovy.` or
-`org.apache.groovy.`).
+`org.apache.groovy.`).  If the `idea` plugin is present, then it'll configure
+the IDE to build to the same directories as Gradle instead of the default `out`
+directory 🤢
 
  - `useJavaVersion(int version)`  
     Sets the version of Java to use in the toolchain configuration.  This will

@@ -66,7 +66,9 @@ abstract class FluentConfigurationPluginExtension {
 	 * Starts a fluent chain for configuring a Groovy project.  This will apply
 	 * the {@code groovy} plugin, and configure the {@code groovydoc} task to
 	 * generate docs with links to any Groovy SDK libraries (those starting with
-	 * {@code groovy.} or {@code org.apache.groovy.}).
+	 * {@code groovy.} or {@code org.apache.groovy.}).  If the {@code idea} plugin
+	 * is present, then it'll configure the IDE to build to the same directories
+	 * as Gradle instead of the default {@code out} directory 🤢
 	 */
 	GroovyProjectConfig createGroovyProject() {
 

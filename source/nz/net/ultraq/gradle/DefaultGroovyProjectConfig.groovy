@@ -36,6 +36,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -57,6 +58,13 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 		project.pluginManager.apply('groovy')
 		project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
 			groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
+		}
+		project.pluginManager.withPlugin('idea') {
+			var idea = project.extensions.getByName('idea') as IdeaModel
+			idea.module {
+				outputDir = project.file('build/classes/groovy/main')
+				testOutputDir = project.file('build/classes/test')
+			}
 		}
 	}
 
