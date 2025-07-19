@@ -37,7 +37,7 @@ interface SourceConfig extends TestingEntry {
 	 * properties files with the project version as part of the
 	 * {@code processResources} build step.
 	 */
-	SourceConfig expand(String filePattern, Map<String, String> replacements)
+	SourceConfig expand(String filePattern, Map<String, Object> replacements)
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy

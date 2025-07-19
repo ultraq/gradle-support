@@ -60,7 +60,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	SourceConfig expand(String filePattern, Map<String, String> replacements) {
+	SourceConfig expand(String filePattern, Map<String, Object> replacements) {
 
 		project.tasks.named('processResources', ProcessResources) { processResources ->
 			processResources.filesMatching(filePattern) { file ->
