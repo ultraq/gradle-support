@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilderBuilder
-import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
+package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -33,14 +30,23 @@ import spock.lang.Specification
  *
  * @author Emanuel Rabina
  */
-class DefaultMavenPublicationBuilderTests extends Specification {
+class MavenPublicationBuilderTests extends Specification {
 
 	Project project
 	MavenPublicationBuilder config
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		config = new DefaultMavenPublicationBuilderBuilder(project)
+		config = new DefaultMavenPublicationBuilder(project)
+	}
+
+	def "Adds the maven-publish plugin and creates a main publication"() {
+		when:
+			configure.createMavenPublication()
+		then:
+			project.pluginManager.hasPlugin('maven-publish')
+			var publishingExtension = project.extensions.getByName('publishing') as PublishingExtension
+			publishingExtension.publications.named('main', MavenPublication)
 	}
 
 	def "Adds artifacts"() {

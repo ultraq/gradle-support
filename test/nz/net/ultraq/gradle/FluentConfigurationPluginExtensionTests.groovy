@@ -17,14 +17,6 @@
 package nz.net.ultraq.gradle
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.distribution.DistributionContainer
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.internal.file.copy.CopySpecInternal
-import org.gradle.api.internal.file.copy.DefaultCopySpec
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Zip
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
@@ -44,71 +36,109 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 		configure = project.extensions.getByName('configure') as FluentConfigurationPluginExtension
 	}
 
-	def "Starts configuration of a Groovy project"() {
+	def "Returns a new Groovy project builder"() {
 		when:
-			configure.createGroovyProject()
+			var groovyProject = configure.createGroovyProject()
 		then:
-			project.pluginManager.hasPlugin('groovy')
+			groovyProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Starts configuration of a Groovy application project"() {
+	def "Returns an existing Groovy project builder"() {
 		when:
-			configure.createGroovyApplicationProject {
+			var groovyProject = configure.createGroovyProject()
+			var existingGroovyProject = configure.asGroovyProject()
+		then:
+			existingGroovyProject == groovyProject
+	}
+
+	def "Throws an error if no Groovy project builder exists"() {
+		when:
+			configure.asGroovyProject()
+		then:
+			thrown(IllegalStateException)
+	}
+
+	def "Returns a Groovy application project builder"() {
+		when:
+			var groovyApplicationProject = configure.createGroovyApplicationProject() {
 				mainClass = 'nz.net.ultraq.gradle.TestApplication'
 			}
 		then:
-			project.pluginManager.hasPlugin('groovy')
-			project.pluginManager.hasPlugin('application')
+			groovyApplicationProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Starts configuration of a Groovy library project"() {
+	def "Returns an existing Groovy application project builder"() {
 		when:
-			configure.createGroovyLibraryProject()
-		then:
-			project.pluginManager.hasPlugin('java-library')
-			project.pluginManager.hasPlugin('groovy')
-	}
-
-	def "Starts configuration of a Groovy Gradle plugin project"() {
-		when:
-			configure.createGroovyGradlePluginProject()
-		then:
-			project.pluginManager.hasPlugin('groovy-gradle-plugin')
-	}
-
-	def "Starts configuration of a Maven publication"() {
-		when:
-			configure.createMavenPublication()
-		then:
-			project.pluginManager.hasPlugin('maven-publish')
-			var publishingExtension = project.extensions.getByName('publishing') as PublishingExtension
-			publishingExtension.publications.named('main', MavenPublication)
-	}
-
-	def "Starts configuration of a ZIP distribution"() {
-		when:
-			configure.createZipDistribution()
-		then:
-			project.pluginManager.hasPlugin('distribution')
-			var mainDistribution = project.extensions.getByType(DistributionContainer).named('main').get()
-
-			// TODO: Is there a way to do the below without reaching into Gradle internals?
-			var copySpec = (mainDistribution.contents as CopySpecInternal).children.first() as DefaultCopySpec
-			verifyAll(copySpec.patterns.includes) {
-				contains('CHANGELOG.md')
-				contains('LICENSE.txt')
-				contains('README.md')
+			var groovyApplicationProject = configure.createGroovyApplicationProject() {
+				mainClass = 'nz.net.ultraq.gradle.TestApplication'
 			}
-
-			!project.tasks.named('distTar', Task).get().enabled
-			project.tasks.named('distZip', Zip).get().duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+			var existingGroovyApplicationProject = configure.asGroovyApplicationProject()
+		then:
+			existingGroovyApplicationProject == groovyApplicationProject
 	}
 
-	def "Starts configuration of a ZIP distribution - with Groovy project"() {
+	def "Throws an error if no Groovy application project builder exists"() {
 		when:
-			configure.createGroovyProject()
-			configure.createZipDistribution()
+			configure.asGroovyApplicationProject()
 		then:
-			project.tasks.named('distZip', Zip).get().dependsOn.contains('groovydoc')
+			thrown(IllegalStateException)
+	}
+
+	def "Returns a Groovy Gradle plugin project builder"() {
+		when:
+			var groovyGradlePluginProject = configure.createGroovyGradlePluginProject()
+		then:
+			groovyGradlePluginProject.class.simpleName.contains('_Decorated')
+	}
+
+	def "Returns an existing Groovy Gradle plugin project builder"() {
+		when:
+			var groovyGradlePluginProject = configure.createGroovyGradlePluginProject()
+			var existingGroovyGradlePluginProject = configure.asGroovyGradlePluginProject()
+		then:
+			existingGroovyGradlePluginProject == groovyGradlePluginProject
+	}
+
+	def "Throws an error if no Groovy Gradle plugin project builder exists"() {
+		when:
+			configure.asGroovyGradlePluginProject()
+		then:
+			thrown(IllegalStateException)
+	}
+
+	def "Returns a Groovy library project builder"() {
+		when:
+			var groovyLibraryProject = configure.createGroovyLibraryProject()
+		then:
+			groovyLibraryProject.class.simpleName.contains('_Decorated')
+	}
+
+	def "Returns an existing Groovy library project builder"() {
+		when:
+			var groovyLibraryProject = configure.createGroovyLibraryProject()
+			var existingGroovyLibraryProject = configure.asGroovyLibraryProject()
+		then:
+			existingGroovyLibraryProject == groovyLibraryProject
+	}
+
+	def "Throws an error if no Groovy library project builder exists"() {
+		when:
+			configure.asGroovyLibraryProject()
+		then:
+			thrown(IllegalStateException)
+	}
+
+	def "Returns a Maven publication builder"() {
+		when:
+			var mavenPublication = configure.createMavenPublication()
+		then:
+			mavenPublication.class.simpleName.contains('_Decorated')
+	}
+
+	def "Returns a ZIP distribution builder"() {
+		when:
+			var zipDistribution = configure.createZipDistribution()
+		then:
+			zipDistribution.class.simpleName.contains('_Decorated')
 	}
 }

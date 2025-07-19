@@ -30,13 +30,13 @@ import org.gradle.plugins.signing.SigningExtension
  *
  * @author Emanuel Rabina
  */
-class DefaultMavenPublicationBuilderBuilder implements MavenPublicationBuilder, MavenPomBuilder, MavenCentralBuilder {
+class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPomBuilder, MavenCentralBuilder {
 
 	private final Project project
 	private final PublishingExtension publishing
 	private final MavenPublication publication
 
-	DefaultMavenPublicationBuilderBuilder(Project project) {
+	DefaultMavenPublicationBuilder(Project project) {
 
 		this.project = project
 		project.pluginManager.apply('maven-publish')

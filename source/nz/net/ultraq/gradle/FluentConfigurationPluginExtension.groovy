@@ -20,10 +20,11 @@ import nz.net.ultraq.gradle.fluent.DefaultGroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyGradlePluginProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
-import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilderBuilder
+import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.DefaultZipDistributionBuilder
 import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectBuilder
+import nz.net.ultraq.gradle.fluent.GroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
 import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.ZipDistributionBuilder
@@ -43,12 +44,54 @@ abstract class FluentConfigurationPluginExtension {
 
 	final Project project
 
+	private GroovyApplicationProjectBuilder groovyApplicationProjectBuilder
+	private GroovyGradlePluginProjectBuilder groovyGradlePluginProjectBuilder
+	private GroovyProjectBuilder groovyProjectBuilder
+	private GroovyLibraryProjectBuilder groovyLibraryProjectBuilder
+
+	/**
+	 * Starts a fluent chain for working on an existing Groovy application project.
+	 */
+	GroovyApplicationProjectBuilder asGroovyApplicationProject() {
+
+		if (!groovyApplicationProjectBuilder) {
+			throw new IllegalStateException('No existing Groovy application project found - create one first with createGroovyApplicationProject()')
+		}
+		return groovyApplicationProjectBuilder
+	}
+
+	/**
+	 * Starts a fluent chain for working on an existing Groovy Gradle plugin
+	 * project.
+	 */
+	GroovyGradlePluginProjectBuilder asGroovyGradlePluginProject() {
+
+		if (!groovyGradlePluginProjectBuilder) {
+			throw new IllegalStateException('No existing Groovy Gradle plugin project found - create one first with createGroovyGradlePluginProject()')
+		}
+		return groovyGradlePluginProjectBuilder
+	}
+
+	/**
+	 * Starts a fluent chain for working on an existing Groovy library project.
+	 */
+	GroovyLibraryProjectBuilder asGroovyLibraryProject() {
+
+		if (!groovyLibraryProjectBuilder) {
+			throw new IllegalStateException('No existing Groovy library project found - create one first with createGroovyLibraryProject()')
+		}
+		return groovyLibraryProjectBuilder
+	}
+
 	/**
 	 * Starts a fluent chain for working on an existing Groovy project.
 	 */
 	GroovyProjectBuilder asGroovyProject() {
 
-		return new DefaultGroovyProjectBuilder(project)
+		if (!groovyProjectBuilder) {
+			throw new IllegalStateException('No existing Groovy project found - create one first with createGroovyProject()')
+		}
+		return groovyProjectBuilder
 	}
 
 	/**
@@ -56,7 +99,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyApplicationProjectBuilder createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
-		return new DefaultGroovyApplicationProjectBuilder(project, configure)
+		groovyApplicationProjectBuilder = project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
+		return groovyApplicationProjectBuilder
 	}
 
 	/**
@@ -65,7 +109,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyGradlePluginProjectBuilder createGroovyGradlePluginProject() {
 
-		return new DefaultGroovyGradlePluginProjectBuilder(project)
+		groovyGradlePluginProjectBuilder = project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
+		return groovyGradlePluginProjectBuilder
 	}
 
 	/**
@@ -74,7 +119,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyProjectBuilder createGroovyLibraryProject() {
 
-		return new DefaultGroovyLibraryProjectBuilder(project)
+		groovyLibraryProjectBuilder = project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
+		return groovyLibraryProjectBuilder
 	}
 
 	/**
@@ -87,7 +133,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyProjectBuilder createGroovyProject() {
 
-		return new DefaultGroovyProjectBuilder(project)
+		groovyProjectBuilder = project.objects.newInstance(DefaultGroovyProjectBuilder, project)
+		return groovyProjectBuilder
 	}
 
 	/**
@@ -98,7 +145,7 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	MavenPublicationBuilder createMavenPublication() {
 
-		return new DefaultMavenPublicationBuilderBuilder(project)
+		return project.objects.newInstance(DefaultMavenPublicationBuilder, project)
 	}
 
 	/**
@@ -109,6 +156,6 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	ZipDistributionBuilder createZipDistribution() {
 
-		return new DefaultZipDistributionBuilder(project)
+		return project.objects.newInstance(DefaultZipDistributionBuilder, project)
 	}
 }

@@ -39,6 +39,8 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
+import javax.inject.Inject
+
 /**
  * Implementation for configuring a Groovy project.
  *
@@ -48,6 +50,7 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 
 	protected final Project project
 
+	@Inject
 	DefaultGroovyProjectBuilder(Project project) {
 
 		this.project = project

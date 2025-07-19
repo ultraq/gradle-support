@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
+package nz.net.ultraq.gradle.fluent
 
-import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
-import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
+import nz.net.ultraq.gradle.FluentConfigurationPlugin
+import nz.net.ultraq.gradle.FluentConfigurationPluginExtension
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
@@ -43,14 +43,16 @@ import spock.lang.Specification
  *
  * @author Emanuel Rabina
  */
-class DefaultGroovyProjectBuilderTests extends Specification {
+class GroovyProjectBuilderTests extends Specification {
 
 	Project project
 	GroovyProjectBuilder config
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		config = new DefaultGroovyProjectBuilder(project)
+		project.pluginManager.apply(FluentConfigurationPlugin)
+		var configure = project.extensions.getByName('configure') as FluentConfigurationPluginExtension
+		config = configure.createGroovyProject()
 	}
 
 	def "Use the specified Java version"(int version) {
@@ -77,8 +79,8 @@ class DefaultGroovyProjectBuilderTests extends Specification {
 
 	def "Configure Java compilation options"() {
 		when:
-			config.withJavaCompileOptions() { javaCompile ->
-				javaCompile.sourceCompatibility = '17'
+			config.withJavaCompileOptions() {
+				sourceCompatibility = '17'
 			}
 		then:
 			project.tasks.named('compileJava', JavaCompile).get().sourceCompatibility == '17'

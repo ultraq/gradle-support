@@ -18,6 +18,8 @@ package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.Project
 
+import javax.inject.Inject
+
 /**
  * Implementation for configuring a Groovy Gradle plugin project.
  *
@@ -25,6 +27,7 @@ import org.gradle.api.Project
  */
 class DefaultGroovyGradlePluginProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyGradlePluginProjectBuilder {
 
+	@Inject
 	DefaultGroovyGradlePluginProjectBuilder(Project project) {
 
 		super(project)

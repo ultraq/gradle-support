@@ -20,6 +20,8 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 
+import javax.inject.Inject
+
 /**
  * Implementation for configuring a Groovy application.
  *
@@ -27,6 +29,7 @@ import org.gradle.api.plugins.JavaApplication
  */
 class DefaultGroovyApplicationProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyApplicationProjectBuilder {
 
+	@Inject
 	DefaultGroovyApplicationProjectBuilder(Project project, Action<? extends JavaApplication> configure) {
 
 		super(project)
