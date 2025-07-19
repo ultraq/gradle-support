@@ -17,26 +17,15 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * Configuration interface for a ZIP archive of sources, binaries, and
- * accompanying documentation for both consumers and developers.
+ * Configuration interface for putting together a Groovy Gradle plugin project
+ * in Gradle.
  *
  * @author Emanuel Rabina
  */
-interface ZipDistributionConfig {
+interface GroovyGradlePluginProjectBuilder extends GroovyProjectBuilder {
 
 	/**
-	 * Include runtime dependencies of the main JAR and place them in the given
-	 * directory.
+	 * Adds the Gradle Plugin Portal repository to the project.
 	 */
-	ZipDistributionConfig withDependenciesIn(String directory)
-
-	/**
-	 * Include groovydocs and place them in the given directory.
-	 */
-	ZipDistributionConfig withGroovydocsIn(String directory)
-
-	/**
-	 * Include source files and place them in the given directory.
-	 */
-	ZipDistributionConfig withSourcesIn(String directory)
+	GroovyGradlePluginProjectBuilder useGradlePluginPortal()
 }

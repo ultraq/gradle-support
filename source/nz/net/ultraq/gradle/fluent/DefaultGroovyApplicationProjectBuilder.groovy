@@ -16,15 +16,22 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.Action
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaApplication
+
 /**
- * For any part of the API that can begin a source code configuration chain.
+ * Implementation for configuring a Groovy application.
  *
  * @author Emanuel Rabina
  */
-interface SourceConfigEntry {
+class DefaultGroovyApplicationProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyApplicationProjectBuilder {
 
-	/**
-	 * Start configuration of source code -related things.
-	 */
-	SourceConfig configureSource()
+	DefaultGroovyApplicationProjectBuilder(Project project, Action<? extends JavaApplication> configure) {
+
+		super(project)
+		project.pluginManager.apply('application')
+		var application = project.extensions.getByName('application') as JavaApplication
+		configure.execute(application)
+	}
 }

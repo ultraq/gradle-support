@@ -17,9 +17,14 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * Configure a Groovy application project.
+ * For any part of the API that can begin a source code configuration chain.
  *
  * @author Emanuel Rabina
  */
-interface GroovyApplicationProjectConfig extends GroovyProjectConfig {
+interface GroovyProjectSourceBuilderEntry {
+
+	/**
+	 * Start configuration of source code -related things.
+	 */
+	GroovyProjectSourceBuilder configureSource()
 }

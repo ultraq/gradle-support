@@ -14,32 +14,29 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectConfig
-
-import org.gradle.api.Project
-
-import groovy.transform.PackageScope
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Implementation for configuring a Groovy Gradle plugin project.
+ * Configuration interface for a ZIP archive of sources, binaries, and
+ * accompanying documentation for both consumers and developers.
  *
  * @author Emanuel Rabina
  */
-@PackageScope
-class DefaultGroovyGradlePluginProjectConfig extends DefaultGroovyProjectConfig implements GroovyGradlePluginProjectConfig {
+interface ZipDistributionBuilder {
 
-	DefaultGroovyGradlePluginProjectConfig(Project project) {
+	/**
+	 * Include runtime dependencies of the main JAR and place them in the given
+	 * directory.
+	 */
+	ZipDistributionBuilder withDependenciesIn(String directory)
 
-		super(project)
-		project.pluginManager.apply('groovy-gradle-plugin')
-	}
+	/**
+	 * Include groovydocs and place them in the given directory.
+	 */
+	ZipDistributionBuilder withGroovydocsIn(String directory)
 
-	@Override
-	GroovyGradlePluginProjectConfig useGradlePluginPortal() {
-
-		project.repositories.gradlePluginPortal()
-		return this
-	}
+	/**
+	 * Include source files and place them in the given directory.
+	 */
+	ZipDistributionBuilder withSourcesIn(String directory)
 }

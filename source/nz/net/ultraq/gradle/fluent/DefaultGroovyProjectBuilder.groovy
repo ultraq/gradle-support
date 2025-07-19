@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
+package nz.net.ultraq.gradle.fluent
 
-import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
-import nz.net.ultraq.gradle.fluent.SourceConfig
-import nz.net.ultraq.gradle.fluent.TestingConfig
+import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Action
@@ -41,19 +39,16 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
-import groovy.transform.PackageScope
-
 /**
  * Implementation for configuring a Groovy project.
  *
  * @author Emanuel Rabina
  */
-@PackageScope
-class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, TestingConfig {
+class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProjectSourceBuilder, GroovyProjectVerificationBuilder {
 
 	protected final Project project
 
-	DefaultGroovyProjectConfig(Project project) {
+	DefaultGroovyProjectBuilder(Project project) {
 
 		this.project = project
 		project.pluginManager.apply('groovy')
@@ -70,19 +65,19 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	SourceConfig configureSource() {
+	GroovyProjectSourceBuilder configureSource() {
 
 		return this
 	}
 
 	@Override
-	TestingConfig configureTesting() {
+	GroovyProjectVerificationBuilder configureVerification() {
 
 		return this
 	}
 
 	@Override
-	SourceConfig expand(String filePattern, Map<String, Object> replacements) {
+	GroovyProjectSourceBuilder expand(String filePattern, Map<String, Object> replacements) {
 
 		project.tasks.named('processResources', ProcessResources) { processResources ->
 			processResources.filesMatching(filePattern) { file ->
@@ -93,13 +88,13 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
+	GroovyProjectSourceBuilder expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
 
 		return expand('**/org.codehaus.groovy.runtime.ExtensionModule', [(propertyName): value])
 	}
 
 	@Override
-	TestingConfig useCodenarc(TextResource codenarcConfig) {
+	GroovyProjectVerificationBuilder useCodenarc(TextResource codenarcConfig) {
 
 		project.pluginManager.apply('codenarc')
 		project.extensions.configure(CodeNarcExtension) { codenarc ->
@@ -109,7 +104,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	TestingConfig useJacoco() {
+	GroovyProjectVerificationBuilder useJacoco() {
 
 		project.pluginManager.apply('jacoco')
 		project.tasks.named('test').configure { test ->
@@ -125,7 +120,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig useJavaVersion(int version) {
+	GroovyProjectBuilder useJavaVersion(int version) {
 
 		project.extensions.configure(JavaPluginExtension) { java ->
 			java.toolchain.languageVersion.set(JavaLanguageVersion.of(version))
@@ -137,7 +132,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	TestingConfig useJUnitJupiter() {
+	GroovyProjectVerificationBuilder useJUnitJupiter() {
 
 		project.extensions.configure(TestingExtension) { testing ->
 			testing.suites.configureEach { JvmTestSuite test ->
@@ -148,14 +143,14 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig useMavenCentralRepositories() {
+	GroovyProjectBuilder useMavenCentralRepositories() {
 
 		project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
 		return this
 	}
 
 	@Override
-	SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
+	GroovyProjectSourceBuilder withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
 		project.dependencies(configure)
 		return this
@@ -176,14 +171,14 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withGroovyCompileOptions(Action<? extends GroovyCompile> configure) {
+	GroovyProjectBuilder withGroovyCompileOptions(Action<? extends GroovyCompile> configure) {
 
 		project.tasks.named('compileGroovy', GroovyCompile, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withGroovydocJar() {
+	GroovyProjectBuilder withGroovydocJar() {
 
 		var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
 			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
@@ -200,28 +195,28 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withGroovydocOptions(Action<? extends Groovydoc> configure) {
+	GroovyProjectBuilder withGroovydocOptions(Action<? extends Groovydoc> configure) {
 
 		project.tasks.named('groovydoc', Groovydoc, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withJarOptions(Action<? extends Jar> configure) {
+	GroovyProjectBuilder withJarOptions(Action<? extends Jar> configure) {
 
 		project.tasks.named('jar', Jar, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withJavaCompileOptions(Action<? extends JavaCompile> configure) {
+	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure) {
 
 		project.tasks.named('compileJava', JavaCompile, configure)
 		return this
 	}
 
 	@Override
-	GroovyProjectConfig withShadowJar(Action<? extends ShadowJar> configure) {
+	GroovyProjectBuilder withShadowJar(Action<? extends ShadowJar> configure) {
 
 		project.pluginManager.apply('com.gradleup.shadow')
 		project.tasks.named('shadowJar', ShadowJar, configure)
@@ -229,7 +224,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withSourcesJar() {
+	GroovyProjectBuilder withSourcesJar() {
 
 		project.extensions.configure(JavaPluginExtension) { java ->
 			java.withSourcesJar()
@@ -238,7 +233,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	SourceConfig withSourceDirectory(Object path) {
+	GroovyProjectSourceBuilder withSourceDirectory(Object path) {
 
 		withDirectoryForSourceSetAt(project.file(path), 'main')
 		project.tasks.withType(Jar).configureEach { jar ->
@@ -248,14 +243,14 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	TestingConfig withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
+	GroovyProjectVerificationBuilder withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
 		project.dependencies(configure)
 		return this
 	}
 
 	@Override
-	TestingConfig withTestDirectory(Object path) {
+	GroovyProjectVerificationBuilder withTestDirectory(Object path) {
 
 		withDirectoryForSourceSetAt(project.file(path), 'test')
 		return this

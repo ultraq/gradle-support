@@ -25,21 +25,21 @@ import org.gradle.api.publish.maven.MavenPom
  *
  * @author Emanuel Rabina
  */
-interface MavenPublicationConfig extends MavenCentralEntry {
+interface MavenPublicationBuilder extends MavenCentralBuilderEntry {
 
 	/**
 	 * Configure the POM that will get published.  The Gradle project {@code name}
 	 * and {@code description} properties will also be used for their respective
 	 * POM elements.
 	 */
-	MavenPomConfig configurePom()
+	MavenPomBuilder configurePom()
 
 	/**
 	 * Configure the POM that will get published.  The Gradle project {@code name}
 	 * and {@code description} properties will also be used for their respective
 	 * POM elements.
 	 */
-	MavenPomConfig configurePom(Action<? extends MavenPom> configure)
+	MavenPomBuilder configurePom(Action<? extends MavenPom> configure)
 
 	/**
 	 * Add the given artifacts to the publication.
@@ -49,5 +49,5 @@ interface MavenPublicationConfig extends MavenCentralEntry {
 	 * for the main JAR and so that services like
 	 * <a href="https://javadoc.io">javadoc.io</a> can find it.
 	 */
-	MavenPublicationConfig withArtifacts(Object... artifacts)
+	MavenPublicationBuilder withArtifacts(Object... artifacts)
 }

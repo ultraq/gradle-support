@@ -25,12 +25,12 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
  *
  * @author Emanuel Rabina
  */
-interface MavenCentralEntry {
+interface MavenCentralBuilderEntry {
 
 	/**
 	 * Publish to any Maven repository of your configuration.
 	 */
-	MavenCentralConfig publishTo(Action<? extends MavenArtifactRepository> closure)
+	MavenCentralBuilder publishTo(Action<? extends MavenArtifactRepository> closure)
 
 	/**
 	 * <p>Configure Maven Central publishing.  This will set up both the Maven
@@ -51,5 +51,5 @@ interface MavenCentralEntry {
 	 *   account for the Publisher API.  DO NOT enter your actual credentials
 	 *   here, instead reference a Gradle property or environment variable.
 	 */
-	MavenCentralConfig publishToMavenCentral(String username, String password)
+	MavenCentralBuilder publishToMavenCentral(String username, String password)
 }

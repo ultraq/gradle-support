@@ -16,15 +16,25 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.Project
+
 /**
- * For any part of the API that can begin a testing chain.
+ * Implementation for configuring a Groovy Gradle plugin project.
  *
  * @author Emanuel Rabina
  */
-interface TestingEntry {
+class DefaultGroovyGradlePluginProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyGradlePluginProjectBuilder {
 
-	/**
-	 * Start configuration of test-related things.
-	 */
-	TestingConfig configureTesting()
+	DefaultGroovyGradlePluginProjectBuilder(Project project) {
+
+		super(project)
+		project.pluginManager.apply('groovy-gradle-plugin')
+	}
+
+	@Override
+	GroovyGradlePluginProjectBuilder useGradlePluginPortal() {
+
+		project.repositories.gradlePluginPortal()
+		return this
+	}
 }

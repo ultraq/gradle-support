@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
+package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -29,20 +27,17 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 
-import groovy.transform.PackageScope
-
 /**
  * Implementation for configuring a ZIP distribution.
  *
  * @author Emanuel Rabina
  */
-@PackageScope
-class DefaultZipDistributionConfig implements ZipDistributionConfig {
+class DefaultZipDistributionBuilder implements ZipDistributionBuilder {
 
 	private final Project project
 	private final Distribution mainDistribution
 
-	DefaultZipDistributionConfig(Project project) {
+	DefaultZipDistributionBuilder(Project project) {
 
 		this.project = project
 
@@ -72,7 +67,7 @@ class DefaultZipDistributionConfig implements ZipDistributionConfig {
 	}
 
 	@Override
-	ZipDistributionConfig withDependenciesIn(String directory) {
+	ZipDistributionBuilder withDependenciesIn(String directory) {
 
 		mainDistribution.contents { spec ->
 			spec.from(project.configurations.named('runtimeClasspath').get()) {
@@ -83,7 +78,7 @@ class DefaultZipDistributionConfig implements ZipDistributionConfig {
 	}
 
 	@Override
-	ZipDistributionConfig withGroovydocsIn(String directory) {
+	ZipDistributionBuilder withGroovydocsIn(String directory) {
 
 		mainDistribution.contents { spec ->
 			spec.from(project.tasks.named('groovydoc', Groovydoc).get()) {
@@ -94,7 +89,7 @@ class DefaultZipDistributionConfig implements ZipDistributionConfig {
 	}
 
 	@Override
-	ZipDistributionConfig withSourcesIn(String directory) {
+	ZipDistributionBuilder withSourcesIn(String directory) {
 
 		mainDistribution.contents { spec ->
 			var mainSourceSet = project.extensions.getByType(SourceSetContainer).named('main').get()

@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import nz.net.ultraq.gradle.fluent.MavenCentralConfig
-import nz.net.ultraq.gradle.fluent.MavenPomConfig
-import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
+package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -29,21 +25,18 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.signing.SigningExtension
 
-import groovy.transform.PackageScope
-
 /**
  * Implementation for configuring a Maven publication.
  *
  * @author Emanuel Rabina
  */
-@PackageScope
-class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomConfig, MavenCentralConfig {
+class DefaultMavenPublicationBuilderBuilder implements MavenPublicationBuilder, MavenPomBuilder, MavenCentralBuilder {
 
 	private final Project project
 	private final PublishingExtension publishing
 	private final MavenPublication publication
 
-	DefaultMavenPublicationConfig(Project project) {
+	DefaultMavenPublicationBuilderBuilder(Project project) {
 
 		this.project = project
 		project.pluginManager.apply('maven-publish')
@@ -52,7 +45,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPomConfig configurePom(Action<? extends MavenPom> configure = null) {
+	MavenPomBuilder configurePom(Action<? extends MavenPom> configure = null) {
 
 		publication.pom { pom ->
 			pom.name.set(project.name)
@@ -63,7 +56,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenCentralConfig publishTo(Action<? extends MavenArtifactRepository> configure) {
+	MavenCentralBuilder publishTo(Action<? extends MavenArtifactRepository> configure) {
 
 		publishing.repositories { repositories ->
 			repositories.maven(configure)
@@ -72,7 +65,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenCentralConfig publishToMavenCentral(String username, String password) {
+	MavenCentralBuilder publishToMavenCentral(String username, String password) {
 
 		project.pluginManager.apply('signing')
 		project.extensions.configure(SigningExtension) { signing ->
@@ -93,7 +86,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPomConfig useApache20License() {
+	MavenPomBuilder useApache20License() {
 
 		publication.pom { pom ->
 			pom.licenses { licences ->
@@ -108,7 +101,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPublicationConfig withArtifacts(Object... sources) {
+	MavenPublicationBuilder withArtifacts(Object... sources) {
 
 		sources.each { source ->
 			if (source instanceof Jar && source.name == 'groovydocJar') {
@@ -124,7 +117,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPomConfig withDevelopers(Map<String, String>... developers) {
+	MavenPomBuilder withDevelopers(Map<String, String>... developers) {
 
 		publication.pom { pom ->
 			pom.developers { pomDeveloperSpec ->
@@ -141,7 +134,7 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
-	MavenPomConfig withGitHubScm(String owner, String repository = project.rootProject.name) {
+	MavenPomBuilder withGitHubScm(String owner, String repository = project.rootProject.name) {
 
 		publication.pom { pom ->
 			pom.scm { scm ->

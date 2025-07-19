@@ -17,10 +17,14 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * Configuration interface for putting together a Groovy library project in
- * Gradle.
+ * For any part of the API that can begin a testing chain.
  *
  * @author Emanuel Rabina
  */
-interface GroovyLibraryProjectConfig extends GroovyProjectConfig {
+interface GroovyProjectVerificationBuilderEntry {
+
+	/**
+	 * Start configuration of verification-related things.
+	 */
+	GroovyProjectVerificationBuilder configureVerification()
 }

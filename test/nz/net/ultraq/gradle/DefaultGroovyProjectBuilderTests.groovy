@@ -16,7 +16,8 @@
 
 package nz.net.ultraq.gradle
 
-import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
+import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
@@ -42,14 +43,14 @@ import spock.lang.Specification
  *
  * @author Emanuel Rabina
  */
-class DefaultGroovyProjectConfigTests extends Specification {
+class DefaultGroovyProjectBuilderTests extends Specification {
 
 	Project project
-	GroovyProjectConfig config
+	GroovyProjectBuilder config
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		config = new DefaultGroovyProjectConfig(project)
+		config = new DefaultGroovyProjectBuilder(project)
 	}
 
 	def "Use the specified Java version"(int version) {
@@ -151,7 +152,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 			config
 				.configureSource()
 					.withSourceDirectory('source')
-				.configureTesting()
+				.configureVerification()
 					.withTestDirectory('test')
 			// @formatter:on
 		then:
@@ -177,7 +178,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 		when:
 			// @formatter:off
 			config
-				.configureTesting()
+				.configureVerification()
 					.useCodenarc(project.resources.text.fromString('Hello!'))
 			// @formatter:on
 		then:
@@ -191,7 +192,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 		when:
 			// @formatter:off
 			config
-				.configureTesting()
+				.configureVerification()
 					.withTestDirectory('test')
 					.useJUnitJupiter()
 			// @formatter:on
@@ -209,7 +210,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 					.withDependencies() {
 						implementation 'org.apache.groovy:groovy:4.0.27'
 					}
-				.configureTesting()
+				.configureVerification()
 					.withTestDependencies() {
 						testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 					}
@@ -225,7 +226,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 		when:
 			// @formatter:off
 			config
-				.configureTesting()
+				.configureVerification()
 					.useJacoco()
 			// @formatter:on
 		then:

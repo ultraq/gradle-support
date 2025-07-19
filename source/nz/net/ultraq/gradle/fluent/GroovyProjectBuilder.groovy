@@ -30,7 +30,7 @@ import org.gradle.api.tasks.javadoc.Groovydoc
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
+interface GroovyProjectBuilder extends GroovyProjectSourceBuilderEntry, GroovyProjectVerificationBuilderEntry {
 
 	/**
 	 * Sets the version of Java to use in the toolchain configuration.  This will
@@ -38,47 +38,47 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	 * Java SDK for Java libraries (anything starting with {@code java.} or
 	 * {@code javax.}).
 	 */
-	GroovyProjectConfig useJavaVersion(int version)
+	GroovyProjectBuilder useJavaVersion(int version)
 
 	/**
 	 * Adds the Maven Central and Snapshots repositories to the project by
 	 * applying the {@link UseMavenCentralRepositoriesPlugin} plugin.
 	 */
-	GroovyProjectConfig useMavenCentralRepositories()
+	GroovyProjectBuilder useMavenCentralRepositories()
 
 	/**
 	 * Pass any compilation options to the `compileGroovy` task.
 	 */
-	GroovyProjectConfig withGroovyCompileOptions(Action<? extends GroovyCompile> configure)
+	GroovyProjectBuilder withGroovyCompileOptions(Action<? extends GroovyCompile> configure)
 
 	/**
 	 * Adds a groovydoc JAR archive as output for the build.
 	 */
-	GroovyProjectConfig withGroovydocJar()
+	GroovyProjectBuilder withGroovydocJar()
 
 	/**
 	 * Pass any groovydoc options to the {@code groovydoc} task.
 	 */
-	GroovyProjectConfig withGroovydocOptions(Action<? extends Groovydoc> configure)
+	GroovyProjectBuilder withGroovydocOptions(Action<? extends Groovydoc> configure)
 
 	/**
 	 * Configure the {@code jar} task.
 	 */
-	GroovyProjectConfig withJarOptions(Action<? extends Jar> configure)
+	GroovyProjectBuilder withJarOptions(Action<? extends Jar> configure)
 
 	/**
 	 * Pass any compilation options to the `compileJava` task.
 	 */
-	GroovyProjectConfig withJavaCompileOptions(Action<? extends JavaCompile> configure)
+	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure)
 
 	/**
 	 * Add a shadow JAR archive as output for the build.  This will also disable
 	 * the module metadata task as it's incorrect when building a shadow JAR.
 	 */
-	GroovyProjectConfig withShadowJar(Action<? extends ShadowJar> configure)
+	GroovyProjectBuilder withShadowJar(Action<? extends ShadowJar> configure)
 
 	/**
 	 * Adds a sources JAR archive as output for the build.
 	 */
-	GroovyProjectConfig withSourcesJar()
+	GroovyProjectBuilder withSourcesJar()
 }

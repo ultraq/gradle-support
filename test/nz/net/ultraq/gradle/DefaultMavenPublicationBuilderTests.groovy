@@ -16,7 +16,8 @@
 
 package nz.net.ultraq.gradle
 
-import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
+import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilderBuilder
+import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -32,14 +33,14 @@ import spock.lang.Specification
  *
  * @author Emanuel Rabina
  */
-class DefaultMavenPublicationConfigTests extends Specification {
+class DefaultMavenPublicationBuilderTests extends Specification {
 
 	Project project
-	MavenPublicationConfig config
+	MavenPublicationBuilder config
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		config = new DefaultMavenPublicationConfig(project)
+		config = new DefaultMavenPublicationBuilderBuilder(project)
 	}
 
 	def "Adds artifacts"() {

@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.gradle
-
-import nz.net.ultraq.gradle.fluent.GroovyLibraryProjectConfig
-
-import org.gradle.api.Project
-
-import groovy.transform.PackageScope
+package nz.net.ultraq.gradle.fluent
 
 /**
- * Implementation for configuring a Groovy library project.
+ * Configure a Groovy application project.
  *
  * @author Emanuel Rabina
  */
-@PackageScope
-class DefaultGroovyLibraryProjectConfig extends DefaultGroovyProjectConfig implements GroovyLibraryProjectConfig {
-
-	DefaultGroovyLibraryProjectConfig(Project project) {
-
-		super(project)
-		project.pluginManager.apply('java-library')
-	}
+interface GroovyApplicationProjectBuilder extends GroovyProjectBuilder {
 }

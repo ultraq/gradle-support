@@ -17,15 +17,9 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * Configuration interface for putting together a Groovy Gradle plugin project
- * in Gradle.
+ * For publishing a Maven Central project.
  *
  * @author Emanuel Rabina
  */
-interface GroovyGradlePluginProjectConfig extends GroovyProjectConfig {
-
-	/**
-	 * Adds the Gradle Plugin Portal repository to the project.
-	 */
-	GroovyGradlePluginProjectConfig useGradlePluginPortal()
+interface MavenCentralBuilder {
 }

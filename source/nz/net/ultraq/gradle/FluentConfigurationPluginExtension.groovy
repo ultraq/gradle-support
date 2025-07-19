@@ -16,11 +16,17 @@
 
 package nz.net.ultraq.gradle
 
-import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectConfig
-import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectConfig
-import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
-import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
-import nz.net.ultraq.gradle.fluent.ZipDistributionConfig
+import nz.net.ultraq.gradle.fluent.DefaultGroovyApplicationProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultGroovyGradlePluginProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultGroovyLibraryProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilderBuilder
+import nz.net.ultraq.gradle.fluent.DefaultZipDistributionBuilder
+import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectBuilder
+import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectBuilder
+import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
+import nz.net.ultraq.gradle.fluent.ZipDistributionBuilder
 
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -38,29 +44,37 @@ abstract class FluentConfigurationPluginExtension {
 	final Project project
 
 	/**
+	 * Starts a fluent chain for working on an existing Groovy project.
+	 */
+	GroovyProjectBuilder asGroovyProject() {
+
+		return new DefaultGroovyProjectBuilder(project)
+	}
+
+	/**
 	 * Extends {@link #createGroovyProject} with the {@code application} plugin.
 	 */
-	GroovyApplicationProjectConfig createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
+	GroovyApplicationProjectBuilder createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
-		return new DefaultGroovyApplicationProjectConfig(project, configure)
+		return new DefaultGroovyApplicationProjectBuilder(project, configure)
 	}
 
 	/**
 	 * Extends {@link #createGroovyProject} with the {@code groovy-gradle-plugin}
 	 * plugin.
 	 */
-	GroovyGradlePluginProjectConfig createGroovyGradlePluginProject() {
+	GroovyGradlePluginProjectBuilder createGroovyGradlePluginProject() {
 
-		return new DefaultGroovyGradlePluginProjectConfig(project)
+		return new DefaultGroovyGradlePluginProjectBuilder(project)
 	}
 
 	/**
 	 * Extends {@link #createGroovyProject} with the {@code java-library}
 	 * plugin.
 	 */
-	GroovyProjectConfig createGroovyLibraryProject() {
+	GroovyProjectBuilder createGroovyLibraryProject() {
 
-		return new DefaultGroovyLibraryProjectConfig(project)
+		return new DefaultGroovyLibraryProjectBuilder(project)
 	}
 
 	/**
@@ -71,9 +85,9 @@ abstract class FluentConfigurationPluginExtension {
 	 * is present, then it'll configure the IDE to build to the same directories
 	 * as Gradle instead of the default {@code out} directory 🤢
 	 */
-	GroovyProjectConfig createGroovyProject() {
+	GroovyProjectBuilder createGroovyProject() {
 
-		return new DefaultGroovyProjectConfig(project)
+		return new DefaultGroovyProjectBuilder(project)
 	}
 
 	/**
@@ -82,9 +96,9 @@ abstract class FluentConfigurationPluginExtension {
 	 * a {@code main} publication, which all of the methods in this chain will
 	 * operate on.
 	 */
-	MavenPublicationConfig createMavenPublication() {
+	MavenPublicationBuilder createMavenPublication() {
 
-		return new DefaultMavenPublicationConfig(project)
+		return new DefaultMavenPublicationBuilderBuilder(project)
 	}
 
 	/**
@@ -93,8 +107,8 @@ abstract class FluentConfigurationPluginExtension {
 	 * any {@code CHANGELOG}, {@code LICENSE}, and {@code README} files in the
 	 * project directory.
 	 */
-	ZipDistributionConfig createZipDistribution() {
+	ZipDistributionBuilder createZipDistribution() {
 
-		return new DefaultZipDistributionConfig(project)
+		return new DefaultZipDistributionBuilder(project)
 	}
 }

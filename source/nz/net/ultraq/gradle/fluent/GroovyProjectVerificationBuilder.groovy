@@ -27,12 +27,12 @@ import org.gradle.api.resources.TextResource
  *
  * @author Emanuel Rabina
  */
-interface TestingConfig {
+interface GroovyProjectVerificationBuilder {
 
 	/**
 	 * Adds the {@code codenarc} plugin and specifies the config file to use.
 	 */
-	TestingConfig useCodenarc(TextResource codenarcConfig)
+	GroovyProjectVerificationBuilder useCodenarc(TextResource codenarcConfig)
 
 	/**
 	 * Adds the {@code jacoco} plugin, making the added {@code jacocoTestReport}
@@ -40,20 +40,20 @@ interface TestingConfig {
 	 * enabled so coverage data can be uploaded to services like
 	 * <a href="https://codecov.io/">codecov</a>.
 	 */
-	TestingConfig useJacoco()
+	GroovyProjectVerificationBuilder useJacoco()
 
 	/**
 	 * Configure all test suites to use JUnit Jupiter.
 	 */
-	TestingConfig useJUnitJupiter()
+	GroovyProjectVerificationBuilder useJUnitJupiter()
 
 	/**
 	 * Configure the testing dependencies for the project.
 	 */
-	TestingConfig withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure)
+	GroovyProjectVerificationBuilder withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure)
 
 	/**
 	 * Set the directory in which test code and assets will reside.
 	 */
-	TestingConfig withTestDirectory(Object path)
+	GroovyProjectVerificationBuilder withTestDirectory(Object path)
 }

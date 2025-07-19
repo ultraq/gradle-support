@@ -23,7 +23,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  *
  * @author Emanuel Rabina
  */
-interface SourceConfig extends TestingEntry {
+interface GroovyProjectSourceBuilder extends GroovyProjectVerificationBuilderEntry {
 
 	/**
 	 * Expand any of the keys in {@code replacements} to their mapped values, for
@@ -37,28 +37,28 @@ interface SourceConfig extends TestingEntry {
 	 * properties files with the project version as part of the
 	 * {@code processResources} build step.
 	 */
-	SourceConfig expand(String filePattern, Map<String, Object> replacements)
+	GroovyProjectSourceBuilder expand(String filePattern, Map<String, Object> replacements)
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy
 	 * extension module manifest file to the Gradle project version.
 	 */
-	SourceConfig expandExtensionModuleVersion()
+	GroovyProjectSourceBuilder expandExtensionModuleVersion()
 
 	/**
 	 * Expands the given property reference in the Groovy extension module
 	 * manifest file to the given value.
 	 */
-	SourceConfig expandExtensionModuleVersion(String propertyName, String value)
+	GroovyProjectSourceBuilder expandExtensionModuleVersion(String propertyName, String value)
 
 	/**
 	 * Configure the dependencies for the project.
 	 */
-	SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
+	GroovyProjectSourceBuilder withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
 
 	/**
 	 * Set the directory in which source code and assets will reside.  This is for
 	 * those who prefer co-locating source code and assets.
 	 */
-	SourceConfig withSourceDirectory(Object path)
+	GroovyProjectSourceBuilder withSourceDirectory(Object path)
 }

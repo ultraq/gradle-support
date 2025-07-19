@@ -94,7 +94,7 @@ configure {
       }
       .expandExtensionModuleVersion('moduleVersion', version)
       .expand('**/*.properties', [version: version])
-    .configureTesting()
+    .configureVerification()
       .withTestDirectory('test')
       .withTestDependencies() {
         testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
@@ -154,7 +154,7 @@ configure {
       Expand any of the keys in `replacements` to their mapped values, for any
       file matched by `filePattern`.
 
- - `configureTesting`  
+ - `configureVerification`  
    Start configuration of test-related things.
  
     - `withTestDirectory(Object path)`  

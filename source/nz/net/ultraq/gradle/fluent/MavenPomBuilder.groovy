@@ -21,29 +21,29 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface MavenPomConfig extends MavenCentralEntry {
+interface MavenPomBuilder extends MavenCentralBuilderEntry {
 
 	/**
 	 * Automatically fill in the {@code <licences>} section to have a license of
 	 * the Apache 2.0 license.
 	 */
-	MavenPomConfig useApache20License()
+	MavenPomBuilder useApache20License()
 
 	/**
 	 * Set the {@code <developers>} section with the given developers.  The map
 	 * properties accepted are {@code name}, {@code email}, and {@code ur}.
 	 */
-	MavenPomConfig withDevelopers(Map<String, String>... developers)
+	MavenPomBuilder withDevelopers(Map<String, String>... developers)
 
 	/**
 	 * Automatically fill in the {@code <scm>} section to reference a GitHub
 	 * project.  The repository will default to the project name.
 	 */
-	MavenPomConfig withGitHubScm(String owner)
+	MavenPomBuilder withGitHubScm(String owner)
 
 	/**
 	 * Automatically fill in the {@code <scm>} section to reference a GitHub
 	 * project.
 	 */
-	MavenPomConfig withGitHubScm(String owner, String repository)
+	MavenPomBuilder withGitHubScm(String owner, String repository)
 }
