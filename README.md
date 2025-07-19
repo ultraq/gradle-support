@@ -104,7 +104,7 @@ configure {
   createGroovyProject()
     .useJavaVersion(17)
     .useMavenCentralRepositories()
-    .withCompileOptions() {
+    .withGroovyCompileOptions() {
       groovyOptions.parameters = true
     }
     .withJarOptions() {
@@ -174,7 +174,7 @@ to any Groovy SDK libraries (those starting with `groovy.` or
     applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
     plugin.
 
- - `withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
+ - `withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
    Pass any compilation options to the `compileGroovy` task.
 
  - `withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)`  

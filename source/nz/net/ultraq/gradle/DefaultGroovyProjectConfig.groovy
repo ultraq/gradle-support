@@ -31,6 +31,7 @@ import org.gradle.api.tasks.GroovySourceDirectorySet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -95,7 +96,7 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
-	GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
+	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
 
 		project.tasks.named('compileGroovy', GroovyCompile) { compileGroovy ->
 			configure.delegate = compileGroovy
@@ -132,6 +133,13 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure) {
 
 		project.tasks.named('jar', Jar, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure) {
+
+		project.tasks.named('compileJava', JavaCompile, configure)
 		return this
 	}
 

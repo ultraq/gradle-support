@@ -27,6 +27,7 @@ import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testfixtures.ProjectBuilder
@@ -72,9 +73,18 @@ class DefaultGroovyProjectConfigTests extends Specification {
 			version << [17, 21]
 	}
 
+	def "Configure Java compilation options"() {
+		when:
+			config.withJavaCompileOptions() {
+				sourceCompatibility = '17'
+			}
+		then:
+			project.tasks.named('compileJava', JavaCompile).get().sourceCompatibility == '17'
+	}
+
 	def "Configure Groovy compilation options"() {
 		when:
-			config.withCompileOptions() {
+			config.withGroovyCompileOptions() {
 				groovyOptions.parameters = true
 			}
 		then:

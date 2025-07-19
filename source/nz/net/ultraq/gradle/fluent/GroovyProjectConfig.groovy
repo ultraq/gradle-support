@@ -20,6 +20,7 @@ import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 
 /**
@@ -46,7 +47,7 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	/**
 	 * Pass any compilation options to the `compileGroovy` task.
 	 */
-	GroovyProjectConfig withCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)
+	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)
 
 	/**
 	 * Adds a groovydoc JAR archive as output for the build.
@@ -62,6 +63,11 @@ interface GroovyProjectConfig extends SourceConfigEntry, TestingEntry {
 	 * Configure the JAR task.
 	 */
 	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure)
+
+	/**
+	 * Pass any compilation options to the `compileJava` task.
+	 */
+	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure)
 
 	/**
 	 * Adds a sources JAR archive as output for the build.
