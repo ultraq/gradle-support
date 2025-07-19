@@ -21,7 +21,7 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface MavenPomConfig {
+interface MavenPomConfig extends MavenCentralEntry {
 
 	/**
 	 * Automatically fill in the {@code <licences>} section to have a license of

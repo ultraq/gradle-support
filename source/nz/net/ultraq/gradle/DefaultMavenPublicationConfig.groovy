@@ -18,7 +18,6 @@ package nz.net.ultraq.gradle
 
 import nz.net.ultraq.gradle.fluent.MavenCentralConfig
 import nz.net.ultraq.gradle.fluent.MavenPomConfig
-import nz.net.ultraq.gradle.fluent.MavenPomConfigChain
 import nz.net.ultraq.gradle.fluent.MavenPublicationConfig
 
 import org.gradle.api.Project
@@ -37,13 +36,11 @@ import groovy.transform.PackageScope
  * @author Emanuel Rabina
  */
 @PackageScope
-class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomConfigChain, MavenCentralConfig {
+class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomConfig, MavenCentralConfig {
 
 	private final Project project
 	private final PublishingExtension publishing
 	private final MavenPublication publication
-	@Delegate
-	private MavenPomConfig mavenPomConfig
 
 	DefaultMavenPublicationConfig(Project project) {
 
@@ -57,7 +54,12 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	MavenPomConfig configurePom(@DelegatesTo(MavenPom) Closure configure = null) {
 
 		publication.pom { pom ->
-			mavenPomConfig = new DefaultMavenPomConfig(project, pom, configure)
+			pom.name.set(project.name)
+			pom.description.set(project.description)
+			if (configure) {
+				configure.delegate = pom
+				configure()
+			}
 		}
 		return this
 	}
@@ -93,6 +95,21 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 	}
 
 	@Override
+	MavenPomConfig useApache20License() {
+
+		publication.pom { pom ->
+			pom.licenses { licences ->
+				licences.license { license ->
+					license.name.set('The Apache Software License, Version 2.0')
+					license.url.set('https://www.apache.org/licenses/LICENSE-2.0.txt')
+					license.distribution.set('repo')
+				}
+			}
+		}
+		return this
+	}
+
+	@Override
 	MavenPublicationConfig withArtifacts(Object... sources) {
 
 		sources.each { source ->
@@ -103,6 +120,36 @@ class DefaultMavenPublicationConfig implements MavenPublicationConfig, MavenPomC
 			}
 			else {
 				publication.artifact(source)
+			}
+		}
+		return this
+	}
+
+	@Override
+	MavenPomConfig withDevelopers(Map<String, String>... developers) {
+
+		publication.pom { pom ->
+			pom.developers { pomDeveloperSpec ->
+				developers.each { developer ->
+					pomDeveloperSpec.developer { pomDeveloper ->
+						pomDeveloper.name.set(developer.name)
+						pomDeveloper.email.set(developer.email)
+						pomDeveloper.url.set(developer.url)
+					}
+				}
+			}
+		}
+		return this
+	}
+
+	@Override
+	MavenPomConfig withGitHubScm(String owner, String repository = project.rootProject.name) {
+
+		publication.pom { pom ->
+			pom.scm { scm ->
+				scm.connection.set("scm:git:git@github.com:${owner}/${repository}.git")
+				scm.developerConnection.set("scm:git:git@github.com:${owner}/${repository}.git")
+				scm.url.set("https://github.com/${owner}/${repository}")
 			}
 		}
 		return this

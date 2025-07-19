@@ -66,14 +66,68 @@ class DefaultMavenPublicationConfigTests extends Specification {
 			mainPublication.artifacts.first().classifier == 'javadoc'
 	}
 
-	def "POM configuration is just a wrapper for the configure POM plugin"() {
+	def "POM configuration sets up the POM with some initial values and the configure closure"() {
 		when:
+			project.description = 'Test project description'
 			config.configurePom() {
 				inceptionYear = '2025'
 			}
 		then:
-			var publication = project.extensions.getByType(PublishingExtension).publications.named('main').get() as MavenPublication
-			publication.pom.inceptionYear.get() == '2025'
+			var publishing = project.extensions.getByName('publishing') as PublishingExtension
+			var publication = publishing.publications.named('main').get() as MavenPublication
+			verifyAll(publication.pom) {
+				name.get() == project.name
+				description.get() == project.description
+				inceptionYear.get() == '2025'
+			}
+	}
+
+	def "Fills in an Apache 2.0 License"() {
+		when:
+			config.configurePom()
+				.useApache20License()
+		then:
+			var publishing = project.extensions.getByName('publishing') as PublishingExtension
+			var mainPublication = publishing.publications.named('main').get() as MavenPublication
+			mainPublication.pom.licenses.size() == 1
+			verifyAll(mainPublication.pom.licenses.first()) {
+				name.get() == 'The Apache Software License, Version 2.0'
+				url.get() == 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution.get() == 'repo'
+			}
+	}
+
+	def "Fills in GitHub SCM details"() {
+		when:
+			config.configurePom()
+				.withGitHubScm('ultraq', 'gradle-support')
+		then:
+			var publishing = project.extensions.getByName('publishing') as PublishingExtension
+			var publication = publishing.publications.named('main').get() as MavenPublication
+			verifyAll(publication.pom.scm) {
+				connection.get() == 'scm:git:git@github.com:ultraq/gradle-support.git'
+				developerConnection.get() == 'scm:git:git@github.com:ultraq/gradle-support.git'
+				url.get() == 'https://github.com/ultraq/gradle-support'
+			}
+	}
+
+	def "Adds developer details"() {
+		when:
+			config.configurePom()
+				.withDevelopers([
+					name: 'Emanuel Rabina',
+					email: 'emanuelrabina@gmail.com',
+					url: 'https://www.ultraq.net.nz'
+				])
+		then:
+			var publishing = project.extensions.getByName('publishing') as PublishingExtension
+			var mainPublication = publishing.publications.named('main').get() as MavenPublication
+			mainPublication.pom.developers.size() == 1
+			verifyAll(mainPublication.pom.developers.first()) {
+				name.get() == 'Emanuel Rabina'
+				email.get() == 'emanuelrabina@gmail.com'
+				url.get() == 'https://www.ultraq.net.nz'
+			}
 	}
 
 	def "Publishes to any Maven repository"() {

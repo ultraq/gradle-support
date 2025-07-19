@@ -41,54 +41,6 @@ plugins {
 }
 ```
 
-### configure-pom
-
-Adds a `configurePom` method to the Gradle build script that can be used to
-configure a Maven POM more succintly.
-
-```groovy
-// build.gradle
-plugins {
-  id 'nz.net.ultraq.gradle.configure-pom' version '0.4.0'
-}
-
-publishing {
-  publications {
-    main(MavenPublication) {
-      configurePom(pom) {
-        inceptionYear = '2025'
-        // All the usual MavenPom configuration can go here, but there are some
-        // methods below to save a whole lot of typing
-      }
-        .useApache20License()
-        .withGitHubScm('github-user', 'github-repository')
-        .withDevelopers([
-          name: 'My Name',
-          email: 'me@example.org',
-          url: 'https://example.org'
-        ])
-    }
-  }
-}
-```
-
-#### `configurePom(MavenPom pom, @DelegatesTo(MavenPom) Closure configure = null)`
-
-Starts a fluent chain to configure the Maven POM.  The Gradle project `name` and
-`description` properties will also be used for their respective POM elements.
-
- - `useApache20License`  
-   Automatically fill in the `<licences>` section to have a license of the
-   Apache 2.0 license.
-
- - `withGitHubScm(String user, String repo = rootProject.name)`  
-   Automatically fill in the `<scm>` section to reference a GitHub project.  The
-   repository will default to the root project name.
-
- - `withDevelopers(Map<String, String>... developers)`  
-   Set the `<developers>` section with the given developers.  The map properties
-   accepted are `name`, `email`, and `url`.
-
 ### fluent-configuration
 
 Adds a `configure` script block to a `build.gradle` file, within which you can
@@ -242,9 +194,22 @@ publication which all of the methods in this chain will operate on.
  - `withArtifacts(Object... sources)`  
    Add several artifacts to the publication.
 
- - `configurePom(@DelegatesTo(MavenPom) Closure configure)`  
-   Configure the POM that will get published.  This method provides the same API
-   as using the [configure-pom](#configure-pom) plugin.
+ - `configurePom(MavenPom pom, @DelegatesTo(MavenPom) Closure configure = null)`  
+   Starts a fluent chain to configure the Maven POM.  The Gradle project `name`
+   and `description` properties will also be used for their respective POM
+   elements.
+
+    - `useApache20License`  
+      Automatically fill in the `<licences>` section to have a license of the
+      Apache 2.0 license.
+
+    - `withGitHubScm(String user, String repo = rootProject.name)`  
+      Automatically fill in the `<scm>` section to reference a GitHub project.
+      The repository will default to the root project name.
+
+    - `withDevelopers(Map<String, String>... developers)`  
+      Set the `<developers>` section with the given developers.  The map
+      properties accepted are `name`, `email`, and `url`.
 
  - `publishToMavenCentral(String username, String password)`  
    Configure Maven Central publishing.  This will set up both the Maven Central
