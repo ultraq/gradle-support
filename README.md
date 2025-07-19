@@ -24,7 +24,7 @@ available on the Gradle Plugin Portal, so only need to be added by their ID and
 version to their respective `plugins` block.
 
 > Gradle 9 is still in RC, and while I don't expect too much to change it does
-> mean these plugins are still effectively beta software.
+> mean these plugins are effectively beta software.
 > 
 > The goal is to have these plugins work with the release version, which
 > includes the configuration cache, before achieving 1.0.0 status.
@@ -53,19 +53,37 @@ plugins {
 }
 
 configure {
+  // The following sections will go in this block!
+}
+```
+
+#### `createGroovyProject`
+
+Starts a fluent chain for configuring a Groovy project.  This will apply the
+`groovy` plugin, and configure the `groovydoc` task to generate docs with links
+to any Groovy SDK libraries (those starting with `groovy.` or
+`org.apache.groovy.`).  If the `idea` plugin is present, then it'll configure
+the IDE to build to the same directories as Gradle instead of the default `out`
+directory 🤢
+
+```groovy
+configure {
   createGroovyProject()
     .useJavaVersion(17)
     .useMavenCentralRepositories()
+    .withJavaCompileOptions() {
+      options.compilerArgs = ['-Aname="Value"']
+    }
     .withGroovyCompileOptions() {
       groovyOptions.parameters = true
+    }
+    .withGroovydocOptions() {
+      overviewText = resources.text.fromString('Hello!')
     }
     .withJarOptions() {
       manifest {
         attributes 'Automatic-Module-Name': 'org.example.myproject'
       }
-    }
-    .withGroovydocOptions() {
-      overviewText = resources.text.fromString('Hello!')
     }
     .withSourcesJar()
     .withGroovydocJar()
@@ -84,39 +102,8 @@ configure {
       .useCodenarc(resources.text.fromUri('https://example.org/path-to-codenarc-config.groovy'))
       .useJUnitJupiter()
       .useJacoco()
-
-  createMavenPublication()
-    .withArtifacts(jar, sourcesJar, groovydocJar)
-    .configurePom() {
-      inceptionYear = '2025'
-    }
-      .useApache20License()
-      .withGitHubScm('github-user', 'github-repository')
-      .withDevelopers([
-        name: 'My Name',
-        email: 'me@example.org',
-        url: 'https://example.org'
-      ])
-    .publishToMavenCentral(
-      property('mavenCentralPublisherUsername'),
-      property('mavenCentralPublisherPassword')
-    )
-
-  createZipDistribution()
-    .withDependenciesIn('libraries')
-    .withSourcesIn('source')
-    .withGroovydocsIn('groovydoc')
 }
 ```
-
-#### `createGroovyProject`
-
-Starts a fluent chain for configuring a Groovy project.  This will apply the
-`groovy` plugin, and configure the `groovydoc` task to generate docs with links
-to any Groovy SDK libraries (those starting with `groovy.` or
-`org.apache.groovy.`).  If the `idea` plugin is present, then it'll configure
-the IDE to build to the same directories as Gradle instead of the default `out`
-directory 🤢
 
  - `useJavaVersion(int version)`  
     Sets the version of Java to use in the toolchain configuration.  This will
@@ -127,6 +114,9 @@ directory 🤢
     Adds the Maven Central and Snapshots repositories to the project by
     applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
     plugin.
+
+ - `withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure)`  
+   Pass any compilation options to the `compileJava` task.
 
  - `withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
    Pass any compilation options to the `compileGroovy` task.
@@ -144,8 +134,7 @@ directory 🤢
    Adds a groovydoc JAR archive as output for the build.
 
  - `withShadowJar(@DelegatesTo(ShadowJar) Closure configure)`  
-   Adds and configures a shadow JAR from the
-   [`shadow-gradle-plugin`](https://github.com/GradleUp/shadow).
+   Adds and configures a shadow JAR from the [`shadow-gradle-plugin`](https://github.com/GradleUp/shadow).
 
  - `configureSource`  
    Start configuration of source code -related things.
@@ -206,8 +195,32 @@ Starts a fluent chain for configuring publishing artifacts to a Maven
 repository.  This will apply the `maven-publish` plugin and create a `main`
 publication which all of the methods in this chain will operate on.
 
+```groovy
+configure {
+  createMavenPublication()
+    .withArtifacts(jar, sourcesJar, groovydocJar)
+    .configurePom() {
+      inceptionYear = '2025'
+    }
+      .useApache20License()
+      .withGitHubScm('github-user', 'github-repository')
+      .withDevelopers([
+        name: 'My Name',
+        email: 'me@example.org',
+        url: 'https://example.org'
+      ])
+    .publishToMavenCentral(
+      property('mavenCentralPublisherUsername'),
+      property('mavenCentralPublisherPassword')
+    )
+}
+```
+
  - `withArtifacts(Object... sources)`  
-   Add several artifacts to the publication.
+   Add several artifacts to the publication.  If `groovydocJar` is one of the
+   artifacts, it will be given a `javadoc` classifier so that it can be used as
+   the documentation companion for the main JAR and so that services like
+   [javadoc.io](https://javadoc.io) can display it.
 
  - `configurePom(MavenPom pom, @DelegatesTo(MavenPom) Closure configure = null)`  
    Starts a fluent chain to configure the Maven POM.  The Gradle project `name`
@@ -249,12 +262,21 @@ Starts a fluent chain for configuring a ZIP archive.  Applies the `distribution`
 plugin and defaults to including the main JAR, then any `CHANGELOG`, `LICENSE`,
 and `README` files in the project directory.
 
+```groovy
+configure {
+  createZipDistribution()
+    .withDependenciesIn('libraries')
+    .withSourcesIn('source')
+    .withGroovydocsIn('groovydoc')
+}
+```
+
  - `withDependenciesIn(String directory)`  
    Include runtime dependencies of the main JAR and place them in the given
    directory.
 
  - `withSourcesIn(String directory)`  
-   Include sources for the main JAR and place them in the given directory.
+   Include source code and place them in the given directory.
 
  - `withGroovydocsIn(String directory)`  
-   Include Javadoc for the main JAR and place them in the given directory.
+   Include Groovydocs and place them in the given directory.

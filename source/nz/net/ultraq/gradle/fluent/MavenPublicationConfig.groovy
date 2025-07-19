@@ -45,7 +45,7 @@ interface MavenPublicationConfig extends MavenCentralEntry {
 	 *
 	 * <p>If {@code groovydocJar} is one of the artifacts, it will be given a
 	 * `javadoc` classifier so that it can be used as the documentation companion
-	 * for the main JAR, and so that services like
+	 * for the main JAR and so that services like
 	 * <a href="https://javadoc.io">javadoc.io</a> can find it.
 	 */
 	MavenPublicationConfig withArtifacts(Object... artifacts)
