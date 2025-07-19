@@ -20,6 +20,7 @@ import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 import nz.net.ultraq.gradle.fluent.SourceConfig
 import nz.net.ultraq.gradle.fluent.TestingConfig
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.DuplicatesStrategy
@@ -60,6 +61,18 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
+	SourceConfig configureSource() {
+
+		return this
+	}
+
+	@Override
+	TestingConfig configureTesting() {
+
+		return this
+	}
+
+	@Override
 	SourceConfig expand(String filePattern, Map<String, Object> replacements) {
 
 		project.tasks.named('processResources', ProcessResources) { processResources ->
@@ -74,85 +87,6 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	SourceConfig expandExtensionModuleVersion(String propertyName = 'moduleVersion', String value = project.version) {
 
 		return expand('**/org.codehaus.groovy.runtime.ExtensionModule', [(propertyName): value])
-	}
-
-	@Override
-	SourceConfig configureSource() {
-
-		return this
-	}
-
-	@Override
-	TestingConfig configureTesting() {
-
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig useMavenCentralRepositories() {
-
-		project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
-
-		project.tasks.named('compileGroovy', GroovyCompile) { compileGroovy ->
-			configure.delegate = compileGroovy
-			configure()
-		}
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withGroovydocJar() {
-
-		var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
-			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
-			groovydocJar.group = 'build'
-			groovydocJar.dependsOn('groovydoc')
-			groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
-			groovydocJar.destinationDirectory.set(project.layout.buildDirectory.dir('libs'))
-			groovydocJar.archiveClassifier.set('javadoc')
-		}
-		project.tasks.named('assemble') { assembleTask ->
-			assembleTask.dependsOn(groovydocJar.get())
-		}
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
-
-		project.tasks.named('groovydoc', Groovydoc, configure)
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure) {
-
-		project.tasks.named('jar', Jar, configure)
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure) {
-
-		project.tasks.named('compileJava', JavaCompile, configure)
-		return this
-	}
-
-	@Override
-	GroovyProjectConfig withSourcesJar() {
-
-		project.extensions.configure(JavaPluginExtension) { java ->
-			java.withSourcesJar()
-			project.tasks.named('sourcesJar', Jar) { jar ->
-				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-			}
-		}
-		return this
 	}
 
 	@Override
@@ -205,6 +139,13 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
+	GroovyProjectConfig useMavenCentralRepositories() {
+
+		project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
+		return this
+	}
+
+	@Override
 	SourceConfig withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
 		project.dependencies(configure)
@@ -226,9 +167,80 @@ class DefaultGroovyProjectConfig implements GroovyProjectConfig, SourceConfig, T
 	}
 
 	@Override
+	GroovyProjectConfig withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure) {
+
+		project.tasks.named('compileGroovy', GroovyCompile) { compileGroovy ->
+			configure.delegate = compileGroovy
+			configure()
+		}
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withGroovydocJar() {
+
+		var groovydocJar = project.tasks.register('groovydocJar', Jar) { groovydocJar ->
+			groovydocJar.description = 'Assembles a jar archive containing the main groovydoc.'
+			groovydocJar.group = 'build'
+			groovydocJar.dependsOn('groovydoc')
+			groovydocJar.from(project.tasks.named('groovydoc', Groovydoc).get().destinationDir)
+			groovydocJar.destinationDirectory.set(project.layout.buildDirectory.dir('libs'))
+			groovydocJar.archiveClassifier.set('javadoc')
+		}
+		project.tasks.named('assemble') { assembleTask ->
+			assembleTask.dependsOn(groovydocJar.get())
+		}
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure) {
+
+		project.tasks.named('groovydoc', Groovydoc, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withJarOptions(@DelegatesTo(Jar) Closure configure) {
+
+		project.tasks.named('jar', Jar, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure) {
+
+		project.tasks.named('compileJava', JavaCompile, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withShadowJar(@DelegatesTo(ShadowJar) Closure configure) {
+
+		project.pluginManager.apply('com.gradleup.shadow')
+		project.tasks.named('shadowJar', ShadowJar, configure)
+		return this
+	}
+
+	@Override
+	GroovyProjectConfig withSourcesJar() {
+
+		project.extensions.configure(JavaPluginExtension) { java ->
+			java.withSourcesJar()
+			project.tasks.named('sourcesJar', Jar) { jar ->
+				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			}
+		}
+		return this
+	}
+
+	@Override
 	SourceConfig withSourceDirectory(Object path) {
 
 		withDirectoryForSourceSetAt(project.file(path), 'main')
+		project.tasks.named('jar', Jar) { jar ->
+			jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+		}
 		return this
 	}
 

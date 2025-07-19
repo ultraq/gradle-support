@@ -132,6 +132,19 @@ to any Groovy SDK libraries (those starting with `groovy.` or
  - `withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)`  
    Pass any groovydoc options to the `groovydoc` task.
 
+ - `withJarOptions(@DelegatesTo(Jar) Closure configure)`  
+   Configures the `jar` task.
+
+ - `withSourcesJar()`  
+   Adds a sources JAR archive as output for the build.
+
+ - `withGroovydocJar()`  
+   Adds a groovydoc JAR archive as output for the build.
+
+ - `withShadowJar(@DelegatesTo(ShadowJar) Closure configure)`  
+   Adds and configures a shadow JAR from the
+   [`shadow-gradle-plugin`](https://github.com/GradleUp/shadow).
+
  - `configureSource`  
    Start configuration of source code -related things.
 

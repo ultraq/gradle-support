@@ -18,6 +18,7 @@ package nz.net.ultraq.gradle
 
 import nz.net.ultraq.gradle.fluent.GroovyProjectConfig
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.file.DuplicatesStrategy
@@ -135,6 +136,16 @@ class DefaultGroovyProjectConfigTests extends Specification {
 			project.tasks.named('assemble').get().dependsOn.contains(groovydocJar)
 	}
 
+	def "Applies the shadow JAR plugin and configures it"() {
+		when:
+			config.withShadowJar {
+				archiveClassifier.set('test')
+			}
+		then:
+			project.pluginManager.hasPlugin('com.gradleup.shadow')
+			project.tasks.named('shadowJar', ShadowJar).get().archiveClassifier.get() == 'test'
+	}
+
 	def "Configures a combined source and resource directory"() {
 		when:
 			// @formatter:off
@@ -148,6 +159,7 @@ class DefaultGroovyProjectConfigTests extends Specification {
 			var sourceSets = project.extensions.getByName('sourceSets') as SourceSetContainer
 			sourceSets.named('main').get().java.srcDirs == [project.file('source')] as Set
 			sourceSets.named('test').get().java.srcDirs == [project.file('test')] as Set
+			project.tasks.named('jar', Jar).get().duplicatesStrategy == DuplicatesStrategy.EXCLUDE
 	}
 
 	def "Configures Maven Central and Snapshot repositories"() {

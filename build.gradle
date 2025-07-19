@@ -33,6 +33,9 @@ configure {
 		.useMavenCentralRepositories()
 		.configureSource()
 			.withSourceDirectory('source')
+			.withDependencies() {
+				implementation 'com.gradleup.shadow:shadow-gradle-plugin:8.3.8'
+			}
 		.configureTesting()
 			.withTestDirectory('test')
 			.withTestDependencies() {
