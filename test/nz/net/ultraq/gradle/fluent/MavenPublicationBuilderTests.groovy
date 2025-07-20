@@ -16,6 +16,9 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import nz.net.ultraq.gradle.FluentConfigurationPlugin
+import nz.net.ultraq.gradle.FluentConfigurationPluginExtension
+
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.JavaPluginExtension
@@ -37,13 +40,13 @@ class MavenPublicationBuilderTests extends Specification {
 
 	def setup() {
 		project = ProjectBuilder.builder().build()
-		config = new DefaultMavenPublicationBuilder(project)
+		project.pluginManager.apply(FluentConfigurationPlugin)
+		var configure = project.extensions.getByName('configure') as FluentConfigurationPluginExtension
+		config = configure.createMavenPublication()
 	}
 
 	def "Adds the maven-publish plugin and creates a main publication"() {
-		when:
-			configure.createMavenPublication()
-		then:
+		expect:
 			project.pluginManager.hasPlugin('maven-publish')
 			var publishingExtension = project.extensions.getByName('publishing') as PublishingExtension
 			publishingExtension.publications.named('main', MavenPublication)
@@ -77,7 +80,7 @@ class MavenPublicationBuilderTests extends Specification {
 		when:
 			project.description = 'Test project description'
 			config.configurePom() { pom ->
-				pom.inceptionYear = '2025'
+				pom.inceptionYear.set('2025')
 			}
 		then:
 			var publishing = project.extensions.getByName('publishing') as PublishingExtension

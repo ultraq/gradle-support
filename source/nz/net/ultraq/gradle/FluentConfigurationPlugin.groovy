@@ -19,12 +19,15 @@ package nz.net.ultraq.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+import groovy.transform.CompileStatic
+
 /**
  * Adds a {@code configure} script block to a {@code build.gradle} file, within
  * which a fluent API can be used to configure a project.
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class FluentConfigurationPlugin implements Plugin<Project> {
 
 	@Override

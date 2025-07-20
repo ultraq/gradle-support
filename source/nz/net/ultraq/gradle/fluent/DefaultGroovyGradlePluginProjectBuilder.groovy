@@ -18,6 +18,7 @@ package nz.net.ultraq.gradle.fluent
 
 import org.gradle.api.Project
 
+import groovy.transform.CompileStatic
 import javax.inject.Inject
 
 /**
@@ -25,6 +26,7 @@ import javax.inject.Inject
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultGroovyGradlePluginProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyGradlePluginProjectBuilder {
 
 	@Inject

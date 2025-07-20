@@ -21,6 +21,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.initialization.Settings
 
+import groovy.transform.CompileStatic
+
 /**
  * Adds the Maven Central and Snapshots repositories to a single project, or all
  * projects if added to a settings file.
@@ -34,6 +36,7 @@ import org.gradle.api.initialization.Settings
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class UseMavenCentralRepositoriesPlugin implements Plugin {
 
 	@Override
@@ -41,8 +44,8 @@ class UseMavenCentralRepositoriesPlugin implements Plugin {
 
 		// Because of generic type erasure, I have to dispatch to a Settings or Project handler myself...
 		switch (target) {
-			case Settings -> applyMavenCentralRepositories(target.dependencyResolutionManagement.repositories)
-			case Project -> applyMavenCentralRepositories(target.repositories)
+			case Settings -> applyMavenCentralRepositories((target as Settings).dependencyResolutionManagement.repositories)
+			case Project -> applyMavenCentralRepositories((target as Project).repositories)
 			default -> throw new IllegalArgumentException("${target.class} is not supported for this plugin")
 		}
 	}

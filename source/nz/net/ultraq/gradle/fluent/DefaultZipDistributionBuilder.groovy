@@ -27,16 +27,21 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.javadoc.Groovydoc
 
+import groovy.transform.CompileStatic
+import javax.inject.Inject
+
 /**
  * Implementation for configuring a ZIP distribution.
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultZipDistributionBuilder implements ZipDistributionBuilder {
 
 	private final Project project
 	private final Distribution mainDistribution
 
+	@Inject
 	DefaultZipDistributionBuilder(Project project) {
 
 		this.project = project

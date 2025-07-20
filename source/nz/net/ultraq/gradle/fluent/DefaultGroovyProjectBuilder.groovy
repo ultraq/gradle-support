@@ -39,6 +39,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.testing.base.TestingExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
+import groovy.transform.CompileStatic
 import javax.inject.Inject
 
 /**
@@ -46,6 +47,7 @@ import javax.inject.Inject
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProjectSourceBuilder, GroovyProjectVerificationBuilder {
 
 	protected final Project project
@@ -80,7 +82,7 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	}
 
 	@Override
-	GroovyProjectSourceBuilder expand(String filePattern, Map<String, Object> replacements) {
+	GroovyProjectSourceBuilder expand(String filePattern, Map<String, ?> replacements) {
 
 		project.tasks.named('processResources', ProcessResources) { processResources ->
 			processResources.filesMatching(filePattern) { file ->
@@ -115,9 +117,7 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 		}
 		project.tasks.named('jacocoTestReport', JacocoReport) { jacocoTestReport ->
 			jacocoTestReport.dependsOn('test')
-			jacocoTestReport.reports { reports ->
-				reports.xml.required.set(true)
-			}
+			jacocoTestReport.reports.xml.required.set(true)
 		}
 		return this
 	}
@@ -138,8 +138,8 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	GroovyProjectVerificationBuilder useJUnitJupiter() {
 
 		project.extensions.configure(TestingExtension) { testing ->
-			testing.suites.configureEach { JvmTestSuite test ->
-				test.useJUnitJupiter()
+			testing.suites.withType(JvmTestSuite).configureEach { suite ->
+				suite.useJUnitJupiter()
 			}
 		}
 		return this
@@ -167,7 +167,9 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 
 		project.extensions.configure(SourceSetContainer) { sourceSets ->
 			sourceSets.named(name) { sourceSet ->
-				[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources]*.srcDirs = [path]
+				[sourceSet.java, sourceSet.extensions.getByType(GroovySourceDirectorySet), sourceSet.resources].each { sourceDirectorySet ->
+					sourceDirectorySet.srcDirs = [path]
+				}
 				sourceSet.resources.exclude('**/*.java', '**/*.groovy')
 			}
 		}

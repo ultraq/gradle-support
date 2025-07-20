@@ -20,6 +20,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 
+import groovy.transform.CompileStatic
 import javax.inject.Inject
 
 /**
@@ -27,6 +28,7 @@ import javax.inject.Inject
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultGroovyApplicationProjectBuilder extends DefaultGroovyProjectBuilder implements GroovyApplicationProjectBuilder {
 
 	@Inject

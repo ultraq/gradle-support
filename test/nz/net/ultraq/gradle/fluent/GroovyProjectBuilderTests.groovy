@@ -55,6 +55,11 @@ class GroovyProjectBuilderTests extends Specification {
 		config = configure.createGroovyProject()
 	}
 
+	def "Applies the Groovy plugin"() {
+		expect:
+			project.pluginManager.hasPlugin('groovy')
+	}
+
 	def "Use the specified Java version"(int version) {
 		when:
 			config.useJavaVersion(version)
@@ -79,8 +84,8 @@ class GroovyProjectBuilderTests extends Specification {
 
 	def "Configure Java compilation options"() {
 		when:
-			config.withJavaCompileOptions() {
-				sourceCompatibility = '17'
+			config.withJavaCompileOptions() { javaCompile ->
+				javaCompile.sourceCompatibility = '17'
 			}
 		then:
 			project.tasks.named('compileJava', JavaCompile).get().sourceCompatibility == '17'
@@ -125,7 +130,6 @@ class GroovyProjectBuilderTests extends Specification {
 
 	def "Adds a groovydocJar task"() {
 		when:
-			project.pluginManager.apply('groovy')
 			config.withGroovydocJar()
 		then:
 			var groovydocJar = project.tasks.named('groovydocJar', Jar).get()

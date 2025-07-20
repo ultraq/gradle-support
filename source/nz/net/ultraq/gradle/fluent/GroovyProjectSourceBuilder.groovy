@@ -37,7 +37,7 @@ interface GroovyProjectSourceBuilder extends GroovyProjectVerificationBuilderEnt
 	 * properties files with the project version as part of the
 	 * {@code processResources} build step.
 	 */
-	GroovyProjectSourceBuilder expand(String filePattern, Map<String, Object> replacements)
+	GroovyProjectSourceBuilder expand(String filePattern, Map<String, ?> replacements)
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy

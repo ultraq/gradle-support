@@ -33,12 +33,14 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
 /**
  * The {@code configure} script block and the entry-point methods for the fluent
  * API.
  */
+@CompileStatic
 @TupleConstructor(defaults = false)
 abstract class FluentConfigurationPluginExtension {
 

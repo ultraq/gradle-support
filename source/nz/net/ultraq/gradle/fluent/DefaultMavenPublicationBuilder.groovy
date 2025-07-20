@@ -25,17 +25,22 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.signing.SigningExtension
 
+import groovy.transform.CompileStatic
+import javax.inject.Inject
+
 /**
  * Implementation for configuring a Maven publication.
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPomBuilder, MavenCentralBuilder {
 
 	private final Project project
 	private final PublishingExtension publishing
 	private final MavenPublication publication
 
+	@Inject
 	DefaultMavenPublicationBuilder(Project project) {
 
 		this.project = project
@@ -73,7 +78,7 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 		}
 		publishing.repositories { repositories ->
 			repositories.maven { maven ->
-				maven.url = project.version.endsWith('SNAPSHOT') ?
+				maven.url = project.version.toString().endsWith('SNAPSHOT') ?
 					'https://central.sonatype.com/repository/maven-snapshots/' :
 					'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
 				maven.credentials { credentials ->
@@ -138,9 +143,9 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 
 		publication.pom { pom ->
 			pom.scm { scm ->
-				scm.connection.set("scm:git:git@github.com:${owner}/${repository}.git")
-				scm.developerConnection.set("scm:git:git@github.com:${owner}/${repository}.git")
-				scm.url.set("https://github.com/${owner}/${repository}")
+				scm.connection.set("scm:git:git@github.com:${owner}/${repository}.git".toString())
+				scm.developerConnection.set("scm:git:git@github.com:${owner}/${repository}.git".toString())
+				scm.url.set("https://github.com/${owner}/${repository}".toString())
 			}
 		}
 		return this
