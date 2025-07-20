@@ -66,6 +66,10 @@ to any Groovy SDK libraries (those starting with `groovy.` or
 the IDE to build to the same directories as Gradle instead of the default `out`
 directory 🤢
 
+You can also use `asGroovyProject` to continue configuring an existing project
+created by `createGroovyProject`, eg: started in one build script to be picked
+up later like in a multi-project build.
+
 ```groovy
 configure {
   createGroovyProject()
@@ -115,16 +119,16 @@ configure {
     applying the [`use-maven-central-repositories`](#use-maven-central-repositories)
     plugin.
 
- - `withJavaCompileOptions(@DelegatesTo(JavaCompile) Closure configure)`  
+ - `withJavaCompileOptions(Action<? extends JavaCompile> configure)`  
    Pass any compilation options to the `compileJava` task.
 
- - `withGroovyCompileOptions(@DelegatesTo(GroovyCompile) Closure configure)`  
+ - `withGroovyCompileOptions(Action<? extends GroovyCompile> configure)`  
    Pass any compilation options to the `compileGroovy` task.
 
- - `withGroovydocOptions(@DelegatesTo(Groovydoc) Closure configure)`  
+ - `withGroovydocOptions(Action<? extends Groovydoc> configure)`  
    Pass any groovydoc options to the `groovydoc` task.
 
- - `withJarOptions(@DelegatesTo(Jar) Closure configure)`  
+ - `withJarOptions(Action<? extends Jar> configure)`  
    Configures the `jar` task.
 
  - `withSourcesJar()`  
@@ -133,7 +137,7 @@ configure {
  - `withGroovydocJar()`  
    Adds a groovydoc JAR archive as output for the build.
 
- - `withShadowJar(@DelegatesTo(ShadowJar) Closure configure)`  
+ - `withShadowJar(Action<? extends ShadowJar> configure)`  
    Adds and configures a shadow JAR from the [`shadow-gradle-plugin`](https://github.com/GradleUp/shadow).
 
  - `configureSource`  
@@ -176,15 +180,19 @@ configure {
 
 #### `createGroovyLibraryProject`
 
-Extends `createGroovyProject` to also apply the `groovy-library` plugin.
+Extends `createGroovyProject` to also apply the `groovy-library` plugin.  Also
+comes with `asGroovyLibraryProject` to continue configuring an existing one.
 
-#### `createGroovyApplicationProject(@DelegatesTo(JavaApplication) Closure configure)`
+#### `createGroovyApplicationProject(Action<? extends JavaApplication> configure)`
 
-Extends `createGroovyProject` to also apply the `application` plugin.
+Extends `createGroovyProject` to also apply the `application` plugin.  Also
+comes with `asGroovyApplicationProject` to continue configuring an existing one.
 
 #### `createGroovyGradlePluginProject`
 
 Extends `createGroovyProject` to also apply the `groovy-gradle-plugin` plugin.
+Also comes with `asGroovyGradlePluginProject` to continue configuring an
+existing one.
 
  - `useGradlePluginPortal`  
    Adds the Gradle Plugin Portal repository to the project.
@@ -222,7 +230,7 @@ configure {
    the documentation companion for the main JAR and so that services like
    [javadoc.io](https://javadoc.io) can display it.
 
- - `configurePom(MavenPom pom, @DelegatesTo(MavenPom) Closure configure = null)`  
+ - `configurePom(MavenPom pom, Action<? extends MavenPom> configure = null)`  
    Starts a fluent chain to configure the Maven POM.  The Gradle project `name`
    and `description` properties will also be used for their respective POM
    elements.
@@ -253,7 +261,7 @@ configure {
    credentials into your build script.  Instead, reference Gradle properties or
    environment variables.
 
- - `publishTo(@DelegatesTo(MavenArtifactRepository) Closure configure)`  
+ - `publishTo(Action<? extends MavenArtifactRepository> configure)`  
    Publish to any Maven repository of your configuration.
 
 #### `createZipDistribution`
