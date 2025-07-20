@@ -43,15 +43,15 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 			groovyProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Returns an existing Groovy project builder"() {
+	def "Continues a builder for working with an existing project"() {
 		when:
-			var groovyProject = configure.createGroovyProject()
+			configure.createGroovyProject()
 			var existingGroovyProject = configure.asGroovyProject()
 		then:
-			existingGroovyProject == groovyProject
+			existingGroovyProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Throws an error if no Groovy project builder exists"() {
+	def "Throws an error if no Groovy project builder has been created"() {
 		when:
 			configure.asGroovyProject()
 		then:
@@ -69,17 +69,21 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 
 	def "Returns an existing Groovy application project builder"() {
 		when:
-			var groovyApplicationProject = configure.createGroovyApplicationProject() {
+			configure.createGroovyApplicationProject() {
 				mainClass = 'nz.net.ultraq.gradle.TestApplication'
 			}
-			var existingGroovyApplicationProject = configure.asGroovyApplicationProject()
+			var existingGroovyApplicationProject = configure.asGroovyApplicationProject() {
+				mainClass = 'nz.net.ultraq.gradle.TestApplication'
+			}
 		then:
-			existingGroovyApplicationProject == groovyApplicationProject
+			existingGroovyApplicationProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Throws an error if no Groovy application project builder exists"() {
+	def "Throws an error if no Groovy project builder has been created before continuing an application project"() {
 		when:
-			configure.asGroovyApplicationProject()
+			configure.asGroovyApplicationProject() {
+				mainClass = 'nz.net.ultraq.gradle.TestApplication'
+			}
 		then:
 			thrown(IllegalStateException)
 	}
@@ -93,13 +97,13 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 
 	def "Returns an existing Groovy Gradle plugin project builder"() {
 		when:
-			var groovyGradlePluginProject = configure.createGroovyGradlePluginProject()
+			configure.createGroovyGradlePluginProject()
 			var existingGroovyGradlePluginProject = configure.asGroovyGradlePluginProject()
 		then:
-			existingGroovyGradlePluginProject == groovyGradlePluginProject
+			existingGroovyGradlePluginProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Throws an error if no Groovy Gradle plugin project builder exists"() {
+	def "Throws an error if no Groovy project builder has been created before continuing a Gradle plugin project"() {
 		when:
 			configure.asGroovyGradlePluginProject()
 		then:
@@ -115,13 +119,13 @@ class FluentConfigurationPluginExtensionTests extends Specification {
 
 	def "Returns an existing Groovy library project builder"() {
 		when:
-			var groovyLibraryProject = configure.createGroovyLibraryProject()
+			configure.createGroovyLibraryProject()
 			var existingGroovyLibraryProject = configure.asGroovyLibraryProject()
 		then:
-			existingGroovyLibraryProject == groovyLibraryProject
+			existingGroovyLibraryProject.class.simpleName.contains('_Decorated')
 	}
 
-	def "Throws an error if no Groovy library project builder exists"() {
+	def "Throws an error if no Groovy project builder has been created before continuing a library project"() {
 		when:
 			configure.asGroovyLibraryProject()
 		then:

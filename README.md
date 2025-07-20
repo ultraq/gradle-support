@@ -180,19 +180,19 @@ configure {
 
 #### `createGroovyLibraryProject`
 
-Extends `createGroovyProject` to also apply the `groovy-library` plugin.  Also
-comes with `asGroovyLibraryProject` to continue configuring an existing one.
+Extends `createGroovyProject` to also apply the `java-library` plugin.  Also
+comes with `asGroovyLibraryProject` to continue configuring any existing Groovy
+project as a library one.
 
 #### `createGroovyApplicationProject(Action<? extends JavaApplication> configure)`
 
 Extends `createGroovyProject` to also apply the `application` plugin.  Also
-comes with `asGroovyApplicationProject` to continue configuring an existing one.
+comes with `asGroovyApplicationProject` to continue configuring any existing
+Groovy project as an application one.
 
 #### `createGroovyGradlePluginProject`
 
 Extends `createGroovyProject` to also apply the `groovy-gradle-plugin` plugin.
-Also comes with `asGroovyGradlePluginProject` to continue configuring an
-existing one.
 
  - `useGradlePluginPortal`  
    Adds the Gradle Plugin Portal repository to the project.

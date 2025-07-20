@@ -46,20 +46,17 @@ abstract class FluentConfigurationPluginExtension {
 
 	final Project project
 
-	private GroovyApplicationProjectBuilder groovyApplicationProjectBuilder
-	private GroovyGradlePluginProjectBuilder groovyGradlePluginProjectBuilder
-	private GroovyProjectBuilder groovyProjectBuilder
-	private GroovyLibraryProjectBuilder groovyLibraryProjectBuilder
+	private boolean hasGroovyProject
 
 	/**
 	 * Starts a fluent chain for working on an existing Groovy application project.
 	 */
-	GroovyApplicationProjectBuilder asGroovyApplicationProject() {
+	GroovyApplicationProjectBuilder asGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
-		if (!groovyApplicationProjectBuilder) {
+		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy application project found - create one first with createGroovyApplicationProject()')
 		}
-		return groovyApplicationProjectBuilder
+		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
 	}
 
 	/**
@@ -68,10 +65,10 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyGradlePluginProjectBuilder asGroovyGradlePluginProject() {
 
-		if (!groovyGradlePluginProjectBuilder) {
+		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy Gradle plugin project found - create one first with createGroovyGradlePluginProject()')
 		}
-		return groovyGradlePluginProjectBuilder
+		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
 	}
 
 	/**
@@ -79,10 +76,10 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyLibraryProjectBuilder asGroovyLibraryProject() {
 
-		if (!groovyLibraryProjectBuilder) {
+		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy library project found - create one first with createGroovyLibraryProject()')
 		}
-		return groovyLibraryProjectBuilder
+		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
 	}
 
 	/**
@@ -90,10 +87,10 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyProjectBuilder asGroovyProject() {
 
-		if (!groovyProjectBuilder) {
+		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy project found - create one first with createGroovyProject()')
 		}
-		return groovyProjectBuilder
+		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
 	}
 
 	/**
@@ -101,8 +98,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyApplicationProjectBuilder createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
-		groovyApplicationProjectBuilder = project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
-		return groovyApplicationProjectBuilder
+		hasGroovyProject = true
+		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
 	}
 
 	/**
@@ -111,8 +108,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyGradlePluginProjectBuilder createGroovyGradlePluginProject() {
 
-		groovyGradlePluginProjectBuilder = project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
-		return groovyGradlePluginProjectBuilder
+		hasGroovyProject = true
+		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
 	}
 
 	/**
@@ -121,8 +118,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyProjectBuilder createGroovyLibraryProject() {
 
-		groovyLibraryProjectBuilder = project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
-		return groovyLibraryProjectBuilder
+		hasGroovyProject = true
+		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
 	}
 
 	/**
@@ -135,8 +132,8 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	GroovyProjectBuilder createGroovyProject() {
 
-		groovyProjectBuilder = project.objects.newInstance(DefaultGroovyProjectBuilder, project)
-		return groovyProjectBuilder
+		hasGroovyProject = true
+		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
 	}
 
 	/**
