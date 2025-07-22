@@ -19,7 +19,7 @@ plugins {
 	id 'maven-publish'
 	id 'signing'
 	id 'com.gradle.plugin-publish' version '1.3.1'
-	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.0'
+	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.1'
 }
 
 description = 'Gradle support plugins for use in my own projects'
@@ -37,7 +37,7 @@ configure {
 			.withDependencies() {
 				implementation 'com.gradleup.shadow:shadow-gradle-plugin:8.3.8'
 			}
-		.configureTesting()
+		.configureVerification()
 			.withTestDirectory('test')
 			.withTestDependencies() {
 				testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
