@@ -37,7 +37,7 @@ projects if added to a settings file.
 ```groovy
 // settings.gradle or build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.5.1'
+  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.5.2'
 }
 ```
 
@@ -49,7 +49,7 @@ configure the project:
 ```groovy
 // build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.1'
+  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.2'
 }
 
 configure {
