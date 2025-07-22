@@ -19,7 +19,7 @@ plugins {
 	id 'maven-publish'
 	id 'signing'
 	id 'com.gradle.plugin-publish' version '1.3.1'
-	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.1'
+	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.2'
 }
 
 description = 'Gradle support plugins for use in my own projects'
@@ -31,7 +31,9 @@ configure {
 	createGroovyProject()
 		.useJavaVersion(17)
 		.useMavenCentralRepositories()
-		.withSourcesJar()
+		.withSourcesJar() {
+			duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+		}
 		.configureSource()
 			.withSourceDirectory('source')
 			.withDependencies() {
@@ -46,12 +48,6 @@ configure {
 			.useJacoco()
 }
 // @formatter:on
-
-afterEvaluate {
-	tasks.named('sourcesJar', Jar) {
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	}
-}
 
 gradlePlugin {
 	website = 'https://github.com/ultraq/gradle-support'
