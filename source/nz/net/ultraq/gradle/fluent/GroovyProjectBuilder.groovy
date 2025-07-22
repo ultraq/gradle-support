@@ -81,4 +81,9 @@ interface GroovyProjectBuilder extends GroovyProjectSourceBuilderEntry, GroovyPr
 	 * Adds a sources JAR archive as output for the build.
 	 */
 	GroovyProjectBuilder withSourcesJar()
+
+	/**
+	 * Adds a sources JAR archive as output for the build.
+	 */
+	GroovyProjectBuilder withSourcesJar(Action<? extends Jar> configure)
 }

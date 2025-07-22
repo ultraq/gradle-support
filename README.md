@@ -131,8 +131,9 @@ configure {
  - `withJarOptions(Action<? extends Jar> configure)`  
    Configures the `jar` task.
 
- - `withSourcesJar()`  
-   Adds a sources JAR archive as output for the build.
+ - `withSourcesJar(Action<? extends Jar> configure = null)`  
+   Adds a sources JAR archive as output for the build.  The task can optionally
+   be configured by providing a closure.
 
  - `withGroovydocJar()`  
    Adds a groovydoc JAR archive as output for the build.

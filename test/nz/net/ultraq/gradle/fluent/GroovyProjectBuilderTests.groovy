@@ -128,6 +128,16 @@ class GroovyProjectBuilderTests extends Specification {
 			project.tasks.named('sourcesJar', Jar)
 	}
 
+	def "Adds and configures a sourcesJar task"() {
+		when:
+			config.withSourcesJar() { jar ->
+				jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			}
+		then:
+			var sourcesJar = project.tasks.named('sourcesJar', Jar).get()
+			sourcesJar.duplicatesStrategy == DuplicatesStrategy.EXCLUDE
+	}
+
 	def "Adds a groovydocJar task"() {
 		when:
 			config.withGroovydocJar()

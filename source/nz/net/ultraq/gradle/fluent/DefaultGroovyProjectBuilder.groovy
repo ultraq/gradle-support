@@ -229,10 +229,13 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	}
 
 	@Override
-	GroovyProjectBuilder withSourcesJar() {
+	GroovyProjectBuilder withSourcesJar(Action<? extends Jar> configure = null) {
 
 		project.extensions.configure(JavaPluginExtension) { java ->
 			java.withSourcesJar()
+			if (configure) {
+				project.tasks.named('sourcesJar', Jar, configure)
+			}
 		}
 		return this
 	}
