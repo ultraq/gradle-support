@@ -219,8 +219,8 @@ configure {
         url: 'https://example.org'
       ])
     .publishToMavenCentral(
-      property('mavenCentralPublisherUsername'),
-      property('mavenCentralPublisherPassword')
+      findProperty('mavenCentralPublisherUsername'),
+      findProperty('mavenCentralPublisherPassword')
     )
 }
 ```
