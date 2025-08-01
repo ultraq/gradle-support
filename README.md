@@ -23,11 +23,8 @@ These plugins are built targeting Gradle 9, so require Java 17 as well, and are
 available on the Gradle Plugin Portal, so only need to be added by their ID and
 version to their respective `plugins` block.
 
-> Gradle 9 is still in RC, and while I don't expect too much to change it does
-> mean these plugins are effectively beta software.
-> 
-> The goal is to have these plugins work with the release version, which
-> includes the configuration cache, before achieving 1.0.0 status.
+> With Gradle 9 now released, the goal is to test it and these plugins with the
+> configuration cache before achieving 1.0.0 status.
 
 ### use-maven-central-repositories
 
@@ -37,7 +34,7 @@ projects if added to a settings file.
 ```groovy
 // settings.gradle or build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.5.2'
+  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.6.0'
 }
 ```
 
@@ -49,7 +46,7 @@ configure the project:
 ```groovy
 // build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.5.2'
+  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.6.0'
 }
 
 configure {
