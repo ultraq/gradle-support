@@ -40,7 +40,7 @@ interface MavenCentralBuilderEntry {
 	 * <p>Note that this is currently using the transitional Portal OSSRH Staging
 	 * API that Sonatype has created to allow people to slowly migrate to their
 	 * newer Publisher API.  This will be rewritten to utilize the Publisher API
-	 * in future
+	 * in future.
 	 *
 	 * @param username
 	 *   The username part of the user token generated from your Maven Central
@@ -50,6 +50,10 @@ interface MavenCentralBuilderEntry {
 	 *   The password part of the user token generated from your Maven Central
 	 *   account for the Publisher API.  DO NOT enter your actual credentials
 	 *   here, instead reference a Gradle property or environment variable.
+	 * @param namespace
+	 *   Because the implementation is using the OSSRH Staging API, a follow-up
+	 *   call needs to be made to an endpoint with your {@code namespace} in it to
+	 *   close the current publishing session.
 	 */
-	MavenCentralBuilder publishToMavenCentral(String username, String password)
+	MavenCentralBuilder publishToMavenCentral(String username, String password, String namespace)
 }

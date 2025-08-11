@@ -26,6 +26,10 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.signing.SigningExtension
 
 import groovy.transform.CompileStatic
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse.BodyHandlers
 import javax.inject.Inject
 
 /**
@@ -70,15 +74,18 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 	}
 
 	@Override
-	MavenCentralBuilder publishToMavenCentral(String username, String password) {
+	MavenCentralBuilder publishToMavenCentral(String username, String password, String namespace) {
 
 		project.pluginManager.apply('signing')
 		project.extensions.configure(SigningExtension) { signing ->
 			signing.sign(publication)
 		}
+
+		var isSnapshot = project.version.toString().endsWith('SNAPSHOT')
+
 		publishing.repositories { repositories ->
 			repositories.maven { maven ->
-				maven.url = project.version.toString().endsWith('SNAPSHOT') ?
+				maven.url = isSnapshot ?
 					'https://central.sonatype.com/repository/maven-snapshots/' :
 					'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
 				maven.credentials { credentials ->
@@ -87,6 +94,30 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 				}
 			}
 		}
+
+		var publishComplete = project.tasks.register('publishComplete') { task ->
+			task.description = 'Completes publishing on the new Central Repository'
+			task.group = 'publishing'
+			task.dependsOn(project.tasks.named('publish').get())
+			task.enabled = !isSnapshot
+			task.doLast {
+				var httpClient = HttpClient.newHttpClient()
+				var request = HttpRequest.newBuilder()
+					.POST(BodyPublishers.noBody())
+					.uri(new URI("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/${namespace}"))
+					.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
+					.build()
+				var response = httpClient.send(request, BodyHandlers.discarding())
+				if (response.statusCode() != 200) {
+					throw new Exception("Failed to complete publishing, received response code of ${response.statusCode()}")
+				}
+			}
+		}
+
+		project.tasks.named('publish').configure { task ->
+			task.finalizedBy(publishComplete)
+		}
+
 		return this
 	}
 

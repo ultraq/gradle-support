@@ -217,7 +217,8 @@ configure {
       ])
     .publishToMavenCentral(
       findProperty('mavenCentralPublisherUsername'),
-      findProperty('mavenCentralPublisherPassword')
+      findProperty('mavenCentralPublisherPassword'),
+      'org.example'
     )
 }
 ```
@@ -245,7 +246,7 @@ configure {
       Set the `<developers>` section with the given developers.  The map
       properties accepted are `name`, `email`, and `url`.
 
- - `publishToMavenCentral(String username, String password)`  
+ - `publishToMavenCentral(String username, String password, String namespace)`  
    Configure Maven Central publishing.  This will set up both the Maven Central
    and Snapshot repositories (pushing to snapshots if the project version ends
    with `-SNAPSHOT`), and apply the `signing` plugin.
