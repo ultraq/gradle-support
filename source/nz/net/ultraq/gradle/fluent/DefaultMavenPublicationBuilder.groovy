@@ -51,6 +51,10 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 		project.pluginManager.apply('maven-publish')
 		publishing = project.extensions.getByType(PublishingExtension)
 		publication = publishing.publications.create('main', MavenPublication)
+		var javaComponent = project.components.findByName('java')
+		if (javaComponent) {
+			publication.from(javaComponent)
+		}
 	}
 
 	@Override
