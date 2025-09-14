@@ -204,7 +204,7 @@ publication which all of the methods in this chain will operate on.
 ```groovy
 configure {
   createMavenPublication()
-    .withArtifacts(jar, sourcesJar, groovydocJar)
+    .withArtifacts(groovydocJar)
     .configurePom() {
       inceptionYear = '2025'
     }
@@ -224,10 +224,11 @@ configure {
 ```
 
  - `withArtifacts(Object... sources)`  
-   Add several artifacts to the publication.  If `groovydocJar` is one of the
-   artifacts, it will be given a `javadoc` classifier so that it can be used as
-   the documentation companion for the main JAR and so that services like
-   [javadoc.io](https://javadoc.io) can display it.
+   Add more artifacts to the publication (the main JAR and sources JAR are
+   already included).  If `groovydocJar` is one of the artifacts, it will be
+   given a `javadoc` classifier so that it can be used as the documentation
+   companion for the main JAR and so that services like [javadoc.io](https://javadoc.io)
+   can display it.
 
  - `configurePom(MavenPom pom, Action<? extends MavenPom> configure = null)`  
    Starts a fluent chain to configure the Maven POM.  The Gradle project `name`
