@@ -19,11 +19,11 @@ plugins {
 	id 'maven-publish'
 	id 'signing'
 	id 'com.gradle.plugin-publish' version '1.3.1'
-	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.6.1'
+	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.6.2'
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '0.6.2'
+version = '0.7.0'
 group = 'nz.net.ultraq.gradle'
 
 // @formatter:off

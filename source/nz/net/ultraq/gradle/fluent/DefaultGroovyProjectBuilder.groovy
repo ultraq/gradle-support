@@ -63,8 +63,8 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 		project.pluginManager.withPlugin('idea') {
 			var idea = project.extensions.getByName('idea') as IdeaModel
 			idea.module {
-				outputDir = project.file('build/classes/groovy/main')
-				testOutputDir = project.file('build/classes/test')
+				outputDir = project.file('build/idea/classes/groovy/main')
+				testOutputDir = project.file('build/idea/classes/test')
 			}
 		}
 	}
