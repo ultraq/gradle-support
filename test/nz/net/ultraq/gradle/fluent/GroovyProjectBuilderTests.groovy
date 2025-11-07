@@ -19,7 +19,6 @@ package nz.net.ultraq.gradle.fluent
 import nz.net.ultraq.gradle.FluentConfigurationPlugin
 import nz.net.ultraq.gradle.FluentConfigurationPluginExtension
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.file.DuplicatesStrategy
@@ -150,16 +149,6 @@ class GroovyProjectBuilderTests extends Specification {
 				archiveClassifier.get() == 'javadoc'
 			}
 			project.tasks.named('assemble').get().dependsOn.contains(groovydocJar)
-	}
-
-	def "Applies the shadow JAR plugin and configures it"() {
-		when:
-			config.withShadowJar() { shadowJar ->
-				shadowJar.archiveClassifier.set('test')
-			}
-		then:
-			project.pluginManager.hasPlugin('com.gradleup.shadow')
-			project.tasks.named('shadowJar', ShadowJar).get().archiveClassifier.get() == 'test'
 	}
 
 	def "Configures a combined source and resource directory"() {

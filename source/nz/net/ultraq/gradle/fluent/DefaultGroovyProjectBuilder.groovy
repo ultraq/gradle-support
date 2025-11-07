@@ -18,7 +18,6 @@ package nz.net.ultraq.gradle.fluent
 
 import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -217,14 +216,6 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure) {
 
 		project.tasks.named('compileJava', JavaCompile, configure)
-		return this
-	}
-
-	@Override
-	GroovyProjectBuilder withShadowJar(Action<? extends ShadowJar> configure) {
-
-		project.pluginManager.apply('com.gradleup.shadow')
-		project.tasks.named('shadowJar', ShadowJar, configure)
 		return this
 	}
 

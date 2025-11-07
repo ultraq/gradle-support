@@ -135,9 +135,6 @@ configure {
  - `withGroovydocJar()`  
    Adds a groovydoc JAR archive as output for the build.
 
- - `withShadowJar(Action<? extends ShadowJar> configure)`  
-   Adds and configures a shadow JAR from the [`shadow-gradle-plugin`](https://github.com/GradleUp/shadow).
-
  - `configureSource`  
    Start configuration of source code -related things.
 

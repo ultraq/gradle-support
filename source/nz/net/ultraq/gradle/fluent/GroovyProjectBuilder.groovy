@@ -18,7 +18,6 @@ package nz.net.ultraq.gradle.fluent
 
 import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Action
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
@@ -70,12 +69,6 @@ interface GroovyProjectBuilder extends GroovyProjectSourceBuilderEntry, GroovyPr
 	 * Pass any compilation options to the `compileJava` task.
 	 */
 	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure)
-
-	/**
-	 * Add a shadow JAR archive as output for the build.  This will also disable
-	 * the module metadata task as it's incorrect when building a shadow JAR.
-	 */
-	GroovyProjectBuilder withShadowJar(Action<? extends ShadowJar> configure)
 
 	/**
 	 * Adds a sources JAR archive as output for the build.
