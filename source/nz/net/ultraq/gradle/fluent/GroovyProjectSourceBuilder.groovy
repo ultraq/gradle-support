@@ -15,29 +15,12 @@
  */
 
 package nz.net.ultraq.gradle.fluent
-
-import org.gradle.api.artifacts.dsl.DependencyHandler
-
 /**
  * Configuration interface for the project source code.
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectSourceBuilder extends GroovyProjectVerificationBuilderEntry {
-
-	/**
-	 * Expand any of the keys in {@code replacements} to their mapped values, for
-	 * any file matched by {@code filePattern}.  eg:
-	 *
-	 * <pre>{@code
-	 * expand('*.properties', [version: project.version])
-	 * }</pre>
-	 *
-	 * This will replace any {@code $version} or {@code ${version}} tokens in
-	 * properties files with the project version as part of the
-	 * {@code processResources} build step.
-	 */
-	GroovyProjectSourceBuilder expand(String filePattern, Map<String, ?> replacements)
+interface GroovyProjectSourceBuilder extends JavaProjectSourceBuilder, GroovyProjectVerificationBuilderEntry {
 
 	/**
 	 * Expands the {@code moduleVersion} property reference in the Groovy
@@ -50,15 +33,4 @@ interface GroovyProjectSourceBuilder extends GroovyProjectVerificationBuilderEnt
 	 * manifest file to the given value.
 	 */
 	GroovyProjectSourceBuilder expandExtensionModuleVersion(String propertyName, String value)
-
-	/**
-	 * Configure the dependencies for the project.
-	 */
-	GroovyProjectSourceBuilder withDependencies(@DelegatesTo(DependencyHandler) Closure configure)
-
-	/**
-	 * Set the directory in which source code and assets will reside.  This is for
-	 * those who prefer co-locating source code and assets.
-	 */
-	GroovyProjectSourceBuilder withSourceDirectory(Object path)
 }

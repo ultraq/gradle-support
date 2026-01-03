@@ -16,7 +16,6 @@
 
 package nz.net.ultraq.gradle.fluent
 
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.resources.TextResource
 
 /**
@@ -27,33 +26,10 @@ import org.gradle.api.resources.TextResource
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectVerificationBuilder {
+interface GroovyProjectVerificationBuilder extends JavaProjectVerificationBuilder {
 
 	/**
 	 * Adds the {@code codenarc} plugin and specifies the config file to use.
 	 */
 	GroovyProjectVerificationBuilder useCodenarc(TextResource codenarcConfig)
-
-	/**
-	 * Adds the {@code jacoco} plugin, making the added {@code jacocoTestReport}
-	 * task run after and depend on the {@code test} task.  XML reports are also
-	 * enabled so coverage data can be uploaded to services like
-	 * <a href="https://codecov.io/">codecov</a>.
-	 */
-	GroovyProjectVerificationBuilder useJacoco()
-
-	/**
-	 * Configure all test suites to use JUnit Jupiter.
-	 */
-	GroovyProjectVerificationBuilder useJUnitJupiter()
-
-	/**
-	 * Configure the testing dependencies for the project.
-	 */
-	GroovyProjectVerificationBuilder withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure)
-
-	/**
-	 * Set the directory in which test code and assets will reside.
-	 */
-	GroovyProjectVerificationBuilder withTestDirectory(Object path)
 }

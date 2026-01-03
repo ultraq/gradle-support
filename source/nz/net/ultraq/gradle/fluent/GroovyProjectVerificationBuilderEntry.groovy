@@ -21,7 +21,7 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectVerificationBuilderEntry {
+interface GroovyProjectVerificationBuilderEntry extends JavaProjectVerificationBuilderEntry {
 
 	/**
 	 * Start configuration of verification-related things.

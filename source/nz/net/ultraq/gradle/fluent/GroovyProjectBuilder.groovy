@@ -16,12 +16,8 @@
 
 package nz.net.ultraq.gradle.fluent
 
-import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
-
 import org.gradle.api.Action
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 
 /**
@@ -29,21 +25,7 @@ import org.gradle.api.tasks.javadoc.Groovydoc
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectBuilder extends GroovyProjectSourceBuilderEntry, GroovyProjectVerificationBuilderEntry {
-
-	/**
-	 * Sets the version of Java to use in the toolchain configuration.  This will
-	 * also update the {@code groovydoc} task to generate docs with links to the
-	 * Java SDK for Java libraries (anything starting with {@code java.} or
-	 * {@code javax.}).
-	 */
-	GroovyProjectBuilder useJavaVersion(int version)
-
-	/**
-	 * Adds the Maven Central and Snapshots repositories to the project by
-	 * applying the {@link UseMavenCentralRepositoriesPlugin} plugin.
-	 */
-	GroovyProjectBuilder useMavenCentralRepositories()
+interface GroovyProjectBuilder extends JavaProjectBuilder, GroovyProjectSourceBuilderEntry, GroovyProjectVerificationBuilderEntry {
 
 	/**
 	 * Pass any compilation options to the `compileGroovy` task.
@@ -59,24 +41,4 @@ interface GroovyProjectBuilder extends GroovyProjectSourceBuilderEntry, GroovyPr
 	 * Pass any groovydoc options to the {@code groovydoc} task.
 	 */
 	GroovyProjectBuilder withGroovydocOptions(Action<? extends Groovydoc> configure)
-
-	/**
-	 * Configure the {@code jar} task.
-	 */
-	GroovyProjectBuilder withJarOptions(Action<? extends Jar> configure)
-
-	/**
-	 * Pass any compilation options to the `compileJava` task.
-	 */
-	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure)
-
-	/**
-	 * Adds a sources JAR archive as output for the build.
-	 */
-	GroovyProjectBuilder withSourcesJar()
-
-	/**
-	 * Adds a sources JAR archive as output for the build.
-	 */
-	GroovyProjectBuilder withSourcesJar(Action<? extends Jar> configure)
 }

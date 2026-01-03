@@ -21,10 +21,10 @@ package nz.net.ultraq.gradle.fluent
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectSourceBuilderEntry extends JavaProjectSourceBuilderEntry {
+interface JavaProjectSourceBuilderEntry {
 
 	/**
 	 * Start configuration of source code -related things.
 	 */
-	GroovyProjectSourceBuilder configureSource()
+	JavaProjectSourceBuilder configureSource()
 }

@@ -16,14 +16,9 @@
 
 package nz.net.ultraq.gradle.fluent
 
-import nz.net.ultraq.gradle.UseMavenCentralRepositoriesPlugin
-
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.GroovySourceDirectorySet
@@ -32,11 +27,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.gradle.testing.base.TestingExtension
-import org.gradle.testing.jacoco.tasks.JacocoReport
 
 import groovy.transform.CompileStatic
 import javax.inject.Inject
@@ -47,14 +38,13 @@ import javax.inject.Inject
  * @author Emanuel Rabina
  */
 @CompileStatic
-class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProjectSourceBuilder, GroovyProjectVerificationBuilder {
-
-	protected final Project project
+class DefaultGroovyProjectBuilder extends DefaultJavaProjectBuilder implements GroovyProjectBuilder,
+	GroovyProjectSourceBuilder, GroovyProjectVerificationBuilder {
 
 	@Inject
 	DefaultGroovyProjectBuilder(Project project) {
 
-		this.project = project
+		super(project)
 		project.pluginManager.apply('groovy')
 		project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
 			groovydoc.link('https://docs.groovy-lang.org/latest/html/gapi/', 'groovy.', 'org.apache.groovy.')
@@ -83,11 +73,7 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	@Override
 	GroovyProjectSourceBuilder expand(String filePattern, Map<String, ?> replacements) {
 
-		project.tasks.named('processResources', ProcessResources) { processResources ->
-			processResources.filesMatching(filePattern) { file ->
-				file.expand(replacements)
-			}
-		}
+		super.expand(filePattern, replacements)
 		return this
 	}
 
@@ -110,23 +96,14 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	@Override
 	GroovyProjectVerificationBuilder useJacoco() {
 
-		project.pluginManager.apply('jacoco')
-		project.tasks.named('test').configure { test ->
-			test.finalizedBy('jacocoTestReport')
-		}
-		project.tasks.named('jacocoTestReport', JacocoReport) { jacocoTestReport ->
-			jacocoTestReport.dependsOn('test')
-			jacocoTestReport.reports.xml.required.set(true)
-		}
+		super.useJacoco()
 		return this
 	}
 
 	@Override
 	GroovyProjectBuilder useJavaVersion(int version) {
 
-		project.extensions.configure(JavaPluginExtension) { java ->
-			java.toolchain.languageVersion.set(JavaLanguageVersion.of(version))
-		}
+		super.useJavaVersion(version)
 		project.tasks.named('groovydoc', Groovydoc) { groovydoc ->
 			groovydoc.link("https://docs.oracle.com/en/java/javase/${version}/docs/api/java.base/", 'java.', 'javax.')
 		}
@@ -136,25 +113,21 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	@Override
 	GroovyProjectVerificationBuilder useJUnitJupiter() {
 
-		project.extensions.configure(TestingExtension) { testing ->
-			testing.suites.withType(JvmTestSuite).configureEach { suite ->
-				suite.useJUnitJupiter()
-			}
-		}
+		super.useJUnitJupiter()
 		return this
 	}
 
 	@Override
 	GroovyProjectBuilder useMavenCentralRepositories() {
 
-		project.pluginManager.apply(UseMavenCentralRepositoriesPlugin)
+		super.useMavenCentralRepositories()
 		return this
 	}
 
 	@Override
 	GroovyProjectSourceBuilder withDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
-		project.dependencies(configure)
+		super.withDependencies(configure)
 		return this
 	}
 
@@ -162,7 +135,8 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	 * Sets a single source directory for both source and resource files in
 	 * the named sourceset.
 	 */
-	private void withDirectoryForSourceSetAt(File path, String name) {
+	@Override
+	protected void withDirectoryForSourceSetAt(File path, String name) {
 
 		project.extensions.configure(SourceSetContainer) { sourceSets ->
 			sourceSets.named(name) { sourceSet ->
@@ -208,50 +182,42 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	@Override
 	GroovyProjectBuilder withJarOptions(Action<? extends Jar> configure) {
 
-		project.tasks.named('jar', Jar, configure)
+		super.withJarOptions(configure)
 		return this
 	}
 
 	@Override
 	GroovyProjectBuilder withJavaCompileOptions(Action<? extends JavaCompile> configure) {
 
-		project.tasks.named('compileJava', JavaCompile, configure)
+		super.withJavaCompileOptions(configure)
 		return this
 	}
 
 	@Override
 	GroovyProjectBuilder withSourcesJar(Action<? extends Jar> configure = null) {
 
-		project.extensions.configure(JavaPluginExtension) { java ->
-			java.withSourcesJar()
-			if (configure) {
-				project.tasks.named('sourcesJar', Jar, configure)
-			}
-		}
+		super.withSourcesJar(configure)
 		return this
 	}
 
 	@Override
 	GroovyProjectSourceBuilder withSourceDirectory(Object path) {
 
-		withDirectoryForSourceSetAt(project.file(path), 'main')
-		project.tasks.withType(Jar).configureEach { jar ->
-			jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-		}
+		super.withSourceDirectory(path)
 		return this
 	}
 
 	@Override
 	GroovyProjectVerificationBuilder withTestDependencies(@DelegatesTo(DependencyHandler) Closure configure) {
 
-		project.dependencies(configure)
+		super.withTestDependencies(configure)
 		return this
 	}
 
 	@Override
 	GroovyProjectVerificationBuilder withTestDirectory(Object path) {
 
-		withDirectoryForSourceSetAt(project.file(path), 'test')
+		super.withTestDirectory(path)
 		return this
 	}
 }

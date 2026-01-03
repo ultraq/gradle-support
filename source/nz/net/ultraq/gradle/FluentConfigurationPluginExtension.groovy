@@ -20,12 +20,16 @@ import nz.net.ultraq.gradle.fluent.DefaultGroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyGradlePluginProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultJavaLibraryProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultJavaProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.DefaultZipDistributionBuilder
 import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.JavaLibraryProjectBuilder
+import nz.net.ultraq.gradle.fluent.JavaProjectBuilder
 import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.ZipDistributionBuilder
 
@@ -134,6 +138,26 @@ abstract class FluentConfigurationPluginExtension {
 
 		hasGroovyProject = true
 		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
+	}
+
+	/**
+	 * Starts a fluent chain for configuring a Java library project.  This will
+	 * apply the {@code java-library} plugin.
+	 */
+	JavaLibraryProjectBuilder createJavaLibraryProject() {
+
+		return project.objects.newInstance(DefaultJavaLibraryProjectBuilder, project)
+	}
+
+	/**
+	 * Starts a fluent chain for configuring a Java project.  This will apply the
+	 * {@code java} plugin.  If the {@code idea} plugin is present, then it'll
+	 * configure the IDE to build to the same directories as Gradle instead of
+	 * the default {@code out} directory 🤢
+	 */
+	JavaProjectBuilder createJavaProject() {
+
+		return project.objects.newInstance(DefaultJavaProjectBuilder, project)
 	}
 
 	/**

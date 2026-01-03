@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, Emanuel Rabina (http://www.ultraq.net.nz/)
+ * Copyright 2026, Emanuel Rabina (http://www.ultraq.net.nz/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,21 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.gradle.api.Project
+
+import javax.inject.Inject
+
 /**
- * For any part of the API that can begin a source code configuration chain.
+ * Implementation for configuring a Java library project.
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectSourceBuilderEntry extends JavaProjectSourceBuilderEntry {
+class DefaultJavaLibraryProjectBuilder extends DefaultJavaProjectBuilder implements JavaLibraryProjectBuilder {
 
-	/**
-	 * Start configuration of source code -related things.
-	 */
-	GroovyProjectSourceBuilder configureSource()
+	@Inject
+	DefaultJavaLibraryProjectBuilder(Project project) {
+
+		super(project)
+		project.pluginManager.apply('java-library')
+	}
 }

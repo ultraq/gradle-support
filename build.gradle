@@ -19,11 +19,11 @@ plugins {
 	id 'maven-publish'
 	id 'signing'
 	id 'com.gradle.plugin-publish' version '1.3.1'
-	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.7.0'
+	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.8.0'
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '0.8.0'
+version = '0.8.1'
 group = 'nz.net.ultraq.gradle'
 
 // @formatter:off
@@ -39,7 +39,7 @@ configure {
 		.configureVerification()
 			.withTestDirectory('test')
 			.withTestDependencies() {
-				testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+				testImplementation 'org.spockframework:spock-core:2.4-groovy-4.0'
 			}
 			.useJUnitJupiter()
 			.useJacoco()

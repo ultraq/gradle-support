@@ -17,14 +17,14 @@
 package nz.net.ultraq.gradle.fluent
 
 /**
- * For any part of the API that can begin a source code configuration chain.
+ * For any part of the API that can begin a testing chain.
  *
  * @author Emanuel Rabina
  */
-interface GroovyProjectSourceBuilderEntry extends JavaProjectSourceBuilderEntry {
+interface JavaProjectVerificationBuilderEntry {
 
 	/**
-	 * Start configuration of source code -related things.
+	 * Start configuration of verification-related things.
 	 */
-	GroovyProjectSourceBuilder configureSource()
+	JavaProjectVerificationBuilder configureVerification()
 }
