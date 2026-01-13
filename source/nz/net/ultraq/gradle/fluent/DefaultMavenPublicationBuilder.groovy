@@ -16,20 +16,23 @@
 
 package nz.net.ultraq.gradle.fluent
 
+import org.apache.hc.client5.http.classic.methods.HttpPost
+import org.apache.hc.client5.http.entity.mime.FileBody
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder
+import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.apache.hc.core5.http.ContentType
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.plugins.signing.SigningExtension
 
 import groovy.transform.CompileStatic
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpRequest.BodyPublishers
-import java.net.http.HttpResponse.BodyHandlers
 import javax.inject.Inject
 
 /**
@@ -78,48 +81,75 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 	}
 
 	@Override
-	MavenCentralBuilder publishToMavenCentral(String username, String password, String namespace) {
-
-		project.pluginManager.apply('signing')
-		project.extensions.configure(SigningExtension) { signing ->
-			signing.sign(publication)
-		}
+	MavenCentralBuilder publishToMavenCentral(String username, String password) {
 
 		var isSnapshot = project.version.toString().endsWith('SNAPSHOT')
 
-		publishing.repositories { repositories ->
-			repositories.maven { maven ->
-				maven.url = isSnapshot ?
-					'https://central.sonatype.com/repository/maven-snapshots/' :
-					'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
-				maven.credentials { credentials ->
-					credentials.username = username
-					credentials.password = password
+		// For snapshot releases, use Gradle's built-in Maven Central publisher
+		if (isSnapshot) {
+			publishing.repositories { repositories ->
+				repositories.maven { maven ->
+					maven.url = 'https://central.sonatype.com/repository/maven-snapshots/'
+					maven.credentials { credentials ->
+						credentials.username = username
+						credentials.password = password
+					}
 				}
 			}
 		}
 
-		var publishComplete = project.tasks.register('publishComplete') { task ->
-			task.description = 'Completes publishing on the new Central Repository'
-			task.group = 'publishing'
-			task.dependsOn(project.tasks.named('publish').get())
-			task.enabled = !isSnapshot
-			task.doLast {
-				var httpClient = HttpClient.newHttpClient()
-				var request = HttpRequest.newBuilder()
-					.POST(BodyPublishers.noBody())
-					.uri(new URI("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/${namespace}"))
-					.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
-					.build()
-				var response = httpClient.send(request, BodyHandlers.discarding())
-				if (response.statusCode() != 200) {
-					throw new Exception("Failed to complete publishing, received response code of ${response.statusCode()}")
+		// For full releases, create an upload bundle to submit to the new publisher API
+		else {
+			project.pluginManager.apply('signing')
+			project.extensions.configure(SigningExtension) { signing ->
+				signing.sign(publication)
+			}
+
+			publishing.repositories { repositories ->
+				repositories.maven { maven ->
+					maven.url = project.layout.buildDirectory.dir('staging-deploy')
 				}
 			}
-		}
 
-		project.tasks.named('publish').configure { task ->
-			task.finalizedBy(publishComplete)
+			project.tasks.register('createStagingBundle', Zip) { zip ->
+				zip.group = 'publishing'
+				zip.dependsOn('publish')
+				zip.from(project.layout.buildDirectory.dir('staging-deploy'))
+				zip.destinationDirectory.set(project.layout.buildDirectory.dir('staging-bundle'))
+				zip.archiveBaseName.set(project.name)
+			}
+
+			project.tasks.register('publishAsUploadBundle') { task ->
+				task.group = 'publishing'
+				task.dependsOn('createStagingBundle')
+				var bundle = project.layout.buildDirectory.file("staging-bundle/${project.name}-${project.version}.zip").get().getAsFile()
+				task.doLast {
+					var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
+						var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload')
+						post.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
+						post.setEntity(MultipartEntityBuilder.create()
+							.addPart('bundle', new FileBody(bundle, ContentType.APPLICATION_OCTET_STREAM))
+							.build())
+						return httpClient.execute(post) { response ->
+							var responseCode = response.code
+							if (responseCode < 200 || responseCode >= 300) {
+								throw new Exception("Failed to publish bundle, received response code of ${response.getCode()}")
+							}
+							return response.entity.content.text
+						}
+					}
+					println "Deployment ID: ${deploymentId}"
+				}
+			}
+
+			project.tasks.named('clean', Delete) { clean ->
+				clean.delete(project.layout.buildDirectory.dir('staging-deploy'))
+				clean.delete(project.layout.buildDirectory.dir('staging-bundle'))
+			}
+
+			project.tasks.named('publish').configure { task ->
+				task.finalizedBy('publishAsUploadBundle')
+			}
 		}
 
 		return this

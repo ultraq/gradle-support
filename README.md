@@ -214,8 +214,7 @@ configure {
       ])
     .publishToMavenCentral(
       findProperty('mavenCentralPublisherUsername'),
-      findProperty('mavenCentralPublisherPassword'),
-      'org.example'
+      findProperty('mavenCentralPublisherPassword')
     )
 }
 ```
@@ -244,16 +243,11 @@ configure {
       Set the `<developers>` section with the given developers.  The map
       properties accepted are `name`, `email`, and `url`.
 
- - `publishToMavenCentral(String username, String password, String namespace)`  
+ - `publishToMavenCentral(String username, String password)`  
    Configure Maven Central publishing.  This will set up both the Maven Central
    and Snapshot repositories (pushing to snapshots if the project version ends
    with `-SNAPSHOT`), and apply the `signing` plugin.
 
-   Note that this is currently using the transitional Portal OSSRH Staging API
-   that Sonatype has created to allow people to slowly migrate to their newer
-   Publisher API.  This will be rewritten to utilize the Publisher API in
-   future.
- 
    As this method takes credential information, DO NOT enter your actual
    credentials into your build script.  Instead, reference Gradle properties or
    environment variables.
