@@ -100,6 +100,9 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 
 		// For full releases, create an upload bundle to submit to the new publisher API
 		else {
+			var stagingDirectory = project.layout.buildDirectory.dir('staging-deploy')
+			var stagingBundleDirectory = project.layout.buildDirectory.dir('staging-bundle')
+
 			project.pluginManager.apply('signing')
 			project.extensions.configure(SigningExtension) { signing ->
 				signing.sign(publication)
@@ -107,22 +110,22 @@ class DefaultMavenPublicationBuilder implements MavenPublicationBuilder, MavenPo
 
 			publishing.repositories { repositories ->
 				repositories.maven { maven ->
-					maven.url = project.layout.buildDirectory.dir('staging-deploy')
+					maven.url = stagingDirectory
 				}
 			}
 
 			project.tasks.register('createStagingBundle', Zip) { zip ->
 				zip.group = 'publishing'
 				zip.dependsOn('publish')
-				zip.from(project.layout.buildDirectory.dir('staging-deploy'))
-				zip.destinationDirectory.set(project.layout.buildDirectory.dir('staging-bundle'))
+				zip.from(stagingDirectory)
+				zip.destinationDirectory.set(stagingBundleDirectory)
 				zip.archiveBaseName.set(project.name)
 			}
 
 			project.tasks.register('publishAsUploadBundle') { task ->
 				task.group = 'publishing'
 				task.dependsOn('createStagingBundle')
-				var bundle = project.layout.buildDirectory.file("staging-bundle/${project.name}-${project.version}.zip").get().getAsFile()
+				var bundle = stagingBundleDirectory.get().file("${project.name}-${project.version}.zip").getAsFile()
 				task.doLast {
 					var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
 						var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload')
