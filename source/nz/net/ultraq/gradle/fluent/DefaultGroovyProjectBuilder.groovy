@@ -84,8 +84,10 @@ class DefaultGroovyProjectBuilder implements GroovyProjectBuilder, GroovyProject
 	GroovyProjectSourceBuilder expand(String filePattern, Map<String, ?> replacements) {
 
 		project.tasks.named('processResources', ProcessResources) { processResources ->
-			processResources.filesMatching(filePattern) { file ->
-				file.expand(replacements)
+			processResources.doLast { ->
+				processResources.filesMatching(filePattern) { file ->
+					file.expand(replacements)
+				}
 			}
 		}
 		return this
