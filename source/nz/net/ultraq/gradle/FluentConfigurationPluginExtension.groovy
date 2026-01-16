@@ -20,12 +20,14 @@ import nz.net.ultraq.gradle.fluent.DefaultGroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyGradlePluginProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.DefaultGroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.DefaultMavenCentralPublisherBundleBuilder
 import nz.net.ultraq.gradle.fluent.DefaultMavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.DefaultZipDistributionBuilder
 import nz.net.ultraq.gradle.fluent.GroovyApplicationProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyGradlePluginProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyLibraryProjectBuilder
 import nz.net.ultraq.gradle.fluent.GroovyProjectBuilder
+import nz.net.ultraq.gradle.fluent.MavenCentralPublisherBundleBuilder
 import nz.net.ultraq.gradle.fluent.MavenPublicationBuilder
 import nz.net.ultraq.gradle.fluent.ZipDistributionBuilder
 
@@ -134,6 +136,17 @@ abstract class FluentConfigurationPluginExtension {
 
 		hasGroovyProject = true
 		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
+	}
+
+	/**
+	 * Starts a fluent chain for configuring the publishing of one or more Maven
+	 * publications and submitting it to Maven Central via their new Publisher
+	 * API.  This can be done for a single project build, or for a multi-project
+	 * build with multiple artifacts all under the same namespace.
+	 */
+	MavenCentralPublisherBundleBuilder createMavenCentralPublisherBundle() {
+
+		return project.objects.newInstance(DefaultMavenCentralPublisherBundleBuilder, project)
 	}
 
 	/**

@@ -212,10 +212,6 @@ configure {
         email: 'me@example.org',
         url: 'https://example.org'
       ])
-    .publishToMavenCentral(
-      findProperty('mavenCentralPublisherUsername'),
-      findProperty('mavenCentralPublisherPassword')
-    )
 }
 ```
 
@@ -243,17 +239,46 @@ configure {
       Set the `<developers>` section with the given developers.  The map
       properties accepted are `name`, `email`, and `url`.
 
- - `publishToMavenCentral(String username, String password)`  
-   Configure Maven Central publishing.  This will set up both the Maven Central
-   and Snapshot repositories (pushing to snapshots if the project version ends
-   with `-SNAPSHOT`), and apply the `signing` plugin.
+ - `publishTo(Action<? extends MavenArtifactRepository> configure)`  
+   Publish to any Maven repository of your configuration.  If looking to publish
+   to Maven Central, there's a separate configuration chain,
+   [`createMavenCentralPublisherBundle`](#createmavencentraluploadbundle),
+   for that just below.
+
+#### `createMavenCentralUploadBundle`
+
+Starts a fluent chain for configuring the publishing of one or more Maven
+publications and submitting it to Maven Central via their new Publisher API.
+This can be done for a single project build, or for a multi-project build with
+multiple artifacts all under the same namespace.
+
+```groovy
+configure {
+  createMavenCentralPublisherBundle()
+    .forProjects(*subprojects)
+    .withCredentials(
+      findProperty('mavenCentralPublisherUsername'),
+      findProperty('mavenCentralPublisherPassword')
+    )
+}
+```
+
+ - `forProjects(Project... projects)`  
+   Select which projects to include in the upload bundle.  Each included project
+   should have a Maven publication already configured so that this task can make
+   sure the publication is signed and configured to deploy to a staging
+   directory that will live at `build/staging-deploy`.
+
+ - `forThisProject()`  
+   Convenience method to set the current project as the only one for publishing.
+
+ - `withCredentials(String username, String password)`  
+   Specify the username/password for publishing the staged artifacts to Maven
+   Central.
 
    As this method takes credential information, DO NOT enter your actual
    credentials into your build script.  Instead, reference Gradle properties or
    environment variables.
-
- - `publishTo(Action<? extends MavenArtifactRepository> configure)`  
-   Publish to any Maven repository of your configuration.
 
 #### `createZipDistribution`
 

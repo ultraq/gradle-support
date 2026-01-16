@@ -31,21 +31,4 @@ interface MavenCentralBuilderEntry {
 	 * Publish to any Maven repository of your configuration.
 	 */
 	MavenCentralBuilder publishTo(Action<? extends MavenArtifactRepository> closure)
-
-	/**
-	 * Configure Maven Central publishing.  This will set up both the Maven
-	 * Central and Snapshot repositories (pushing to snapshots if the project
-	 * version ends with {@code -SNAPSHOT}), and apply the {@code signing} plugin
-	 * for non-snapshot releases.
-	 *
-	 * @param username
-	 *   The username part of the user token generated from your Maven Central
-	 *   account for the Publisher API.  DO NOT enter your actual credentials
-	 *   here, instead reference a Gradle property or environment variable.
-	 * @param password
-	 *   The password part of the user token generated from your Maven Central
-	 *   account for the Publisher API.  DO NOT enter your actual credentials
-	 *   here, instead reference a Gradle property or environment variable.
-	 */
-	MavenCentralBuilder publishToMavenCentral(String username, String password)
 }
