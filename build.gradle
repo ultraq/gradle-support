@@ -42,7 +42,7 @@ configure {
 		.configureVerification()
 			.withTestDirectory('test')
 			.withTestDependencies() {
-				testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+				testImplementation 'org.spockframework:spock-core:2.4-groovy-4.0'
 			}
 			.useJUnitJupiter()
 			.useJacoco()
