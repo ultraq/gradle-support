@@ -58,7 +58,7 @@ abstract class FluentConfigurationPluginExtension {
 		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy application project found - create one first with createGroovyApplicationProject()')
 		}
-		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
+		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, configure)
 	}
 
 	/**
@@ -70,7 +70,7 @@ abstract class FluentConfigurationPluginExtension {
 		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy Gradle plugin project found - create one first with createGroovyGradlePluginProject()')
 		}
-		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder)
 	}
 
 	/**
@@ -81,7 +81,7 @@ abstract class FluentConfigurationPluginExtension {
 		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy library project found - create one first with createGroovyLibraryProject()')
 		}
-		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder)
 	}
 
 	/**
@@ -92,7 +92,7 @@ abstract class FluentConfigurationPluginExtension {
 		if (!hasGroovyProject) {
 			throw new IllegalStateException('No existing Groovy project found - create one first with createGroovyProject()')
 		}
-		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyProjectBuilder)
 	}
 
 	/**
@@ -101,7 +101,7 @@ abstract class FluentConfigurationPluginExtension {
 	GroovyApplicationProjectBuilder createGroovyApplicationProject(Action<? extends JavaApplication> configure) {
 
 		hasGroovyProject = true
-		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, project, configure)
+		return project.objects.newInstance(DefaultGroovyApplicationProjectBuilder, configure)
 	}
 
 	/**
@@ -111,7 +111,7 @@ abstract class FluentConfigurationPluginExtension {
 	GroovyGradlePluginProjectBuilder createGroovyGradlePluginProject() {
 
 		hasGroovyProject = true
-		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyGradlePluginProjectBuilder)
 	}
 
 	/**
@@ -121,7 +121,7 @@ abstract class FluentConfigurationPluginExtension {
 	GroovyProjectBuilder createGroovyLibraryProject() {
 
 		hasGroovyProject = true
-		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyLibraryProjectBuilder)
 	}
 
 	/**
@@ -135,7 +135,7 @@ abstract class FluentConfigurationPluginExtension {
 	GroovyProjectBuilder createGroovyProject() {
 
 		hasGroovyProject = true
-		return project.objects.newInstance(DefaultGroovyProjectBuilder, project)
+		return project.objects.newInstance(DefaultGroovyProjectBuilder)
 	}
 
 	/**
@@ -146,7 +146,7 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	MavenCentralPublisherBundleBuilder createMavenCentralPublisherBundle() {
 
-		return project.objects.newInstance(DefaultMavenCentralPublisherBundleBuilder, project)
+		return project.objects.newInstance(DefaultMavenCentralPublisherBundleBuilder)
 	}
 
 	/**
@@ -157,7 +157,7 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	MavenPublicationBuilder createMavenPublication() {
 
-		return project.objects.newInstance(DefaultMavenPublicationBuilder, project)
+		return project.objects.newInstance(DefaultMavenPublicationBuilder)
 	}
 
 	/**
@@ -168,6 +168,6 @@ abstract class FluentConfigurationPluginExtension {
 	 */
 	ZipDistributionBuilder createZipDistribution() {
 
-		return project.objects.newInstance(DefaultZipDistributionBuilder, project)
+		return project.objects.newInstance(DefaultZipDistributionBuilder)
 	}
 }
