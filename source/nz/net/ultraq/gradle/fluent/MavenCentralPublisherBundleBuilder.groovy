@@ -42,7 +42,7 @@ interface MavenCentralPublisherBundleBuilder {
 	MavenCentralPublisherBundleBuilder forProjects(Project... projects)
 
 	/**
-	 * Convenience method to apply the current project as the only one with
+	 * Convenience method to use the current project as the only one with
 	 * artifacts for publishing.
 	 */
 	MavenCentralPublisherBundleBuilder forThisProject()

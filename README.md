@@ -270,7 +270,7 @@ configure {
    directory that will live at `build/staging-deploy`.
 
  - `forThisProject()`  
-   Convenience method to set the current project as the only one for publishing.
+   Convenience method to use the current project as the only one for publishing.
 
  - `withCredentials(String username, String password)`  
    Specify the username/password for publishing the staged artifacts to Maven
