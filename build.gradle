@@ -23,7 +23,7 @@ plugins {
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '0.9.0'
+version = '0.9.1'
 group = 'nz.net.ultraq.gradle'
 
 // @formatter:off

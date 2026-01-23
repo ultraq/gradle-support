@@ -28,6 +28,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.plugins.signing.SigningExtension
 
+import groovy.transform.CompileStatic
 import javax.inject.Inject
 
 /**
@@ -36,6 +37,7 @@ import javax.inject.Inject
  *
  * @author Emanuel Rabina
  */
+@CompileStatic
 class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisherBundleBuilder {
 
 	private final Project project
@@ -68,77 +70,89 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 	@Override
 	void withCredentials(String username, String password) {
 
-		var isSnapshot = project.version.toString().endsWith('SNAPSHOT')
+		if (project.version.toString().endsWith('SNAPSHOT')) {
+			withCredentialsForSnapshotReleases(username, password)
+		}
+		else {
+			withCredentialsForFinalReleases(username, password)
+		}
+	}
 
-		// For snapshot releases, continue to use Gradle's built-in Maven Central publisher
-		if (isSnapshot) {
-			projectsForPublishing.each { project ->
-				project.extensions.getByType(PublishingExtension).repositories { repositories ->
-					repositories.maven { maven ->
-						maven.url = 'https://central.sonatype.com/repository/maven-snapshots/'
-						maven.credentials { credentials ->
-							credentials.username = username
-							credentials.password = password
-						}
-					}
+	/**
+	 * New code path for publishing a single bundle with the Maven Central
+	 * Publisher API.
+	 */
+	private void withCredentialsForFinalReleases(String username, String password) {
+
+		var stagingDirectory = project.layout.buildDirectory.dir('staging-deploy')
+		var bundleDirectory = project.layout.buildDirectory.dir('staging-bundle')
+
+		projectsForPublishing.each { project ->
+			var publishing = project.extensions.getByType(PublishingExtension)
+			project.pluginManager.apply('signing')
+			project.extensions.configure(SigningExtension) { signing ->
+				signing.sign(publishing.publications.named('main', MavenPublication).get())
+			}
+			publishing.repositories { repositories ->
+				repositories.maven { maven ->
+					maven.url = stagingDirectory
 				}
 			}
 		}
-		else {
-			var stagingDirectory = project.layout.buildDirectory.dir('staging-deploy')
-			var bundleDirectory = project.layout.buildDirectory.dir('staging-bundle')
 
-			projectsForPublishing.each { project ->
-				project.pluginManager.apply('signing')
-				project.extensions.configure(SigningExtension) { signing ->
-					signing.sign(project.extensions.getByType(MavenPublication))
-				}
+		project.tasks.register('createUploadBundle', Zip) { zip ->
+			zip.group = 'publishing'
+			zip.dependsOn(projectsForPublishing.collect { project -> project.tasks.named('publish') })
+			zip.from(stagingDirectory)
+			zip.destinationDirectory.set(bundleDirectory)
+			zip.archiveBaseName.set(project.name)
+		}
 
-				var publishing = project.extensions.getByType(PublishingExtension)
-				publishing.repositories { repositories ->
-					repositories.maven { maven ->
-						maven.url = stagingDirectory
-					}
-				}
-			}
-
-			project.tasks.register('createUploadBundle', Zip) { zip ->
-				zip.group = 'publishing'
-				zip.dependsOn(projectsForPublishing.collect { project -> project.tasks.named('publish') })
-
-				zip.from(stagingDirectory)
-				zip.destinationDirectory.set(bundleDirectory)
-				zip.archiveBaseName.set(project.name)
-			}
-
-			project.tasks.register('publishAsUploadBundle') { task ->
-				task.group = 'publishing'
-				task.dependsOn('createUploadBundle')
-
-				var bundle = bundleDirectory.get().file("${project.name}-${project.version}.zip").getAsFile()
-				task.doLast {
-					var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
-						var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload')
-						post.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
-						post.setEntity(MultipartEntityBuilder.create()
-							.addPart('bundle', new FileBody(bundle, ContentType.APPLICATION_OCTET_STREAM))
-							.build())
-						return httpClient.execute(post) { response ->
-							var responseCode = response.code
-							if (responseCode < 200 || responseCode >= 300) {
-								throw new Exception("Failed to publish bundle, received response code of ${response.getCode()}")
-							}
-							return response.entity.content.text
+		project.tasks.register('publishAsUploadBundle') { task ->
+			task.group = 'publishing'
+			task.dependsOn('createUploadBundle')
+			var bundle = bundleDirectory.get().file("${project.name}-${project.version}.zip").getAsFile()
+			task.doLast {
+				var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
+					var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload')
+					post.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
+					post.setEntity(MultipartEntityBuilder.create()
+						.addPart('bundle', new FileBody(bundle, ContentType.APPLICATION_OCTET_STREAM))
+						.build())
+					return httpClient.execute(post) { response ->
+						var responseCode = response.code
+						if (responseCode < 200 || responseCode >= 300) {
+							throw new Exception("Failed to publish bundle, received response code of ${responseCode}")
 						}
+						return response.entity.content.text
 					}
-					println "Bundle published, deployment ID is ${deploymentId}"
 				}
+				println "Bundle published, deployment ID is ${deploymentId}"
 			}
+		}
 
-			project.tasks.named('clean', Delete) { clean ->
-				clean.doLast {
-					clean.delete(stagingDirectory)
-					clean.delete(bundleDirectory)
+		project.tasks.named('clean', Delete) { clean ->
+			clean.doLast {
+				clean.delete(stagingDirectory)
+				clean.delete(bundleDirectory)
+			}
+		}
+	}
+
+	/**
+	 * Continue to use Gradle's built-in Maven Central publisher for snapshot
+	 * releases.
+	 */
+	private void withCredentialsForSnapshotReleases(String username, String password) {
+
+		projectsForPublishing.each { project ->
+			project.extensions.getByType(PublishingExtension).repositories { repositories ->
+				repositories.maven { maven ->
+					maven.url = 'https://central.sonatype.com/repository/maven-snapshots/'
+					maven.credentials { credentials ->
+						credentials.username = username
+						credentials.password = password
+					}
 				}
 			}
 		}
