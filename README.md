@@ -242,15 +242,15 @@ configure {
  - `publishTo(Action<? extends MavenArtifactRepository> configure)`  
    Publish to any Maven repository of your configuration.  If looking to publish
    to Maven Central, there's a separate configuration chain,
-   [`createMavenCentralPublisherBundle`](#createmavencentraluploadbundle),
+   [`createMavenCentralPublisherBundle`](#createmavencentralpublisherbundle),
    for that just below.
 
-#### `createMavenCentralUploadBundle`
+#### `createMavenCentralPublisherBundle`
 
-Starts a fluent chain for configuring the publishing of one or more Maven
-publications and submitting it to Maven Central via their new Publisher API.
-This can be done for a single project build, or for a multi-project build with
-multiple artifacts all under the same namespace.
+Starts a fluent chain for taking one or more Maven publications and submitting
+them to Maven Central via their new Publisher API.  This can be done for a
+single project build, or for a multi-project build with multiple artifacts all
+under the same namespace.
 
 ```groovy
 configure {

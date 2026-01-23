@@ -73,11 +73,3 @@ gradlePlugin {
 		}
 	}
 }
-
-publishing {
-	repositories {
-		maven {
-			url = file('../test-maven-repository')
-		}
-	}
-}
