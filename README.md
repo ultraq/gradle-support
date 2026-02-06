@@ -34,7 +34,7 @@ projects if added to a settings file.
 ```groovy
 // settings.gradle or build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.9.2'
+  id 'nz.net.ultraq.gradle.use-maven-central-repositories' version '0.9.3'
 }
 ```
 
@@ -46,7 +46,7 @@ configure the project:
 ```groovy
 // build.gradle
 plugins {
-  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.9.2'
+  id 'nz.net.ultraq.gradle.fluent-configuration' version '0.9.3'
 }
 
 configure {
@@ -256,11 +256,11 @@ under the same namespace.
 configure {
   createMavenCentralPublisherBundle()
     .forProjects(*subprojects)
+    .useAutomaticPublishing()
     .withCredentials(
       findProperty('mavenCentralPublisherUsername'),
       findProperty('mavenCentralPublisherPassword')
     )
-    .withAutomaticPublishing()
 }
 ```
 
@@ -272,6 +272,9 @@ configure {
 
  - `forThisProject()`  
    Convenience method to use the current project as the only one for publishing.
+
+ - `useAutomaticPublishing()`  
+   Automatically push the bundle to Maven Central if it passes validation.
 
  - `withCredentials(String username, String password)`  
    Specify the username/password for publishing the staged artifacts to Maven

@@ -42,6 +42,7 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 
 	private final Project project
 	private List<Project> projectsForPublishing
+	private boolean automaticPublishing = false
 
 	@Inject
 	DefaultMavenCentralPublisherBundleBuilder(Project project) {
@@ -65,6 +66,13 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 	MavenCentralPublisherBundleBuilder forThisProject() {
 
 		return forProjects(project)
+	}
+
+	@Override
+	MavenCentralPublisherBundleBuilder useAutomaticPublishing() {
+
+		automaticPublishing = true
+		return this
 	}
 
 	@Override
@@ -115,7 +123,8 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 			var bundle = bundleDirectory.get().file("${project.name}-${project.version}.zip").getAsFile()
 			task.doLast {
 				var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
-					var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload')
+					var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload' +
+						"?publishingType=${automaticPublishing ? 'AUTOMATIC' : 'USER_MANAGED'}")
 					post.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
 					post.setEntity(MultipartEntityBuilder.create()
 						.addPart('bundle', new FileBody(bundle, ContentType.APPLICATION_OCTET_STREAM))

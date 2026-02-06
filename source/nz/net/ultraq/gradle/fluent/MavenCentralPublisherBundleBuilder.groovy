@@ -48,6 +48,11 @@ interface MavenCentralPublisherBundleBuilder {
 	MavenCentralPublisherBundleBuilder forThisProject()
 
 	/**
+	 * Automatically push the bundle to Maven Central if it passes validation.
+	 */
+	MavenCentralPublisherBundleBuilder useAutomaticPublishing()
+
+	/**
 	 * Specify the username/password for publishing the staged artifacts to Maven
 	 * Central.
 	 *
