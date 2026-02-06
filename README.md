@@ -260,6 +260,7 @@ configure {
       findProperty('mavenCentralPublisherUsername'),
       findProperty('mavenCentralPublisherPassword')
     )
+    .withAutomaticPublishing()
 }
 ```
 

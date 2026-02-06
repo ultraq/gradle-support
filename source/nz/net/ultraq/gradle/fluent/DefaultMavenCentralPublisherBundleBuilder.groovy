@@ -68,7 +68,7 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 	}
 
 	@Override
-	void withCredentials(String username, String password) {
+	MavenCentralPublisherBundleBuilder withCredentials(String username, String password) {
 
 		if (project.version.toString().endsWith('SNAPSHOT')) {
 			withCredentialsForSnapshotReleases(username, password)
@@ -76,6 +76,7 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 		else {
 			withCredentialsForFinalReleases(username, password)
 		}
+		return this
 	}
 
 	/**
@@ -136,6 +137,10 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 				clean.delete(stagingDirectory)
 				clean.delete(bundleDirectory)
 			}
+		}
+
+		project.tasks.named('publish') { publish ->
+			publish.finalizedBy('publishAsUploadBundle')
 		}
 	}
 

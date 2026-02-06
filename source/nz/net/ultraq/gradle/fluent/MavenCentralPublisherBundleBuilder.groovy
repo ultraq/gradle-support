@@ -60,5 +60,5 @@ interface MavenCentralPublisherBundleBuilder {
 	 *   account for the Publisher API.  DO NOT enter your actual credentials
 	 *   here, instead reference a Gradle property or environment variable.
 	 */
-	void withCredentials(String username, String password)
+	MavenCentralPublisherBundleBuilder withCredentials(String username, String password)
 }
