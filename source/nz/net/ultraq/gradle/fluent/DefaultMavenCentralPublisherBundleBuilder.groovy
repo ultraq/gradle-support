@@ -120,11 +120,11 @@ class DefaultMavenCentralPublisherBundleBuilder implements MavenCentralPublisher
 		project.tasks.register('publishAsUploadBundle') { task ->
 			task.group = 'publishing'
 			task.dependsOn('createUploadBundle')
+			var publishUrl = "https://central.sonatype.com/api/v1/publisher/upload?publishingType=${automaticPublishing ? 'AUTOMATIC' : 'USER_MANAGED'}"
 			var bundle = bundleDirectory.get().file("${project.name}-${project.version}.zip").getAsFile()
 			task.doLast {
 				var deploymentId = HttpClients.createDefault().withCloseable { httpClient ->
-					var post = new HttpPost('https://central.sonatype.com/api/v1/publisher/upload' +
-						"?publishingType=${automaticPublishing ? 'AUTOMATIC' : 'USER_MANAGED'}")
+					var post = new HttpPost(publishUrl)
 					post.setHeader('Authorization', "Bearer ${Base64.getEncoder().encodeToString("${username}:${password}".getBytes())}")
 					post.setEntity(MultipartEntityBuilder.create()
 						.addPart('bundle', new FileBody(bundle, ContentType.APPLICATION_OCTET_STREAM))
