@@ -18,12 +18,12 @@ plugins {
 	id 'java-gradle-plugin'
 	id 'maven-publish'
 	id 'signing'
-	id 'com.gradle.plugin-publish' version '1.3.1'
-	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.9.4'
+	id 'com.gradle.plugin-publish' version '2.1.1'
+	id 'nz.net.ultraq.gradle.fluent-configuration' version '0.9.5'
 }
 
 description = 'Gradle support plugins for use in my own projects'
-version = '0.9.5'
+version = '0.10.0'
 group = 'nz.net.ultraq.gradle'
 
 configure {
@@ -59,6 +59,11 @@ gradlePlugin {
 				'Adds the Maven Central and Snapshots repositories to a single project, or all projects ' +
 				'if added to a settings file.'
 			tags = ['maven', 'repository']
+			compatibility {
+				features {
+					configurationCache = true
+				}
+			}
 		}
 		fluentConfigurationPlugin {
 			id = 'nz.net.ultraq.gradle.fluent-configuration'
@@ -68,6 +73,11 @@ gradlePlugin {
 				'Adds a `configure` script block to a `build.gradle` file, within which a fluent API can ' +
 				'be used to configure a project.'
 			tags = ['fluent', 'configuration']
+			compatibility {
+				features {
+					configurationCache = true
+				}
+			}
 		}
 	}
 }
