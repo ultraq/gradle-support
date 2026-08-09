@@ -42,6 +42,14 @@ interface MavenCentralPublisherBundleBuilder {
 	MavenCentralPublisherBundleBuilder forProjects(Project... projects)
 
 	/**
+	 * {@code List} version of {@link #forProjects(Project ...)}
+	 */
+	default MavenCentralPublisherBundleBuilder forProjects(List<Project> projects) {
+
+		return forProjects(projects as Project[])
+	}
+
+	/**
 	 * Convenience method to use the current project as the only one with
 	 * artifacts for publishing.
 	 */
