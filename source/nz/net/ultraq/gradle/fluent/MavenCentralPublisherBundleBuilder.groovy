@@ -44,7 +44,7 @@ interface MavenCentralPublisherBundleBuilder {
 	/**
 	 * {@code List} version of {@link #forProjects(Project ...)}
 	 */
-	default MavenCentralPublisherBundleBuilder forProjects(List<Project> projects) {
+	default MavenCentralPublisherBundleBuilder forProjects(Collection<Project> projects) {
 
 		return forProjects(projects as Project[])
 	}

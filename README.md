@@ -264,7 +264,7 @@ configure {
 }
 ```
 
- - `forProjects(Project... projects | List<Project> projects)`  
+ - `forProjects(Project... projects | Collection<Project> projects)`  
    Select which projects to include in the upload bundle.  Each included project
    should have a Maven publication already configured so that this task can make
    sure the publication is signed and configured to deploy to a staging
